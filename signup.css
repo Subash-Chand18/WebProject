@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
 
 * {
     margin: 0;
@@ -6,6 +5,8 @@
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
+
+
 body {
     display: flex;
     justify-content: center;
@@ -16,161 +17,80 @@ body {
 
 .wrapper {
     width: 420px;
-    background: #fff;
+    background: white;
     color: #333;
-    border-radius: 12px;
-    padding: 40px 30px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    border-radius: 10px;
+    padding: 30px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .wrapper h1 {
     font-size: 28px;
-    color: #333;
+    text-align: center;
     margin-bottom: 20px;
-    font-weight: 600;
 }
 
-.input-box {
-    position: relative; 
+.wrapper .input-box {
+    position: relative;
     width: 100%;
     height: 50px;
-    margin: 20px 0;
-    display: flex;
-    align-items: center;
-    background: #f0f0f0;
-    border-radius: 25px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 15px 0;
 }
-
-.input-box i {
-    font-size: 20px;
-    color: #888;
-    margin-left: 15px;
-}
-
 .input-box input {
     width: 100%;
     height: 100%;
-    background: transparent;
+    background: #f0f0f0;
     border: none;
     outline: none;
+    border-radius: 40px;
+    padding: 0 20px 0 50px; /* Increase left padding to 50px */
     font-size: 16px;
     color: #333;
-    padding: 0 20px;
-    padding-left: 45px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 .input-box input::placeholder {
     color: #888;
 }
 
-.remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    margin-top: 10px;
-    color: #333;
+.input-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #888;
 }
 
-.remember-forgot label {
-    display: flex;
-    align-items: center;
-}
-
-.remember-forgot input {
-    margin-right: 5px;
-    accent-color: #6d5dfc;
-}
-
-.remember-forgot a {
-    color: #6d5dfc;
-    text-decoration: none;
-}
-
-.remember-forgot a:hover {
-    text-decoration: underline;
-}
-
-.btn {
+.wrapper .btn {
     width: 100%;
     height: 45px;
-    background: #6d5dfc;
+    background: #6c63ff;
     border: none;
     outline: none;
-    border-radius: 25px;
+    border-radius: 40px;
     cursor: pointer;
     font-size: 16px;
     color: #fff;
     font-weight: 600;
-    margin-top: 20px;
-    transition: background 0.3s;
+    transition: background-color 0.3s;
 }
 
-.btn:hover {
-    background: #5e97ff;
+.wrapper .btn:hover {
+    background: #5750d5;
 }
 
-.Signup-link {
-    font-size: 14px;
-    margin-top: 15px;
-    color: #333;
+.wrapper .login-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
 }
 
-.Signup-link a {
-    color: #6d5dfc;
+.login-link p a {
+    color: #6c63ff;
     text-decoration: none;
     font-weight: 600;
 }
 
-.Signup-link a:hover {
+.login-link p a:hover {
     text-decoration: underline;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #888;
-    margin: 20px 0;
-}
-
-.divider hr {
-    flex: 1;
-    border: none;
-    border-top: 1px solid #ccc;
-    margin: 0 10px;
-}
-
-.divider span {
-    font-size: 14px;
-}
-
-/* Google button styling */
-.google-btn {
-    z-index: 10;
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #ccc;
-    border-radius: 40px;
-    padding: 10px;
-    color: #555;
-    font-size: 16px;
-    font-weight: 500;
-    background-color: white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.google-btn img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-}
-
-.google-btn:hover {
-    background-color: #f7f7f7;
 }

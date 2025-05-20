@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>.....Welcome to the Dashboard.....</h2>
-    <h1>These is My E-Clothing Store Dashboard.......!</h1>
+    <h2>These Is Admin Dashboard</h2>
+    <h1>Welcome to Admin Dashboard</h1>
 </body>
 </html>
