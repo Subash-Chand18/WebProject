@@ -78,6 +78,7 @@ if (isset($_POST['login'])) {
         rememberCheckbox.addEventListener('change', function () {
             passwordInput.type = this.checked ? 'text' : 'password';
         });
+        
     </script>
 </body>
 </html>
