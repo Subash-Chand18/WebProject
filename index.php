@@ -15,7 +15,7 @@ if (isset($_POST['login'])) {
 
         if ($res && mysqli_num_rows($res) > 0) {
             $_SESSION['email'] = $email;
-            header("Location: homepage.html");
+            header("Location: Dashboard.php");
             exit();
         } else {
             echo "<script>alert('Invalid email or password!');</script>";
