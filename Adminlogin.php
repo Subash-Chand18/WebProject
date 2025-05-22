@@ -3,18 +3,19 @@ session_start();
 
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
-    $password = md5($_POST['password']); // Hash password using MD5 (for now)
+    $password = md5($_POST['password']); // Still MD5, though consider password_hash() in future
 
     $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 
     if ($con) {
         $email_safe = mysqli_real_escape_string($con, $email);
-
-        $sql = "SELECT * FROM User WHERE Email='$email_safe' AND Password='$password' AND Deleted_at IS NULL";
+        $sql = "SELECT * FROM user WHERE email='$email_safe' AND password='$password' AND deleted_at IS NULL";
         $res = mysqli_query($con, $sql);
 
         if ($res && mysqli_num_rows($res) > 0) {
-            $_SESSION['email'] = $email;
+            $user = mysqli_fetch_assoc($res);
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['admin_name'] = $user['name'];
 
             if (!empty($_POST['remember'])) {
                 setcookie("email", $email, time() + (86400 * 30), "/");
@@ -32,10 +33,11 @@ if (isset($_POST['login'])) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Admin Login - E Clothing Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />

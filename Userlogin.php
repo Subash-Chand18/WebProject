@@ -10,7 +10,7 @@ if (isset($_POST['login'])) {
 
     if ($con) {
         // Check user credentials and ensure account is not deleted
-        $sql = "SELECT * FROM User WHERE Email='$email' AND Password='$password' AND Deleted_at IS NULL";
+        $sql = "SELECT * FROM user WHERE email='$email' AND password='$password' AND deleted_at IS NULL";
         $res = mysqli_query($con, $sql);
 
         if ($res && mysqli_num_rows($res) > 0) {
