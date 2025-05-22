@@ -245,7 +245,82 @@ body {
     z-index: 1000;
 }
 
-/* Responsive */
+/* === New styles for records/tables === */
+
+/* Table container for better responsive */
+.table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    padding: 20px;
+}
+
+/* Records Table */
+.records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.records-table th, 
+.records-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.records-table thead {
+    background-color: #1abc9c;
+    color: white;
+}
+
+.records-table th {
+    font-weight: 600;
+    user-select: none;
+}
+
+.records-table tr:hover {
+    background-color: #e3f6f5;
+    cursor: pointer;
+}
+
+.records-table img {
+    max-width: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+/* Table cell with long text (like description) */
+.records-table td.description {
+    max-width: 400px;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* Search bar style */
+.search-bar {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-bar input[type="search"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 250px;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar input[type="search"]:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .sidebar {
         position: relative;
@@ -266,13 +341,15 @@ body {
         padding: 10px 20px;
     }
 
-    .topnav-menu {
-        width: 100%;
-        justify-content: center;
+    .topnav nav.topnav-menu {
         margin-top: 10px;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
     }
 
-    .footer {
-        left: 0;
+    .stats-container {
+        flex-direction: column;
+        gap: 20px;
     }
 }
