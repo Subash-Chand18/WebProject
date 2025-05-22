@@ -1,32 +1,28 @@
 <?php
-session_start(); // Start session to track user login
+session_start();
 
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
-    $password = md5($_POST['password']); // Hash password (keep md5 as in your original)
+    $password = md5($_POST['password']); // Hash password using MD5 (for now)
 
-    // Connect to database
     $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 
     if ($con) {
-        // Escape email to avoid SQL injection
         $email_safe = mysqli_real_escape_string($con, $email);
 
-        // Check user credentials and ensure account is not deleted
         $sql = "SELECT * FROM User WHERE Email='$email_safe' AND Password='$password' AND Deleted_at IS NULL";
         $res = mysqli_query($con, $sql);
 
         if ($res && mysqli_num_rows($res) > 0) {
-            $_SESSION['email'] = $email; // Save login in session
+            $_SESSION['email'] = $email;
 
-            // Handle "Remember Me" using cookie
             if (!empty($_POST['remember'])) {
-                setcookie("email", $email, time() + (86400 * 30), "/"); // Set for 30 days
+                setcookie("email", $email, time() + (86400 * 30), "/");
             } else {
-                setcookie("email", "", time() - 3600, "/"); // Clear cookie
+                setcookie("email", "", time() - 3600, "/");
             }
 
-            header("Location: Userdashboard.php"); // Redirect to dashboard
+            header("Location: Admindashboard.php");
             exit();
         } else {
             echo "<script>alert('Invalid email or password!');</script>";
@@ -39,15 +35,15 @@ if (isset($_POST['login'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <title>Admin Login - E Clothing Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>E Clothing Store - Login</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="wrapper">
-        <form action="Userlogin.php" method="POST">
+        <form action="Adminlogin.php" method="POST">
             <h1>E-Clothing Store</h1>
             <div class="input-box">
                 <i class='bx bxs-user'></i>
@@ -66,6 +62,7 @@ if (isset($_POST['login'])) {
             <button type="submit" name="login" class="btn">Login</button>
         </form>
     </div>
+
     <script>
         const togglePassword = document.getElementById("togglePassword");
         const passwordInput = document.getElementById("password");
