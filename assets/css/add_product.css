@@ -1,0 +1,232 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.add-product-form {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    width: 650px;
+    max-width: 95%;
+    position: relative;
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    color: #4a148c;
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 22px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 16px 18px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #fafafa;
+    color: #333;
+    transition: 0.3s ease;
+    resize: vertical;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-shadow: none;
+    outline: none;
+}
+
+.form-group select {
+    background: #fafafa url('data:image/svg+xml;utf8,<svg fill="%237b1fa2" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 18px center;
+    background-size: 16px 16px;
+    padding: 16px 40px 16px 18px;
+    height: 52px;
+    line-height: 1.2;
+}
+
+.form-group select option {
+    background-color: #fff !important;
+    color: #333;
+    box-shadow: none !important;
+}
+
+/* Label floating effect */
+.form-group label {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    font-size: 14px;
+    color: #555;
+    background-color: #fff;
+    padding: 0 6px;
+    transition: 0.3s ease;
+    pointer-events: none;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group textarea:focus + label,
+.form-group textarea:not(:placeholder-shown) + label,
+.form-group select:focus + label,
+.form-group select:valid + label {
+    top: -10px;
+    font-size: 12px;
+    color: #7b1fa2;
+}
+
+/* Focus border color */
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #7b1fa2;
+    background-color: #fff;
+    box-shadow: none;
+}
+
+/* File input */
+input[type="file"] {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-radius: 10px;
+    background-color: #f3f3f3;
+    border: 2px dashed #ccc;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+input[type="file"]:hover {
+    border-color: #7b1fa2;
+}
+
+/* File upload button (modern look) */
+input[type="file"]::file-selector-button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #7b1fa2;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: #6a1b9a;
+}
+
+/* Buttons */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.button-group button {
+    width: 40%;
+    padding: 14px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.button-group button[type="submit"] {
+    background-color: #7b1fa2;
+    color: white;
+}
+
+.button-group button[type="submit"]:hover {
+    background-color: #6a1b9a;
+}
+
+.button-group .cancel-btn {
+    background-color: #eee;
+    color: #333;
+    font-weight: 500;
+}
+
+.button-group .cancel-btn:hover {
+    background-color: #ccc;
+}
+
+/* Inline field group */
+.inline-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.inline-group .form-group {
+    flex: 1;
+}
+
+/* Close (X) Button */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 22px;
+    color: #888;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #000;
+    background-color: #f2f2f2;
+    border-radius: 50%;
+}
+
+/* Responsive improvements */
+@media (max-width: 600px) {
+    .inline-group {
+        flex-direction: column;
+    }
+
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+}
