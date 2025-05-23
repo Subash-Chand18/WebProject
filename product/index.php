@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 // db connection
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
@@ -24,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     $price = $_POST["price"];
     $qty = $_POST["quantity"];
     $sku = $_POST["sku"];
-    $c_id = intval($_POST["category_id"]);  // force integer for safety
+    $c_id = intval($_POST["category_id"]);
 
     $sql = "INSERT INTO product (name, description, price, sku, quantity, category_id, image)
             VALUES ('$name', '$desc', $price, '$sku', '$qty', $c_id, '$image')";
@@ -53,11 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     </script>
 </head>
 <body>
+     
+    <!-- Add Product Form -->
     <form id="addProductForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
         <button class="close-btn" onclick="goToDashboard();" type="button" title="Close">
             <i class="fas fa-times"></i>
         </button>
         <h2><i class="fas fa-plus-circle"></i> Add Product</h2>
+
         <div class="inline-group">
             <div class="form-group">
                 <input type="text" id="name" name="name" placeholder=" " required>
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
 
         <div class="form-group">
             <select id="category_id" name="category_id" required>
-                <option value="" disabled selected>Select Category</option>
+                <option value="" disabled selected></option>
                 <option value="1">Men</option>
                 <option value="2">Women</option>
                 <option value="3">Babies</option>
@@ -100,16 +100,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
 
         <div class="button-group">
             <button type="submit" name="submit" id="submitBtn">
-                <i class="fas fa-upload"></i> Add Product
+                <i class="fas fa-upload"></i> Add Products
             </button>
             <button type="button" class="cancel-btn" onclick="document.getElementById('addProductForm').reset();">
                 <i class="fas fa-eraser"></i> Clear Form
             </button>
+            <button type="button" class="view-btn" onclick="window.location.href='view_product.php';">
+                 <i class="fas fa-eye"></i> View Products
+             </button>
         </div>
     </form>
 
     <script>
-        // Prevent negative prices
         document.getElementById('addProductForm').addEventListener('submit', function (e) {
             const priceInput = document.getElementById('price');
             if (parseFloat(priceInput.value) < 0) {
