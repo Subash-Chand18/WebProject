@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="wrapper">
-        form action="#" method="post">
+        <form action="#" method="post">
             <h1>Sign Up</h1>
             <div class="input-box">
                 <i class='bx bxs-user'></i>
