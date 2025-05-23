@@ -1,69 +1,49 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // db connection
-$conn = new mysqli("localhost", "root", "", "EClothingStore");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+
+if (!$con) {
+    die("Database connection failed: " . mysqli_connect_error());
 }
 
-$msg = "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
+    $upload_dir = "../assets/images/";
+    $upload_file = $upload_dir . basename($_FILES["userfile"]["name"]);
+    $image = "";
 
-// Fetch categories for dropdown
-$categories = [];
-$catResult = $conn->query("SELECT id, name FROM category");
-if ($catResult) {
-    while ($row = $catResult->fetch_assoc()) {
-        $categories[] = $row;
+    if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $upload_file)) {
+        $image = $_FILES["userfile"]["name"];
     }
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name']);
-    $desc = trim($_POST['description']);
-    $price = floatval($_POST['price']);
-    $qty = intval($_POST['quantity']);
-    $sku = trim($_POST['sku']);
-    $category_id = intval($_POST['category_id']);
+    $name = $_POST["name"];
+    $desc = $_POST["description"];
+    $price = $_POST["price"];
+    $qty = $_POST["quantity"];
+    $sku = $_POST["sku"];
+    $c_id = intval($_POST["category_id"]);  // force integer for safety
 
-    // Handle image upload
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $imageName = basename($_FILES['image']['name']);
-        $uploadDir = "../assets/images/";
-        $uploadPath = $uploadDir . $imageName;
+    $sql = "INSERT INTO product (name, description, price, sku, quantity, category_id, image)
+            VALUES ('$name', '$desc', $price, '$sku', '$qty', $c_id, '$image')";
 
-        // Optional: validate file type here (e.g. jpg, png)
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $fileType = mime_content_type($_FILES['image']['tmp_name']);
-        if (!in_array($fileType, $allowedTypes)) {
-            $msg = "Only JPG, PNG, and GIF files are allowed.";
-        } else {
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-                // Prepare statement to prevent SQL injection
-                $stmt = $conn->prepare("INSERT INTO product (name, description, price, quantity, sku, category_id, image, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->bind_param("ssdisss", $name, $desc, $price, $qty, $sku, $category_id, $imageName);
+    $result = mysqli_query($con, $sql);
 
-                if ($stmt->execute()) {
-                    $msg = "Product added successfully!";
-                } else {
-                    $msg = "Database error: " . $stmt->error;
-                }
-                $stmt->close();
-            } else {
-                $msg = "Failed to upload image.";
-            }
-        }
+    if ($result) {
+        echo "<script>alert('Product added successfully.');</script>";
     } else {
-        $msg = "Please upload a product image.";
+        echo "<script>alert('Error inserting data: " . mysqli_error($con) . "');</script>";
     }
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Add Product - E-Clothing Store</title>
+    <title>Add Product</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="../assets/css/add_product.css" />
     <script>
@@ -73,16 +53,11 @@ $conn->close();
     </script>
 </head>
 <body>
-    <form id="addProductForm" action="" method="POST" enctype="multipart/form-data" class="add-product-form" novalidate>
-        <button type="button" class="close-btn" onclick="goToDashboard();" title="Close">
+    <form id="addProductForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
+        <button class="close-btn" onclick="goToDashboard();" type="button" title="Close">
             <i class="fas fa-times"></i>
         </button>
         <h2><i class="fas fa-plus-circle"></i> Add Product</h2>
-
-        <?php if ($msg): ?>
-            <p class="message"><?= htmlspecialchars($msg) ?></p>
-        <?php endif; ?>
-
         <div class="inline-group">
             <div class="form-group">
                 <input type="text" id="name" name="name" placeholder=" " required>
@@ -93,7 +68,7 @@ $conn->close();
                 <label for="price"><i class="fas fa-dollar-sign"></i> Price</label>
             </div>
             <div class="form-group">
-                <input type="number" id="quantity" name="quantity" min="0" placeholder=" " required>
+                <input type="number" id="quantity" name="quantity" placeholder=" " required>
                 <label for="quantity"><i class="fas fa-boxes"></i> Quantity</label>
             </div>
         </div>
@@ -106,9 +81,9 @@ $conn->close();
         <div class="form-group">
             <select id="category_id" name="category_id" required>
                 <option value="" disabled selected>Select Category</option>
-                <?php foreach ($categories as $cat): ?>
-                    <option value="<?= (int)$cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
-                <?php endforeach; ?>
+                <option value="1">Men</option>
+                <option value="2">Women</option>
+                <option value="3">Babies</option>
             </select>
             <label for="category_id"><i class="fas fa-list"></i> Category</label>
         </div>
@@ -119,12 +94,14 @@ $conn->close();
         </div>
 
         <div class="form-group">
-            <input type="file" id="image" name="image" accept="image/*" required>
-            <label for="image"><i class="fas fa-image"></i> Upload Image</label>
+            <input type="file" id="userfile" name="userfile" required>
+            <label for="userfile"><i class="fas fa-image"></i> Upload Image</label>
         </div>
 
         <div class="button-group">
-            <button type="submit" name="submit"><i class="fas fa-upload"></i> Add Product</button>
+            <button type="submit" name="submit" id="submitBtn">
+                <i class="fas fa-upload"></i> Add Product
+            </button>
             <button type="button" class="cancel-btn" onclick="document.getElementById('addProductForm').reset();">
                 <i class="fas fa-eraser"></i> Clear Form
             </button>
@@ -132,6 +109,7 @@ $conn->close();
     </form>
 
     <script>
+        // Prevent negative prices
         document.getElementById('addProductForm').addEventListener('submit', function (e) {
             const priceInput = document.getElementById('price');
             if (parseFloat(priceInput.value) < 0) {

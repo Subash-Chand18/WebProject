@@ -16,8 +16,8 @@ body {
     padding: 20px;
 }
 
-.add-product-form {
-    background: #fff;
+form#addProductForm {
+    background: #ffffff;
     padding: 30px 40px;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -60,34 +60,27 @@ h2 {
     transition: 0.3s ease;
     resize: vertical;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    box-shadow: none;
     outline: none;
 }
 
 .form-group select {
     background: #fafafa url('data:image/svg+xml;utf8,<svg fill="%237b1fa2" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 18px center;
     background-size: 16px 16px;
-    padding: 16px 40px 16px 18px;
-    height: 52px;
-    line-height: 1.2;
+    padding-right: 40px;
 }
 
 .form-group select option {
-    background-color: #fff !important;
+    background-color: #fff;
     color: #333;
-    box-shadow: none !important;
 }
 
-/* Label floating effect */
 .form-group label {
     position: absolute;
     top: 16px;
     left: 18px;
     font-size: 14px;
     color: #555;
-    background-color: #fff;
+    background: #fff;
     padding: 0 6px;
     transition: 0.3s ease;
     pointer-events: none;
@@ -104,16 +97,14 @@ h2 {
     color: #7b1fa2;
 }
 
-/* Focus border color */
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
     border-color: #7b1fa2;
     background-color: #fff;
-    box-shadow: none;
 }
 
-/* File input */
+/* File Input */
 input[type="file"] {
     padding: 12px 14px;
     font-size: 14px;
@@ -128,7 +119,6 @@ input[type="file"]:hover {
     border-color: #7b1fa2;
 }
 
-/* File upload button (modern look) */
 input[type="file"]::file-selector-button {
     padding: 10px 15px;
     border: none;
@@ -147,12 +137,12 @@ input[type="file"]::file-selector-button:hover {
 .button-group {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    width: 100%;
+    margin-top: 20px;
+    gap: 20px;
 }
 
 .button-group button {
-    width: 40%;
+    flex: 1;
     padding: 14px;
     border-radius: 30px;
     font-weight: 600;
@@ -178,14 +168,13 @@ input[type="file"]::file-selector-button:hover {
 .button-group .cancel-btn {
     background-color: #eee;
     color: #333;
-    font-weight: 500;
 }
 
 .button-group .cancel-btn:hover {
     background-color: #ccc;
 }
 
-/* Inline field group */
+/* Inline layout for short fields */
 .inline-group {
     display: flex;
     gap: 20px;
@@ -196,7 +185,7 @@ input[type="file"]::file-selector-button:hover {
     flex: 1;
 }
 
-/* Close (X) Button */
+/* Close Button */
 .close-btn {
     position: absolute;
     top: 20px;
@@ -215,7 +204,7 @@ input[type="file"]::file-selector-button:hover {
     border-radius: 50%;
 }
 
-/* Responsive improvements */
+/* Mobile */
 @media (max-width: 600px) {
     .inline-group {
         flex-direction: column;
@@ -223,7 +212,6 @@ input[type="file"]::file-selector-button:hover {
 
     .button-group {
         flex-direction: column;
-        gap: 10px;
     }
 
     .button-group button {
