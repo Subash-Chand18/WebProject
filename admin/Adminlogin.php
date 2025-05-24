@@ -3,7 +3,7 @@ session_start();
 
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
-    $password = md5($_POST['password']); // Still MD5, though consider password_hash() in future
+    $password = md5($_POST['password']); // Consider password_hash() in production
 
     $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 
@@ -44,6 +44,9 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 <body>
+    <!-- Background overlay -->
+    <div class="backdrop-overlay"></div>
+
     <div class="wrapper">
         <form action="Adminlogin.php" method="POST">
             <h1>E-Clothing Store</h1>

@@ -26,7 +26,12 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <h1 class="page-title"><i class="fas fa-box-open"></i> Our Products</h1>
 
-<input type="text" id="searchInput" placeholder="Search by name, ID or SKU..." autocomplete="off" />
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search by name, ID or SKU..." autocomplete="off" />
+    <button class="refresh-btn" type="button" title="Clear Search" onclick="clearSearch()">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+</div>
 
 <!-- Close button -->
 <button class="close-btn" type="button" title="Close" onclick="closePage();">
@@ -84,18 +89,27 @@ const productGrid = document.getElementById('productGrid');
 const productCards = productGrid.querySelectorAll('.product-card');
 
 searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase();
+    filterProducts(searchInput.value);
+});
+
+function clearSearch() {
+    searchInput.value = '';
+    filterProducts('');
+}
+
+function filterProducts(query) {
+    const q = query.toLowerCase();
     productCards.forEach(card => {
         const name = card.getAttribute('data-name');
         const sku = card.getAttribute('data-sku');
         const id = card.getAttribute('data-id');
-        if (name.includes(query) || sku.includes(query) || id.includes(query)) {
+        if (name.includes(q) || sku.includes(q) || id.includes(q)) {
             card.style.display = '';
         } else {
             card.style.display = 'none';
         }
     });
-});
+}
 
 // Product Modal Elements
 const productModal = document.getElementById('productModal');
@@ -125,20 +139,17 @@ function closeProductModal() {
     productModal.style.display = 'none';
 }
 
-// Open large image modal from modal image click
 function openImageView() {
     largeImage.src = modalImage.src;
     imageViewModal.style.display = 'flex';
 }
 
-// Close large image modal, prevent closing if clicking on image itself
 function closeImageView(event) {
     if (!event || event.target === imageViewModal || event.target.classList.contains('close-image')) {
         imageViewModal.style.display = 'none';
     }
 }
 
-// Close modals if clicked outside content
 window.onclick = function(event) {
     if (event.target === productModal) {
         closeProductModal();
