@@ -1,84 +1,152 @@
 <?php
 // DB connection
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
+if (!$con) die("DB connection failed: " . mysqli_connect_error());
 
-if (!$con) {
-    die("Database connection failed: " . mysqli_connect_error());
-}
-
-$query = "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at DESC";
-$result = mysqli_query($con, $query);
+// Fetch all products
+$result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at DESC");
+$products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>View Products</title>
-    <link rel="stylesheet" href="../assets/css/view_product.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>View Products</title>
+<link rel="stylesheet" href="../assets/css/view_product.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script>
+    function closePage() {
+        window.location.href = '../product/index.php';
+    }
+</script>
 </head>
 <body>
 
-<h1 class="page-title"><i class="fas fa-boxes"></i> All Products</h1>
+<h1 class="page-title"><i class="fas fa-box-open"></i> Our Products</h1>
 
-<div class="product-grid">
-    <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-        <div class="product-card" onclick="showModal('<?php echo htmlspecialchars($row['image']); ?>', '<?php echo htmlspecialchars(addslashes($row['name'])); ?>', '<?php echo htmlspecialchars(addslashes($row['description'])); ?>', '<?php echo $row['price']; ?>', '<?php echo $row['quantity']; ?>', '<?php echo $row['sku']; ?>')">
-            <img src="../assets/images/<?php echo htmlspecialchars($row['image']); ?>" alt="Product Image">
-            <h3><?php echo htmlspecialchars($row['name']); ?></h3>
-            <p><strong>$<?php echo $row['price']; ?></strong></p>
-        </div>
-    <?php } ?>
+<input type="text" id="searchInput" placeholder="Search by name, ID or SKU..." autocomplete="off" />
+
+<!-- Close button -->
+<button class="close-btn" type="button" title="Close" onclick="closePage();">
+    <i class="fas fa-times"></i>
+</button>
+
+<div id="productGrid" class="product-grid">
+    <?php foreach ($products as $p): ?>
+    <div class="product-card" 
+         data-name="<?= htmlspecialchars(strtolower($p['name'])) ?>"
+         data-sku="<?= htmlspecialchars(strtolower($p['sku'])) ?>"
+         data-id="<?= $p['id'] ?>"
+         onclick="openProductModal(<?= htmlspecialchars(json_encode($p)) ?>)">
+        <img src="../assets/images/<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" />
+        <h3><?= htmlspecialchars($p['name']) ?></h3>
+        <p class="price">$<?= htmlspecialchars($p['price']) ?></p>
+    </div>
+    <?php endforeach; ?>
 </div>
 
 <!-- Product Detail Modal -->
-<div class="modal" id="productModal">
-    <div class="modal-box">
-        <span class="close" onclick="closeModal()">&times;</span>
+<div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <div class="modal-content">
+        <button class="modal-close-btn" aria-label="Close Product Details" onclick="closeProductModal()">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="modal-body">
-            <img id="modalImage" src="" alt="Product" onclick="showImageOnly(this.src)">
+            <img id="modalImage" src="" alt="Product Image" onclick="openImageView()" />
             <div class="modal-details">
                 <h2 id="modalName"></h2>
-                <p id="modalDesc"></p>
+                <p id="modalDesc" class="desc-font"></p>
                 <p><strong>Price:</strong> $<span id="modalPrice"></span></p>
                 <p><strong>Quantity:</strong> <span id="modalQty"></span></p>
                 <p><strong>SKU:</strong> <span id="modalSKU"></span></p>
+                <div class="modal-actions">
+                    <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Image Viewer Modal -->
-<div class="image-modal" id="imageModal">
-    <span class="close-image" onclick="closeImageModal()">&times;</span>
-    <img id="modalImageViewer" src="" alt="Enlarged Product">
+<!-- Large Image View Modal -->
+<div id="imageViewModal" class="modal" onclick="closeImageView(event)">
+    <button class="modal-close-btn close-image" aria-label="Close Large Image" onclick="closeImageView(event)">
+        <i class="fas fa-times"></i>
+    </button>
+    <img id="largeImage" src="" alt="Detailed Product Image" />
 </div>
 
 <script>
-function showModal(image, name, desc, price, qty, sku) {
-    document.getElementById('modalImage').src = '../assets/images/' + image;
-    document.getElementById('modalName').innerText = name;
-    document.getElementById('modalDesc').innerText = desc;
-    document.getElementById('modalPrice').innerText = price;
-    document.getElementById('modalQty').innerText = qty;
-    document.getElementById('modalSKU').innerText = sku;
-    document.getElementById('productModal').style.display = 'flex';
+const searchInput = document.getElementById('searchInput');
+const productGrid = document.getElementById('productGrid');
+const productCards = productGrid.querySelectorAll('.product-card');
+
+searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    productCards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const sku = card.getAttribute('data-sku');
+        const id = card.getAttribute('data-id');
+        if (name.includes(query) || sku.includes(query) || id.includes(query)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+// Product Modal Elements
+const productModal = document.getElementById('productModal');
+const modalImage = document.getElementById('modalImage');
+const modalName = document.getElementById('modalName');
+const modalDesc = document.getElementById('modalDesc');
+const modalPrice = document.getElementById('modalPrice');
+const modalQty = document.getElementById('modalQty');
+const modalSKU = document.getElementById('modalSKU');
+
+// Image View Modal Elements
+const imageViewModal = document.getElementById('imageViewModal');
+const largeImage = document.getElementById('largeImage');
+
+function openProductModal(product) {
+    modalImage.src = '../assets/images/' + product.image;
+    modalName.textContent = product.name;
+    modalDesc.textContent = product.description;
+    modalPrice.textContent = product.price;
+    modalQty.textContent = product.quantity;
+    modalSKU.textContent = product.sku;
+
+    productModal.style.display = 'flex';
 }
 
-function closeModal() {
-    document.getElementById('productModal').style.display = 'none';
+function closeProductModal() {
+    productModal.style.display = 'none';
 }
 
-// Full image modal
-function showImageOnly(src) {
-    document.getElementById('modalImageViewer').src = src;
-    document.getElementById('imageModal').style.display = 'flex';
+// Open large image modal from modal image click
+function openImageView() {
+    largeImage.src = modalImage.src;
+    imageViewModal.style.display = 'flex';
 }
 
-function closeImageModal() {
-    document.getElementById('imageModal').style.display = 'none';
+// Close large image modal, prevent closing if clicking on image itself
+function closeImageView(event) {
+    if (!event || event.target === imageViewModal || event.target.classList.contains('close-image')) {
+        imageViewModal.style.display = 'none';
+    }
 }
+
+// Close modals if clicked outside content
+window.onclick = function(event) {
+    if (event.target === productModal) {
+        closeProductModal();
+    }
+    if (event.target === imageViewModal) {
+        closeImageView();
+    }
+};
 </script>
 
 </body>
