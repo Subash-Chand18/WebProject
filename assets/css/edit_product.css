@@ -151,15 +151,6 @@ h2 {
     transform: scale(1.03);
 }
 
-.button-group .cancel-btn {
-    background-color: #e0e0e0;
-    color: #333;
-}
-
-.button-group .cancel-btn:hover {
-    background-color: #bdbdbd;
-    transform: scale(1.03);
-}
 
 .inline-group {
     display: flex;

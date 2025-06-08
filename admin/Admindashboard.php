@@ -11,7 +11,8 @@ if (!$con) {
 }
 
 // Dashboard Stats
-$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM product");
+$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM product WHERE deleted_at IS NULL");
+
 $totalProducts = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM user WHERE deleted_at IS NULL");

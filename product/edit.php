@@ -93,9 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="button-group">
             <button type="submit" name="submit"><i class="fas fa-save"></i> Update Product</button>
-            <button type="button" class="cancel-btn" onclick="window.location.href='view.php'">
-                <i class="fas fa-eraser"></i> Cancel
-            </button>
         </div>
     </form>
 </section>
