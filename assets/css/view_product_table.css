@@ -30,7 +30,7 @@ body {
     background-color: #ffffff;
     border-bottom: 1px solid #ddd;
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Center horizontally */
     align-items: center;
     margin-top: 20px;
 }
@@ -40,26 +40,14 @@ body {
     color: #222;
 }
 
-.page-header .close-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #666;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.page-header .close-btn:hover {
-    color: #000;
-}
-
-/* Search Wrapper (Search box and clear button container) */
+/* Search Wrapper (Search box, clear and close buttons container) */
 .search-wrapper {
     margin: 20px auto;
     width: 80%;
     display: flex;             /* horizontal layout */
     align-items: center;       /* vertical centering */
-    gap: 10px;                 /* spacing between input and button */
+    gap: 10px;                 /* spacing between elements */
+    position: relative;
 }
 
 /* Search Input */
@@ -78,7 +66,7 @@ body {
     outline: none;
 }
 
-/* Clear Button */
+/* Buttons inside search wrapper */
 .search-wrapper button {
     background-color: #007bff;
     color: #fff;
@@ -93,12 +81,34 @@ body {
     justify-content: center;
 }
 
-.search-wrapper button:hover {
+/* Clear Search Button */
+.search-wrapper button[title="Clear Search"]:hover {
     background-color: #0056b3;
 }
 
+/* Icon inside buttons */
 .search-wrapper button i {
     font-size: 1.1rem;
+}
+
+/* Close Button inside search wrapper */
+.page-close-btn {
+    background: none;
+    color: #666;
+    font-size: 28px;
+    padding: 0 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    /* Keep same height as input for alignment */
+    height: 40px;
+    line-height: 1;
+}
+
+.page-close-btn:hover {
+    color: #000;
+    background-color: rgba(0,0,0,0.05);
 }
 
 /* Table Container */
@@ -139,6 +149,12 @@ body {
     width: 60px;
     height: auto;
     border-radius: 4px;
+}
+
+/* Center the 'Actions' header and content */
+.product-table th.text-center,
+.product-table td.text-center {
+    text-align: center;
 }
 
 /* Actions */
@@ -294,9 +310,17 @@ body {
     .search-wrapper {
         flex-direction: column;
         width: 90%;
+        gap: 15px;
     }
 
     .actions {
         flex-direction: column;
+    }
+
+    .page-close-btn {
+        align-self: flex-end; /* To keep close button on right in stacked layout */
+        padding: 8px 14px;
+        font-size: 24px;
+        height: auto;
     }
 }

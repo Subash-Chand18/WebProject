@@ -13,14 +13,17 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     <header class="page-header center-content text-center">
         <h1><i class="fas fa-box-open"></i> Our Products</h1>
-        <button class="close-btn" title="Back to Dashboard" onclick="window.location.href='../admin/Admindashboard.php'">
-            <i class="fas fa-arrow-left"></i>
-        </button>
     </header>
 
-    <div class="search-wrapper center-content">
+    <div class="search-wrapper">
         <input type="text" id="searchInput" placeholder="Search by ID, Name or SKU..." autocomplete="off" />
-        <button type="button" title="Clear Search" onclick="clearSearch()"><i class="fas fa-sync-alt"></i></button>
+        <button type="button" title="Clear Search" onclick="clearSearch()">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <button type="button" onclick="window.location.href='../admin/Admindashboard.php'" 
+                class="page-close-btn" title="Back to Dashboard" aria-label="Close and return to dashboard">
+            &times;
+        </button>
     </div>
 
     <div class="table-container">
