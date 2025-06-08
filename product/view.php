@@ -62,8 +62,8 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
                             <button class="btn view-btn" onclick='openProductModal(<?= json_encode($p, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <a href="edit_product.php?id=<?= $p['id'] ?>" class="btn edit-btn"><i class="fas fa-edit"></i></a>
-                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this product?');">
+                            <a href="edit.php?id=<?= $p['id'] ?>" class="btn edit-btn"><i class="fas fa-edit"></i></a>
+                            <a href="delete.php?id=<?= $p['id'] ?>" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this product?');">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
                         </div>

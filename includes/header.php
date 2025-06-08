@@ -16,6 +16,10 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
     <link rel="stylesheet" href="../assets/css/Admindashboard.css" />
     <link rel="stylesheet" href="../assets/css/add_product.css" />
     <link rel="stylesheet" href="../assets/css/view_product_table.css" />
+    <link rel="stylesheet" href="../css/edit_product.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
