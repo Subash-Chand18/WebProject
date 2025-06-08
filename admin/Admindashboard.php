@@ -66,11 +66,15 @@ if ($productQuery) {
         <ul class="sidebar-menu">
             <li><a href="#" class="sidebar-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
 
-            <!-- Products as a simple link -->
-            <li>
-                <a href="../product/index.php" class="sidebar-link">
-                    <i class="fas fa-box-open"></i> Products
+            <!-- Products with dropdown -->
+            <li class="dropdown">
+                <a href="#" class="sidebar-link dropdown-toggle">
+                    <i class="fas fa-box-open"></i> Products <i class="fas fa-chevron-down"></i>
                 </a>
+                <ul class="dropdown-menu">
+                    <li><a href="../product/add.php" class="sidebar-sublink">Add Product</a></li>
+                    <li><a href="../product/view.php" class="sidebar-sublink">View Products</a></li>
+                </ul>
             </li>
 
             <!-- Categories with dropdown -->
