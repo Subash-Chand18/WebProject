@@ -12,7 +12,6 @@ if (!$con) {
 
 // Dashboard Stats
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM product WHERE deleted_at IS NULL");
-
 $totalProducts = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM user WHERE deleted_at IS NULL");
@@ -84,9 +83,8 @@ if ($productQuery) {
                     <i class="fas fa-tags"></i> Categories <i class="fas fa-chevron-down"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" class="sidebar-sublink">Men</a></li>
-                    <li><a href="#" class="sidebar-sublink">Women</a></li>
-                    <li><a href="#" class="sidebar-sublink">Babies</a></li>
+                    <li><a href="../category/add_category.php" class="sidebar-sublink">Add Category</a></li>
+                    <li><a href="../category/view_category.php" class="sidebar-sublink">View Categories</a></li>
                 </ul>
             </li>
 

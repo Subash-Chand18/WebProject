@@ -28,9 +28,9 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
         </div>
         <nav class="topnav-menu">
             <a href="#" class="nav-link active">Home</a>
-            <a href="#" class="nav-link">About Us</a>
-            <a href="#" class="nav-link">Contact Us</a>
-            <a href="#" class="nav-link">Help</a>
+            <a href="../admin/about.php" class="nav-link">About Us</a>
+            <a href="../admin/contact.php" class="nav-link">Contact Us</a>
+            <a href="../admin/help.php" class="nav-link">Help</a>
             <a href="Logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
         <div class="welcome-msg">
@@ -60,9 +60,8 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
                     <i class="fas fa-tags"></i> Categories <i class="fas fa-chevron-down"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" class="sidebar-sublink">Men</a></li>
-                    <li><a href="#" class="sidebar-sublink">Women</a></li>
-                    <li><a href="#" class="sidebar-sublink">Babies</a></li>
+                    <li><a href="../category/add_category.php" class="sidebar-sublink">Add Category</a></li>
+                    <li><a href="../category/view_category.php" class="sidebar-sublink">View Categories</a></li>
                 </ul>
             </li>
 
@@ -76,3 +75,4 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
 
     <!-- Main Content -->
     <main class="main-content">
+       

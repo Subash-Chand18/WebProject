@@ -18,8 +18,7 @@ body {
     overflow-y: auto;
 }
 
-/* Main form container */
-form#addProductForm {
+form#addCategoryForm {
     background: #ffffff;
     width: 1150px;
     max-width: 100%;
@@ -28,45 +27,27 @@ form#addProductForm {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
     position: relative;
     animation: fadeIn 0.6s ease;
+    transition: 0.3s ease;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto;
-    max-height: 80vh; /* Limit height so vertical scroll appears */
+    overflow: hidden;
+    margin-top: 20px;
 }
 
-/* Hide vertical scrollbar for WebKit */
-form#addProductForm::-webkit-scrollbar {
-    width: 6px;
+form#addCategoryForm::-webkit-scrollbar {
+    display: none;
 }
-
-form#addProductForm::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-form#addProductForm::-webkit-scrollbar-thumb {
-    background-color: rgba(106, 27, 154, 0.4);
-    border-radius: 10px;
-}
-
-/* Hide scrollbar for Firefox */
-form#addProductForm {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(106, 27, 154, 0.4) transparent;
+form#addCategoryForm {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Form heading */
 h2 {
     color: #6a1b9a;
     font-size: 28px;
@@ -77,15 +58,13 @@ h2 {
     gap: 10px;
 }
 
-/* Form groups */
 .form-group {
     position: relative;
     margin-bottom: 20px;
 }
 
 .form-group input,
-.form-group textarea,
-.form-group select {
+.form-group textarea {
     width: 100%;
     padding: 18px 20px;
     border: 2px solid #d1c4e9;
@@ -93,14 +72,9 @@ h2 {
     font-size: 16px;
     background: #fafafa;
     color: #333;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: 0.3s ease;
     resize: vertical;
-    appearance: none;
     outline: none;
-}
-
-.form-group textarea {
-    min-height: 120px;
 }
 
 .form-group label {
@@ -115,35 +89,19 @@ h2 {
     pointer-events: none;
 }
 
-/* Floating label on input focus or filled */
 .form-group input:focus + label,
 .form-group input:not(:placeholder-shown) + label,
 .form-group textarea:focus + label,
-.form-group textarea:not(:placeholder-shown) + label,
-.form-group select:focus + label,
-.form-group select:valid + label {
+.form-group textarea:not(:placeholder-shown) + label {
     top: -10px;
     font-size: 12px;
     color: #6a1b9a;
 }
 
-/* Input focus effect */
 .form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group textarea:focus {
     border-color: #6a1b9a;
     background-color: #fff;
-}
-
-/* Inline group for horizontally aligned fields */
-.inline-group {
-    display: flex;
-    gap: 20px;
-    flex-wrap: nowrap;
-}
-
-.inline-group .form-group {
-    flex: 1;
 }
 
 /* Button group */
@@ -189,7 +147,7 @@ h2 {
     transform: scale(1.03);
 }
 
-/* Close button */
+/* Close button styling */
 .close-btn {
     position: absolute;
     top: 20px;
@@ -201,7 +159,6 @@ h2 {
     border: none;
     transition: 0.3s ease;
     line-height: 1;
-    padding: 0;
 }
 
 .close-btn:hover {
@@ -210,33 +167,11 @@ h2 {
     border-radius: 50%;
 }
 
-/* Select arrow fix */
-.form-group select {
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'6'%20viewBox%3D'0%200%2010%206'%20xmlns%3D'http://www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M0%200l5%206%205-6z'%20fill%3D'%23777'%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.2rem center;
-    background-size: 12px;
-}
-
-/* Image preview */
-.form-group img {
-    max-width: 180px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-top: 8px;
-    display: block;
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
-    form#addProductForm {
+    form#addCategoryForm {
         width: 100%;
-        padding: 30px 25px;
-        max-height: none; /* allow full scroll */
-    }
-
-    .inline-group {
-        flex-direction: column;
+        padding: 30px;
     }
 
     .button-group {

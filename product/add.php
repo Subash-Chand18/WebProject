@@ -6,6 +6,15 @@ if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
+// Fetch active categories (where deleted_at IS NULL)
+$categoryResult = mysqli_query($con, "SELECT id, name FROM category WHERE deleted_at IS NULL");
+$categories = [];
+if ($categoryResult) {
+    while ($row = mysqli_fetch_assoc($categoryResult)) {
+        $categories[] = $row;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     $upload_dir = "../assets/images/";
     $image = "";
@@ -13,12 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     // Check if file was uploaded
     if (!empty($_FILES["userfile"]["name"]) && is_uploaded_file($_FILES["userfile"]["tmp_name"])) {
         $upload_file = $upload_dir . basename($_FILES["userfile"]["name"]);
+
+        // Optionally, to avoid filename collisions, add timestamp prefix
+        $upload_file = $upload_dir . time() . "_" . basename($_FILES["userfile"]["name"]);
+
         if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $upload_file)) {
-            $image = $_FILES["userfile"]["name"];
+            $image = basename($upload_file);
         }
     }
 
-    // Escape string inputs
+    // Escape and sanitize inputs
     $name = mysqli_real_escape_string($con, $_POST["name"]);
     $desc = mysqli_real_escape_string($con, $_POST["description"]);
     $price = floatval($_POST["price"]);
@@ -26,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     $sku = mysqli_real_escape_string($con, $_POST["sku"]);
     $c_id = intval($_POST["category_id"]);
 
+    // Insert product into product table
     $sql = "INSERT INTO product (name, description, price, sku, quantity, category_id, image)
             VALUES ('$name', '$desc', $price, '$sku', $qty, $c_id, '$image')";
 
@@ -67,9 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
         <div class="form-group">
             <select name="category_id" required>
                 <option value="" disabled selected></option>
-                <option value="1">Men</option>
-                <option value="2">Women</option>
-                <option value="3">Babies</option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?php echo htmlspecialchars($category['id']); ?>">
+                        <?php echo htmlspecialchars($category['name']); ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
             <label><i class="fas fa-list"></i> Category</label>
         </div>
