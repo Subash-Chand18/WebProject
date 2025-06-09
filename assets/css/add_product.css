@@ -15,7 +15,7 @@ body {
     min-height: 100vh;
     padding: 50px 20px;
     overflow-x: hidden;
-    overflow-y: auto; /* Changed from hidden to auto to allow vertical scrolling */
+    overflow-y: auto;
 }
 
 form#addProductForm {
@@ -32,10 +32,10 @@ form#addProductForm {
     flex-direction: column;
     gap: 20px;
     overflow: hidden;
-    margin-top: 20px; /* Added margin to give breathing space from top */
+    margin-top: 20px;
 }
 
-/* Remove scrollbar completely */
+/* Hide scrollbar for WebKit and Firefox */
 form#addProductForm::-webkit-scrollbar {
     display: none;
 }
@@ -116,7 +116,7 @@ h2 {
     background-color: #fff;
 }
 
-/* File Input */
+/* File Input styling */
 input[type="file"] {
     padding: 14px;
     font-size: 15px;
@@ -145,7 +145,7 @@ input[type="file"]::file-selector-button:hover {
     background-color: #4a148c;
 }
 
-/* Buttons */
+/* Button group */
 .button-group {
     display: flex;
     justify-content: space-between;
@@ -188,17 +188,7 @@ input[type="file"]::file-selector-button:hover {
     transform: scale(1.03);
 }
 
-.button-group .view-btn {
-    background-color: #4caf50;
-    color: white;
-}
-
-.button-group .view-btn:hover {
-    background-color: #388e3c;
-    transform: scale(1.03);
-}
-
-/* Inline layout for short fields */
+/* Inline group for short fields */
 .inline-group {
     display: flex;
     gap: 20px;
@@ -209,44 +199,7 @@ input[type="file"]::file-selector-button:hover {
     flex: 1;
 }
 
-/* Close Button */
-.close-btn {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 24px;
-    color: #aaa;
-    cursor: pointer;
-    background: none;
-    border: none;
-    transition: 0.3s ease;
-}
-
-.close-btn:hover {
-    color: #000;
-    background-color: #f0f0f0;
-    border-radius: 50%;
-}
-
-/* Mobile & Tablet */
-@media (max-width: 1024px) {
-    form#addProductForm {
-        width: 100%;
-        padding: 30px;
-    }
-
-    .inline-group {
-        flex-direction: column;
-    }
-
-    .button-group {
-        flex-direction: column;
-    }
-
-    .button-group button {
-        width: 100%;
-    }
-}
+/* Close button styling */
 .close-btn {
     position: absolute;
     top: 20px;
@@ -266,3 +219,22 @@ input[type="file"]::file-selector-button:hover {
     border-radius: 50%;
 }
 
+/* Responsive */
+@media (max-width: 1024px) {
+    form#addProductForm {
+        width: 100%;
+        padding: 30px;
+    }
+
+    .inline-group {
+        flex-direction: column;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+}

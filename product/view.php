@@ -1,7 +1,9 @@
 <?php
 session_start();
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
-if (!$con) die("DB connection failed: " . mysqli_connect_error());
+if (!$con) {
+    die("DB connection failed: " . mysqli_connect_error());
+}
 
 $result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at DESC");
 $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -16,17 +18,16 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
     </header>
 
     <div class="search-wrapper">
-        <input type="text" id="searchInput" placeholder="Search by ID, Name or SKU..." autocomplete="off" />
-        <button type="button" title="Clear Search" onclick="clearSearch()">
+        <input type="search" id="searchInput" placeholder="Search by ID, Name or SKU..." autocomplete="off" aria-label="Search products" />
+        <button type="button" title="Clear Search" aria-label="Clear Search" onclick="clearSearch()">
             <i class="fas fa-sync-alt"></i>
         </button>
-        <button type="button" onclick="window.location.href='../admin/Admindashboard.php'" 
-                class="page-close-btn" title="Back to Dashboard" aria-label="Close and return to dashboard">
+        <button type="button" class="page-close-btn" title="Back to Dashboard" aria-label="Close and return to dashboard" onclick="window.location.href='../admin/Admindashboard.php'">
             &times;
         </button>
     </div>
 
-    <div class="table-container">
+    <div class="table-container" role="region" aria-live="polite" aria-relevant="all">
         <table id="productTable" class="product-table" aria-label="List of products">
             <thead>
                 <tr>
@@ -59,11 +60,15 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     <td><?= date("Y-m-d H:i", strtotime($p['created_at'])) ?></td>
                     <td class="text-center">
                         <div class="actions">
-                            <button class="btn view-btn" onclick='openProductModal(<?= json_encode($p, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                            <button class="btn view-btn" aria-label="View details of <?= htmlspecialchars($p['name']) ?>"
+                                onclick='openProductModal(<?= json_encode($p, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <a href="edit.php?id=<?= $p['id'] ?>" class="btn edit-btn"><i class="fas fa-edit"></i></a>
-                            <a href="delete.php?id=<?= $p['id'] ?>" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this product?');">
+                            <a href="edit.php?id=<?= $p['id'] ?>" class="btn edit-btn" aria-label="Edit <?= htmlspecialchars($p['name']) ?>">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="delete.php?id=<?= $p['id'] ?>" class="btn delete-btn" aria-label="Delete <?= htmlspecialchars($p['name']) ?>"
+                                onclick="return confirm('Are you sure you want to delete this product?');">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
                         </div>
@@ -77,13 +82,13 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
     </div>
 
     <!-- Product Modal -->
-    <div id="productModal" class="modal">
+    <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName" style="display:none;">
         <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeProductModal()">
+            <button class="modal-close-btn" aria-label="Close product details" onclick="closeProductModal()">
                 <i class="fas fa-times"></i>
             </button>
             <div class="modal-body">
-                <img id="modalImage" src="" alt="Product Image" class="modal-image" onclick="openImageView()" />
+                <img id="modalImage" src="" alt="Product Image" class="modal-image" tabindex="0" onclick="openImageView()" />
                 <div class="modal-details">
                     <h2 id="modalName"></h2>
                     <p id="modalDesc" class="desc-font"></p>
@@ -96,16 +101,16 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
     </div>
 
     <!-- Image View Modal -->
-    <div id="imageViewModal" class="modal" onclick="closeImageView(event)">
-        <button class="modal-close-btn close-image" onclick="closeImageView(event)">
+    <div id="imageViewModal" class="modal" role="dialog" aria-modal="true" style="display:none;" onclick="closeImageView(event)">
+        <button class="modal-close-btn close-image" aria-label="Close image view" onclick="closeImageView(event)">
             <i class="fas fa-times"></i>
         </button>
-        <img id="largeImage" src="" alt="Large View" />
+        <img id="largeImage" src="" alt="Large product image view" />
     </div>
 
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 
 <script>
 const searchInput = document.getElementById('searchInput');
@@ -122,13 +127,17 @@ function clearSearch() {
 }
 
 function filterTable(query) {
-    const q = query.toLowerCase();
+    const q = query.trim().toLowerCase();
     for (let row of tbodyRows) {
         const id = row.getAttribute('data-id');
         const name = row.getAttribute('data-name');
         const sku = row.getAttribute('data-sku');
 
-        if (id.includes(q) || name.includes(q) || sku.includes(q)) {
+        if (
+            id.includes(q) ||
+            name.includes(q) ||
+            sku.includes(q)
+        ) {
             row.style.display = '';
         } else {
             row.style.display = 'none';
@@ -150,12 +159,15 @@ const largeImage = document.getElementById('largeImage');
 
 function openProductModal(product) {
     modalImage.src = '../assets/images/' + product.image;
+    modalImage.alt = product.name + " image";
     modalName.textContent = product.name;
     modalDesc.textContent = product.description;
     modalPrice.textContent = parseFloat(product.price).toFixed(2);
     modalQty.textContent = product.quantity;
     modalSKU.textContent = product.sku;
     productModal.style.display = 'flex';
+    // Focus modal for accessibility
+    modalName.focus();
 }
 
 function closeProductModal() {
@@ -164,6 +176,7 @@ function closeProductModal() {
 
 function openImageView() {
     largeImage.src = modalImage.src;
+    largeImage.alt = modalImage.alt;
     imageViewModal.style.display = 'flex';
 }
 

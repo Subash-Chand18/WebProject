@@ -8,18 +8,22 @@ if (!$con) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     $upload_dir = "../assets/images/";
-    $upload_file = $upload_dir . basename($_FILES["userfile"]["name"]);
     $image = "";
 
-    if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $upload_file)) {
-        $image = $_FILES["userfile"]["name"];
+    // Check if file was uploaded
+    if (!empty($_FILES["userfile"]["name"]) && is_uploaded_file($_FILES["userfile"]["tmp_name"])) {
+        $upload_file = $upload_dir . basename($_FILES["userfile"]["name"]);
+        if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $upload_file)) {
+            $image = $_FILES["userfile"]["name"];
+        }
     }
 
-    $name = $_POST["name"];
-    $desc = $_POST["description"];
-    $price = $_POST["price"];
-    $qty = $_POST["quantity"];
-    $sku = $_POST["sku"];
+    // Escape string inputs
+    $name = mysqli_real_escape_string($con, $_POST["name"]);
+    $desc = mysqli_real_escape_string($con, $_POST["description"]);
+    $price = floatval($_POST["price"]);
+    $qty = intval($_POST["quantity"]);
+    $sku = mysqli_real_escape_string($con, $_POST["sku"]);
     $c_id = intval($_POST["category_id"]);
 
     $sql = "INSERT INTO product (name, description, price, sku, quantity, category_id, image)

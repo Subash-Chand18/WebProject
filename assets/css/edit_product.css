@@ -18,7 +18,8 @@ body {
     overflow-y: auto;
 }
 
-form#addProductForm {
+/* Main form container */
+form#editProductForm {
     background: #ffffff;
     width: 1150px;
     max-width: 100%;
@@ -34,11 +35,11 @@ form#addProductForm {
     margin-top: 20px;
 }
 
-form#addProductForm::-webkit-scrollbar {
+form#editProductForm::-webkit-scrollbar {
     display: none;
 }
 
-form#addProductForm {
+form#editProductForm {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -54,6 +55,7 @@ form#addProductForm {
     }
 }
 
+/* Form heading */
 h2 {
     color: #6a1b9a;
     font-size: 28px;
@@ -64,6 +66,7 @@ h2 {
     gap: 10px;
 }
 
+/* Form groups */
 .form-group {
     position: relative;
     margin-bottom: 20px;
@@ -101,6 +104,7 @@ h2 {
     pointer-events: none;
 }
 
+/* Floating label */
 .form-group input:focus + label,
 .form-group input:not(:placeholder-shown) + label,
 .form-group textarea:focus + label,
@@ -112,6 +116,7 @@ h2 {
     color: #6a1b9a;
 }
 
+/* Input focus */
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -119,6 +124,7 @@ h2 {
     background-color: #fff;
 }
 
+/* Button group */
 .button-group {
     display: flex;
     justify-content: space-between;
@@ -151,7 +157,7 @@ h2 {
     transform: scale(1.03);
 }
 
-
+/* Inline group for flex fields */
 .inline-group {
     display: flex;
     gap: 20px;
@@ -162,6 +168,7 @@ h2 {
     flex: 1;
 }
 
+/* Close button */
 .close-btn {
     position: absolute;
     top: 20px;
@@ -189,9 +196,18 @@ h2 {
     background-size: 12px;
 }
 
+/* Image preview styling */
+.form-group img {
+    max-width: 180px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-top: 8px;
+    display: block;
+}
+
 /* Mobile & Tablet */
 @media (max-width: 1024px) {
-    form#addProductForm {
+    form#editProductForm {
         width: 100%;
         padding: 30px;
     }
