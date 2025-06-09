@@ -1,150 +1,131 @@
 <?php
 session_start();
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
-if (!$con) die("Connection failed: " . mysqli_connect_error());
+include '../includes/header.php';
 
-// Get product ID
-$id = $_GET['id'] ?? null;
-if (!$id) {
+$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+if (!$con) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($id <= 0) {
     header("Location: view.php");
     exit;
 }
 
-// Fetch product details
-$query = mysqli_query($con, "SELECT * FROM product WHERE id = '$id'");
-$product = mysqli_fetch_assoc($query);
+// Fetch product details using simple query
+$query = "SELECT * FROM product WHERE id = $id AND deleted_at IS NULL";
+$result = mysqli_query($con, $query);
+$product = $result ? mysqli_fetch_assoc($result) : null;
 
 if (!$product) {
-    echo "Product not found.";
+    echo "<p>Product not found.</p>";
     exit;
 }
 
-// Fetch categories
-$categories = mysqli_query($con, "SELECT * FROM category");
+// Fetch categories for the select dropdown
+$categories = [];
+$catResult = mysqli_query($con, "SELECT * FROM category WHERE deleted_at IS NULL");
+while ($cat = mysqli_fetch_assoc($catResult)) {
+    $categories[] = $cat;
+}
 
-// Initialize image path
-$image = $product['image'] ?? "";
+$upload_dir = "../assets/images/";
+$image = $product['image']; // current image filename
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
-    $name = mysqli_real_escape_string($con, $_POST['name']);
-    $desc = mysqli_real_escape_string($con, $_POST['description']);
-    $price = floatval($_POST['price']);
-    $quantity = intval($_POST['quantity']);
-    $sku = mysqli_real_escape_string($con, $_POST['sku']);
-    $category_id = intval($_POST['category_id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+    // Use your original update variable names and sanitization style
+    $name = $_POST['name'];
+    $desc = str_replace("'", "", $_POST['description']);
+    $price = $_POST['price'];
+    $quantity = $_POST['quantity'];
+    $sku = $_POST['sku'];
+    $category_id = $_POST['category_id'];
 
-    // Image upload handling
-    $upload_dir = "../assets/images/";
-
-    // Check if a new file is uploaded
-    if (!empty($_FILES["userfile"]["name"]) && is_uploaded_file($_FILES["userfile"]["tmp_name"])) {
-        $target_file = $upload_dir . basename($_FILES["userfile"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        // Validate image file type
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-        if (!in_array($imageFileType, $allowed_types)) {
-            echo "<p style='color:red; text-align:center;'>Only JPG, JPEG, PNG & GIF files are allowed.</p>";
-        } else {
-            // Optionally rename file to avoid conflicts
-            $new_filename = uniqid("img_") . "." . $imageFileType;
-            $target_file = $upload_dir . $new_filename;
-
-            if (move_uploaded_file($_FILES["userfile"]["tmp_name"], $target_file)) {
-                // Delete old image file if exists and different from default
-                if (!empty($image) && file_exists($upload_dir . $image)) {
-                    unlink($upload_dir . $image);
-                }
-                $image = $new_filename;
-            } else {
-                echo "<p style='color:red; text-align:center;'>Sorry, there was an error uploading your file.</p>";
-            }
-        }
+    // Image handling - use your style with basename and move_uploaded_file
+    if (!empty($_FILES['userfile']['name'])) {
+        $image = basename($_FILES['userfile']['name']);
+        $upload_file = $upload_dir . $image;
+        move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_file);
     }
 
-    // Update query with new or existing image
-    $update_sql = "UPDATE product SET 
-        name = '$name',
-        description = '$desc',
-        price = '$price',
-        quantity = '$quantity',
-        sku = '$sku',
-        category_id = '$category_id',
-        image = '$image'
-        WHERE id = '$id'";
+    // Update query
+    $sql_update = "UPDATE product SET 
+        name = '$name', 
+        description = '$desc', 
+        image = '$image', 
+        price = $price, 
+        quantity = $quantity, 
+        sku = '$sku', 
+        category_id = $category_id
+        WHERE id = $id";
 
-    if (mysqli_query($con, $update_sql)) {
+    $res_update = mysqli_query($con, $sql_update);
+
+    if ($res_update) {
         header("Location: view.php");
         exit;
     } else {
-        echo "Error updating product: " . mysqli_error($con);
+        echo "<p style='color:red;'>Error updating product: " . mysqli_error($con) . "</p>";
     }
 }
 ?>
 
-<?php include '../includes/header.php'; ?>
-
-<section class="add-product-container" style="max-width: 600px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
-    <form id="editProductForm" method="POST" enctype="multipart/form-data">
-        <!-- Close button -->
+<section class="add-product-container" style="max-width: 600px; margin: 40px auto;">
+    <form method="POST" enctype="multipart/form-data" novalidate>
         <button type="button" class="close-btn" onclick="window.location.href='view.php'">&times;</button>
-
         <h2><i class="fas fa-edit"></i> Edit Product</h2>
 
-        <div class="inline-group" style="display:flex; gap:16px; flex-wrap:wrap;">
-            <div class="form-group" style="flex:1 1 45%;">
-                <input type="text" name="name" placeholder=" " value="<?= htmlspecialchars($product['name']) ?>" required>
-                <label><i class="fas fa-tag"></i> Product Name</label>
-            </div>
-
-            <div class="form-group" style="flex:1 1 45%;">
-                <input type="number" name="price" step="0.01" min="0" placeholder=" " value="<?= htmlspecialchars($product['price']) ?>" required>
-                <label><i class="fas fa-dollar-sign"></i> Price</label>
-            </div>
-
-            <div class="form-group" style="flex:1 1 45%;">
-                <input type="number" name="quantity" min="0" placeholder=" " value="<?= htmlspecialchars($product['quantity']) ?>" required>
-                <label><i class="fas fa-boxes"></i> Quantity</label>
-            </div>
+        <div class="form-group">
+            <input type="text" name="name" placeholder=" " value="<?= htmlspecialchars($product['name']) ?>" required>
+            <label><i class="fas fa-tag"></i> Product Name</label>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
+            <input type="number" name="price" step="0.01" min="0" placeholder=" " value="<?= htmlspecialchars($product['price']) ?>" required>
+            <label><i class="fas fa-dollar-sign"></i> Price</label>
+        </div>
+
+        <div class="form-group">
+            <input type="number" name="quantity" min="0" placeholder=" " value="<?= htmlspecialchars($product['quantity']) ?>" required>
+            <label><i class="fas fa-boxes"></i> Quantity</label>
+        </div>
+
+        <div class="form-group">
             <input type="text" name="sku" placeholder=" " value="<?= htmlspecialchars($product['sku']) ?>" required>
             <label><i class="fas fa-barcode"></i> SKU</label>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
             <select name="category_id" required>
-                <option value="" disabled>Select Category</option>
-                <?php while ($cat = mysqli_fetch_assoc($categories)) : ?>
+                <option value="" disabled>Select category</option>
+                <?php foreach ($categories as $cat): ?>
                     <option value="<?= $cat['id'] ?>" <?= $cat['id'] == $product['category_id'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($cat['name']) ?>
                     </option>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </select>
             <label><i class="fas fa-list"></i> Category</label>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
             <textarea name="description" placeholder=" " required><?= htmlspecialchars($product['description']) ?></textarea>
             <label><i class="fas fa-align-left"></i> Description</label>
         </div>
 
-        <!-- Current image preview -->
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="form-group">
             <label><i class="fas fa-image"></i> Current Image</label><br>
-            <?php if (!empty($product['image']) && file_exists("../assets/images/" . $product['image'])) : ?>
-                <img src="<?= "../assets/images/" . htmlspecialchars($product['image']) ?>" alt="Product Image" style="max-width: 180px; border-radius: 6px; border: 1px solid #ccc;">
+            <?php if (!empty($image) && file_exists($upload_dir . $image)) : ?>
+                <img src="<?= $upload_dir . htmlspecialchars($image) ?>" alt="Product Image" style="max-width:180px; margin-bottom:10px;">
             <?php else: ?>
                 <p>No image uploaded.</p>
             <?php endif; ?>
         </div>
 
-        <!-- Image upload -->
-        <div class="form-group" style="margin-top: 10px;">
-            <label for="userfile"><i class="fas fa-upload"></i> Change Image</label><br>
+        <div class="form-group">
+            <label for="userfile"><i class="fas fa-upload"></i> Change Image (optional)</label><br>
             <input type="file" name="userfile" id="userfile" accept="image/*">
-            <small style="color: #666;">Leave empty to keep existing image.</small>
+            <small>Leave empty to keep existing image.</small>
         </div>
 
         <div class="button-group" style="margin-top: 25px;">
