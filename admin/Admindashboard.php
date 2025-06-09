@@ -54,7 +54,8 @@ if ($productQuery) {
             <a href="#" class="nav-link">About Us</a>
             <a href="#" class="nav-link">Contact Us</a>
             <a href="#" class="nav-link">Help</a>
-            <a href="Logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
         </nav>
         <div class="welcome-msg">
             <i class="fas fa-user-circle"></i> Welcome, <strong><?php echo htmlspecialchars($adminName); ?></strong>

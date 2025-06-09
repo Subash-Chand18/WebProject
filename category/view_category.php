@@ -21,9 +21,7 @@ $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
     <!-- Search Bar -->
     <div class="search-wrapper">
         <input type="search" id="searchInput" placeholder="Search by ID or Name..." autocomplete="off" aria-label="Search categories" />
-        <button type="button" title="Clear Search" aria-label="Clear Search" onclick="clearSearch()">
-            <i class="fas fa-sync-alt"></i>
-        </button>
+       
         <button type="button" class="page-close-btn" title="Back to Dashboard" aria-label="Close and return to dashboard" onclick="window.location.href='../admin/Admindashboard.php'">
             &times;
         </button>
@@ -106,10 +104,6 @@ searchInput.addEventListener('input', () => {
     filterTable(searchInput.value);
 });
 
-function clearSearch() {
-    searchInput.value = '';
-    filterTable('');
-}
 
 function filterTable(query) {
     const q = query.trim().toLowerCase();

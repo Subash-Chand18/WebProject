@@ -31,7 +31,7 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
             <a href="../admin/about.php" class="nav-link">About Us</a>
             <a href="../admin/contact.php" class="nav-link">Contact Us</a>
             <a href="../admin/help.php" class="nav-link">Help</a>
-            <a href="Logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="../admin/logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
         <div class="welcome-msg">
             <i class="fas fa-user-circle"></i> Welcome, <strong><?php echo htmlspecialchars($adminName); ?></strong>
