@@ -247,3 +247,20 @@ h2 {
         width: 100%;
     }
 }
+/* Show price in Rs instead of $ using ::before pseudo-element */
+.form-group.price input[type="number"] {
+    padding-left: 48px; /* Make space for Rs symbol */
+}
+
+.form-group.price::before {
+    content: "Rs";
+    position: absolute;
+    top: 50%;
+    left: 22px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #6a1b9a;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 2;
+}

@@ -5,7 +5,8 @@ if (!$con) {
     die("DB connection failed: " . mysqli_connect_error());
 }
 
-$result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at DESC");
+$result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at ASC");
+
 $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
@@ -33,7 +34,7 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     <th>Image</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Price ($)</th>
+                    <th>Price (Rs)</th>
                     <th>Quantity</th>
                     <th>SKU</th>
                     <th>Created At</th>
@@ -90,7 +91,7 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <div class="modal-details">
                     <h2 id="modalName"></h2>
                     <p id="modalDesc" class="desc-font"></p>
-                    <p><strong>Price:</strong> $<span id="modalPrice"></span></p>
+                    <p><strong>Price:</strong> Rs <span id="modalPrice"></span></p>
                     <p><strong>Quantity:</strong> <span id="modalQty"></span></p>
                     <p><strong>SKU:</strong> <span id="modalSKU"></span></p>
                 </div>

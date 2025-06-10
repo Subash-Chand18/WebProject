@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
             </div>
             <div class="form-group">
                 <input type="number" id="price" name="price" step="0.01" min="0" placeholder=" " required>
-                <label><i class="fas fa-dollar-sign"></i> Price</label>
+                <label><span class="rs-symbol">Rs</span> Price</label>
             </div>
             <div class="form-group">
                 <input type="number" name="quantity" placeholder=" " required>

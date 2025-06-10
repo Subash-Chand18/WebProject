@@ -7,7 +7,7 @@ if (!$con) {
 }
 
 // Fetch categories where deleted_at IS NULL
-$result = mysqli_query($con, "SELECT * FROM category WHERE deleted_at IS NULL ORDER BY created_at DESC");
+$result = mysqli_query($con, "SELECT * FROM category WHERE deleted_at IS NULL ORDER BY created_at ASC");
 $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
