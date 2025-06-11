@@ -148,10 +148,6 @@ session_start();
                                 <input type="text" name="address" class="form-control" required>
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Town/City<sup>*</sup></label>
-                                <input type="text" name="city" class="form-control" required>
-                            </div>
-                            <div class="form-item">
                                 <label class="form-label my-3">Country<sup>*</sup></label>
                                 <input type="text" name="country" class="form-control" required>
                             </div>
