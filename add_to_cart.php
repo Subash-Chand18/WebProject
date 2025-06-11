@@ -37,7 +37,7 @@ if (isset($_SESSION['cart'][$product_id])) {
             'id' => $product['id'],
             'name' => $product['name'],
             'price' => $product['price'],
-            'image' => $product['image'],
+            'image' => 'assets/images/' . $product['image'],
             'quantity' => 1
         ];
     } else {
