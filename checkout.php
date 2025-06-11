@@ -132,41 +132,41 @@ session_start();
                             <div class="row">
                                 <div class="col-md-12 col-lg-6">
                                     <div class="form-item w-100">
-                                        <label class="form-label my-3">First Name<sup>*</sup></label>
-                                        <input type="text" name="first_name" class="form-control" required>
+                                        <label class="form-label my-3" for="first_name">First Name<sup>*</sup></label>
+                                        <input type="text" id="first_name" name="first_name" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-md-12 col-lg-6">
                                     <div class="form-item w-100">
-                                        <label class="form-label my-3">Last Name<sup>*</sup></label>
-                                        <input type="text" name="last_name" class="form-control" required>
+                                        <label class="form-label my-3" for="last_name">Last Name<sup>*</sup></label>
+                                        <input type="text" id="last_name" name="last_name" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Address <sup>*</sup></label>
-                                <input type="text" name="address" class="form-control" required>
+                                <label class="form-label my-3" for="address">Address <sup>*</sup></label>
+                                <input type="text" id="address" name="address" class="form-control" required>
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Country<sup>*</sup></label>
-                                <input type="text" name="country" class="form-control" required>
+                                <label class="form-label my-3" for="country">Country<sup>*</sup></label>
+                                <input type="text" id="country" name="country" class="form-control" required>
                             </div>
 
                             <div class="form-item">
-                                <label class="form-label my-3">Mobile<sup>*</sup></label>
-                                <input type="tel" name="mobile" class="form-control" required>
+                                <label class="form-label my-3" for="mobile">Mobile<sup>*</sup></label>
+                                <input type="tel" id="mobile" name="mobile" class="form-control" required>
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Email Address<sup>*</sup></label>
-                                <input type="email" name="email" class="form-control" required>
+                                <label class="form-label my-3" for="email">Email Address<sup>*</sup></label>
+                                <input type="email" id="email" name="email" class="form-control" required>
                             </div>
                         </div>
 
                         <!-- Order Summary -->
                         <div class="col-md-12 col-lg-6 col-xl-5">
                             <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
+                                <table class="table align-middle">
+                                    <thead class="table-light">
                                         <tr>
                                             <th scope="col">Product</th>
                                             <th scope="col">Name</th>
@@ -177,25 +177,23 @@ session_start();
                                     </thead>
                                     <tbody>
                                         <?php
-                                        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                                        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])):
                                             $grandTotal = 0;
-                                            foreach ($_SESSION['cart'] as $item) {
+                                            foreach ($_SESSION['cart'] as $item):
                                                 $itemTotal = $item['price'] * $item['quantity'];
                                                 $grandTotal += $itemTotal;
-                                                ?>
-                                                <tr>
-                                                    <th scope="row">
-                                                        <div class="d-flex align-items-center mt-2">
-                                                            <img src="assets/images/<?php echo htmlspecialchars($item['image']); ?>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                                        </div>
-                                                    </th>
-                                                    <td class="py-5"><?php echo htmlspecialchars($item['name']); ?></td>
-                                                    <td class="py-5">Rs <?php echo number_format($item['price'], 2); ?></td>
-                                                    <td class="py-5"><?php echo $item['quantity']; ?></td>
-                                                    <td class="py-5">Rs <?php echo number_format($itemTotal, 2); ?></td>
-                                                </tr>
-                                                <?php
-                                            }
+                                        ?>
+                                        <tr>
+                                            <th scope="row" class="align-middle">
+                                                <img src="assets/images/<?php echo htmlspecialchars($item['image']); ?>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                                            </th>
+                                            <td class="py-5 align-middle"><?php echo htmlspecialchars($item['name']); ?></td>
+                                            <td class="py-5 align-middle">Rs <?php echo number_format($item['price'], 2); ?></td>
+                                            <td class="py-5 align-middle"><?php echo (int)$item['quantity']; ?></td>
+                                            <td class="py-5 align-middle">Rs <?php echo number_format($itemTotal, 2); ?></td>
+                                        </tr>
+                                        <?php
+                                            endforeach;
                                         ?>
                                         <tr>
                                             <td colspan="4" class="text-end py-5"><strong><br>Subtotal </strong></td>
@@ -206,10 +204,10 @@ session_start();
                                             </td>
                                         </tr>
                                         <?php
-                                        } else {
-                                            echo '<tr><td colspan="5" class="text-center">Your cart is empty</td></tr>';
-                                        }
+                                        else:
                                         ?>
+                                        <tr><td colspan="5" class="text-center py-5">Your cart is empty</td></tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -231,6 +229,7 @@ session_start();
                                         <label class="form-check-label" for="Transfer-1">Direct Bank Transfer</label>
                                     </div>
                                 </div>
+                            </div>
 
                             <!-- Place Order Button -->
                             <div class="row g-4 text-center align-items-center justify-content-center pt-4">

@@ -34,11 +34,10 @@ mysqli_close($con);
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(function() {
-    // To prevent multiple rapid clicks causing race conditions
     const updateQueue = {};
 
     function updateQuantity(productId, action) {
-        if (updateQueue[productId]) return; // already updating this product, ignore new request
+        if (updateQueue[productId]) return;
         updateQueue[productId] = true;
 
         const qtyElem = $("#qty-" + productId);
@@ -53,8 +52,8 @@ $(function() {
             success: function(response) {
                 if (response.status === "success") {
                     qtyElem.text(response.quantity);
-                    totalElem.text("$" + response.item_total);
-                    grandTotalElem.text("$" + response.grand_total);
+                    totalElem.text("Rs " + response.item_total);
+                    grandTotalElem.text("Rs " + response.grand_total);
                 } else {
                     alert("Error: " + response.message);
                 }
@@ -68,7 +67,6 @@ $(function() {
         });
     }
 
-    // Attach handlers dynamically
     $(".btn-increase").click(function() {
         const productId = $(this).data("id");
         updateQuantity(productId, 'increase');
@@ -115,7 +113,6 @@ $(function() {
             $quantity = (int)$item['quantity'];
             $stock = (int)$product['stock'];
 
-            // Adjust quantity if it exceeds stock
             if ($quantity > $stock) {
                 $_SESSION['cart'][$id]['quantity'] = $stock;
                 $quantity = $stock;
@@ -125,9 +122,13 @@ $(function() {
             $grandTotal += $total;
         ?>
             <tr>
-                <td><img src="assets/images/<?php echo htmlspecialchars($product['image']); ?>" width="70" alt="<?php echo htmlspecialchars($product['name']); ?>"></td>
+                <td>
+                    <img src="assets/images/<?php echo htmlspecialchars($product['image']); ?>" 
+                         alt="<?php echo htmlspecialchars($product['name']); ?>" 
+                         class="img-fluid" style="max-width: 100px;">
+                </td>
                 <td><?php echo htmlspecialchars($product['name']); ?></td>
-                <td class="price" data-price="<?php echo $price; ?>">Rs <?php echo number_format($price, 2); ?></td>
+                <td>Rs <?php echo number_format($price, 2); ?></td>
                 <td>
                     <div class="d-flex justify-content-center align-items-center">
                         <button class="btn btn-sm btn-outline-secondary me-2 btn-decrease" data-id="<?php echo $id; ?>">-</button>

@@ -266,21 +266,6 @@ while ($row = mysqli_fetch_assoc($res)) {
 
 
        <!-- Clothes Shop Start -->
-        <style>
-            .clothing-item {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            position: relative; /* keep relative for any overlays or positioning */
-            z-index: 1; /* default z-index */
-        }
-
-            .clothing-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            z-index: 10; /* bring hovered card above others */
-        }
-        </style>
-
         <div class="container-fluid clothing py-5">
             <div class="container py-5">
                 <div class="tab-class text-center">
@@ -505,25 +490,6 @@ while ($row = mysqli_fetch_assoc($res)) {
 
 
         <!-- Features Start -->
-         <style>
-            .service-item {
-                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-                cursor: pointer;
-                position: relative;
-                z-index: 1;
-            }
-
-                .service-item:hover {
-                transform: scale(1.05);
-                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-                z-index: 10;
-            }
-
-                .service-item:hover i {
-                transform: scale(1.1);
-            }
-        </style>
-
         <div class="container-fluid service py-5" style="background-color: #f8f9fa; padding: 50px 0;">
             <div class="container py-5">
                 <div class="row g-4 justify-content-center">
@@ -713,27 +679,6 @@ while ($row = mysqli_fetch_assoc($res)) {
 
 
         <!-- Bestseller Products Start -->
-        <style>
-                .clothing-item {
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                    cursor: pointer;
-                    position: relative;
-                    z-index: 1;
-                }
-
-                .clothing-item:hover {
-                    transform: scale(1.05);
-                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-                    z-index: 10;
-                }
-
-                .clothing-item img {
-                    width: 100%;
-                    height: 200px;
-                    border-radius: 10px; /* slight rounding for a modern look */
-                    object-fit: cover;
-                }
-        </style>
 
         <div class="container-fluid py-5">
                 <div class="container py-5">
