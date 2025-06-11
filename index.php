@@ -15,6 +15,8 @@ $sql = "SELECT p.*, c.name AS category_name
         ORDER BY p.id DESC";
 $res = mysqli_query($con, $sql);
 
+
+
 // Group products by category name
 $productsByCategory = [];
 $allProducts = [];
@@ -43,6 +45,9 @@ while ($row = mysqli_fetch_assoc($res)) {
         <!-- Icon Font Stylesheet -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
 
         <!-- Libraries Stylesheet -->
         <link href="design-assets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
@@ -207,7 +212,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                 </div>
                 <div class="featurs-content">
                     <h5 class="mb-2">Free Shipping</h5>
-                    <p class="text-muted">On orders above Rs 5000, fast &amp; secure delivery with no delivery charges.</p>
+                    <p class="text-muted">On orders above Rs 50000, fast &amp; secure delivery with no delivery charges.</p>
                 </div>
                 </div>
             </div>
@@ -261,6 +266,21 @@ while ($row = mysqli_fetch_assoc($res)) {
 
 
        <!-- Clothes Shop Start -->
+        <style>
+            .clothing-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative; /* keep relative for any overlays or positioning */
+            z-index: 1; /* default z-index */
+        }
+
+            .clothing-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            z-index: 10; /* bring hovered card above others */
+        }
+        </style>
+
         <div class="container-fluid clothing py-5">
             <div class="container py-5">
                 <div class="tab-class text-center">
@@ -484,57 +504,91 @@ while ($row = mysqli_fetch_assoc($res)) {
 
 
 
-        <!-- Featurs Start -->
-        <div class="container-fluid service py-5">
+        <!-- Features Start -->
+         <style>
+            .service-item {
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                cursor: pointer;
+                position: relative;
+                z-index: 1;
+            }
+
+                .service-item:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                z-index: 10;
+            }
+
+                .service-item:hover i {
+                transform: scale(1.1);
+            }
+        </style>
+
+        <div class="container-fluid service py-5" style="background-color: #f8f9fa; padding: 50px 0;">
             <div class="container py-5">
                 <div class="row g-4 justify-content-center">
+
+                    <!-- Trendy T-Shirt -->
                     <div class="col-md-6 col-lg-4">
-                        <a href="#">
-                            <div class="service-item bg-secondary rounded border border-secondary">
-                                <img src="img/featur-1.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <a href="#" style="text-decoration: none;">
+                            <div class="service-item" style="background-color: #6c757d; border: 2px solid #6c757d; border-radius: 10px; transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <div class="icon-wrapper text-center py-5">
+                                    <i class="fa-solid fa-shirt fa-6x text-white" style="transition: transform 0.3s ease-in-out; display: block;"></i>
+                                </div>
                                 <div class="px-4 rounded-bottom">
-                                    <div class="service-content bg-primary text-center p-4 rounded">
-                                        <h5 class="text-white">Fresh Apples</h5>
-                                        <h3 class="mb-0">20% OFF</h3>
+                                    <div class="service-content text-center p-4 rounded" style="background-color: #007bff; border-radius: 10px;">
+                                        <h6 class="text-white" style="margin: 0;">Trendy T-Shirt</h6>
+                                        <h4 style="color: #ffc107; margin: 5px 0 0;">Flat 25% OFF</h4>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     </div>
+
+                    <!-- Fashionable Dresses -->
                     <div class="col-md-6 col-lg-4">
-                        <a href="#">
-                            <div class="service-item bg-dark rounded border border-dark">
-                                <img src="img/featur-2.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <a href="#" style="text-decoration: none;">
+                            <div class="service-item" style="background-color: #343a40; border: 2px solid #343a40; border-radius: 10px; transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <div class="icon-wrapper text-center py-5">
+                                    <i class="fa-solid fa-female fa-6x text-primary" style="transition: transform 0.3s ease-in-out; display: block;"></i>
+                                </div>
                                 <div class="px-4 rounded-bottom">
-                                    <div class="service-content bg-light text-center p-4 rounded">
-                                        <h5 class="text-primary">Tasty Fruits</h5>
-                                        <h3 class="mb-0">Free delivery</h3>
+                                    <div class="service-content text-center p-4 rounded" style="background-color: #f8f9fa; border-radius: 10px;">
+                                        <h6 class="text-primary" style="margin: 0;">Fashionable Dresses</h6>
+                                        <h5 style="color: #28a745; margin: 5px 0 0;">Free Delivery on Orders Over Rs 30000</h5>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     </div>
+
+                    <!-- Premium Shoes -->
                     <div class="col-md-6 col-lg-4">
-                        <a href="#">
-                            <div class="service-item bg-primary rounded border border-primary">
-                                <img src="img/featur-3.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <a href="#" style="text-decoration: none;">
+                            <div class="service-item" style="background-color: #007bff; border: 2px solid #007bff; border-radius: 10px; transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <div class="icon-wrapper text-center py-5">
+                                    <i class="fa-solid fa-shoe-prints fa-6x text-white" style="transition: transform 0.3s ease-in-out; display: block;"></i>
+                                </div>
                                 <div class="px-4 rounded-bottom">
-                                    <div class="service-content bg-secondary text-center p-4 rounded">
-                                        <h5 class="text-white">Exotic Vegitable</h5>
-                                        <h3 class="mb-0">Discount 30$</h3>
+                                    <div class="service-content text-center p-4 rounded" style="background-color: #6c757d; border-radius: 10px;">
+                                        <h6 class="text-white" style="margin: 0;">Premium Shoes</h6>
+                                        <h5 style="color: #ffc107; margin: 5px 0 0;">Elegant Style & Flat 10% OFF</h5>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     </div>
+
                 </div>
             </div>
         </div>
-        <!-- Featurs End -->
+        <!-- Features End -->
 
 
-        <!-- Vesitable Shop Start-->
-        <div class="container-fluid vesitable py-5">
+
+
+        <!-- New Product Start-->
+        <!-- <div class="container-fluid vesitable py-5">
             <div class="container py-5">
                 <h1 class="mb-0">New Products</h1>
                 <div class="owl-carousel vegetable-carousel justify-content-center">
@@ -652,235 +706,240 @@ while ($row = mysqli_fetch_assoc($res)) {
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Vesitable Shop End -->
+        </div> -->
+        <!-- New product End -->
 
 
-        <!-- Banner Section Start-->
-        <div class="container-fluid banner bg-secondary my-5">
-            <div class="container py-5">
-                <div class="row g-4 align-items-center">
-                    <div class="col-lg-6">
-                        <div class="py-4">
-                            <h1 class="display-3 text-white">Fresh Exotic Fruits</h1>
-                            <p class="fw-normal display-3 text-dark mb-4">in Our Store</p>
-                            <p class="mb-4 text-dark">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc.</p>
-                            <a href="#" class="banner-btn btn border-2 border-white rounded-pill text-dark py-3 px-5">BUY</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="position-relative">
-                            <img src="design-assets/img/baner-1.avif" class="img-fluid w-100 rounded" alt="">
-                            <div class="d-flex align-items-center justify-content-center bg-white rounded-circle position-absolute" style="width: 140px; height: 140px; top: 0; left: 0;">
-                                <h1 style="font-size: 100px;">1</h1>
-                                <div class="d-flex flex-column">
-                                    <span class="h2 mb-0">50$</span>
-                                    <span class="h4 text-muted mb-0">kg</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Banner Section End -->
 
 
-        <!-- Bestsaler Product Start -->
+        <!-- Bestseller Products Start -->
+        <style>
+                .clothing-item {
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    cursor: pointer;
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .clothing-item:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                    z-index: 10;
+                }
+
+                .clothing-item img {
+                    width: 100%;
+                    height: 200px;
+                    border-radius: 10px; /* slight rounding for a modern look */
+                    object-fit: cover;
+                }
+        </style>
+
         <div class="container-fluid py-5">
-            <div class="container py-5">
-                <div class="text-center mx-auto mb-5" style="max-width: 700px;">
-                    <h1 class="display-4">Bestseller Products</h1>
-                    <p>Best Product For you </p>
+                <div class="container py-5">
+                    <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+                        <h1 class="display-4">Bestseller Products</h1>
+                        <p>Our Top Picks Just For You</p>
+                    </div>
+                    <div class="row g-4">
+
+                        <!-- Product Item Template -->
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/black gown.jpeg" alt="Wedding Gown (Ball Gown)" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Wedding Gown (Ball Gown)</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 9000</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/babies combo set.jpg" alt="Kids Outfit Set" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Kids Outfit Set</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 7000</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/shoes2.jpg" alt="Nike Air Force" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Nike Air Force</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 7500</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/unisex hiphop tshirt.jpg" alt="Hip hop T-Shirt" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Hip hop T-Shirt</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 2000</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/Kurta set.jpg" alt="Kurta set" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Kurta Set</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 2000</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/High Heels Boots.jpeg" alt="Block Heel Boots" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Block Heel Boots</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 2000</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/ladies sandle.jpg" alt="Strap Sandals" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Strap Sandals</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 2500</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                        <!-- Start Product -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="clothing-item p-4 rounded bg-light h-100 d-flex flex-column">
+                                <div class="text-center mb-3">
+                                    <img src="assets/images/classic white t-shirt.jpg" alt="Classic White T-Shirt" class="img-fluid">
+                                </div>
+                                <h5 class="text-center mb-2"><a href="#" class="text-decoration-none text-dark">Classic White T-Shirt</a></h5>
+                                <div class="d-flex justify-content-center mb-3">
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                    <i class="fas fa-star-half-alt text-primary"></i>
+                                </div>
+                                <h4 class="text-center text-primary mb-3">Rs 3500</h4>
+                            </div>
+                        </div>
+                        <!-- End Product -->
+
+                    </div>
                 </div>
-                <div class="row g-4">
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="p-4 rounded bg-light">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <img src="design-assets/img/blackweddingdress.webp" class="img-fluid rounded-circle w-100" alt="">
-                                </div>
-                                <div class="col-6">
-                                    <a href="#" class="h5">Wedding Gawn</a>
-                                    <div class="d-flex my-3">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="mb-3">$22.3</h4>
-                                    <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="p-4 rounded bg-light">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <img src="design-assets/img/boykidsdress.jpg" class="img-fluid rounded-circle w-100" alt="">
-                                </div>
-                                <div class="col-6">
-                                    <a href="#" class="h5">Littlt Boy dress</a>
-                                    <div class="d-flex my-3">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="mb-3">$10.2</h4>
-                                    <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="p-4 rounded bg-light">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <img src="design-assets/img/blazerformen.jpeg" class="img-fluid rounded-circle w-100" alt="">
-                                </div>
-                                <div class="col-6">
-                                    <a href="#" class="h5">Blazer</a>
-                                    <div class="d-flex my-3">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="mb-3">3.12 $</h4>
-                                    <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="p-4 rounded bg-light">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <img src="design-assets/img/longblazer.jpg" class="img-fluid rounded-circle w-100" alt="">
-                                </div>
-                                <div class="col-6">
-                                    <a href="#" class="h5">Long BLazer</a>
-                                    <div class="d-flex my-3">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="mb-3">3.12 $</h4>
-                                    <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="p-4 rounded bg-light">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <img src="design-assets/img/highheelsboots.jpg" class="img-fluid rounded-circle w-100" alt="">
-                                </div>
-                                <div class="col-6">
-                                    <a href="#" class="h5">Boot</a>
-                                    <div class="d-flex my-3">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="mb-3">3.12 $</h4>
-                                    <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-xl-4">
-                        <div class="p-4 rounded bg-light">
-                            <div class="row align-items-center">
-                                <div class="col-6">
-                                    <img src="design-assets/img/modernblazer.jpg" class="img-fluid rounded-circle w-100" alt="">
-                                </div>
-                                <div class="col-6">
-                                    <a href="#" class="h5">White Blazer</a>
-                                    <div class="d-flex my-3">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="mb-3">3.12 $</h4>
-                                    <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                                </div>
-                            </div>
+        </div>
+        <!-- Bestseller Products End -->
+
+
+
+    <!-- Fact Section Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="bg-light p-5 rounded">
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5 text-center">
+                            <i class="fa fa-users fa-3x text-secondary mb-3"></i>
+                            <h4>Satisfied Customers</h4>
+                            <h1>1963</h1>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="text-center">
-                            <img src="design-assets/img/dressforlittlegirl.webp" class="img-fluid rounded" alt="">
-                            <div class="py-4">
-                                <a href="#" class="h5">Little girl</a>
-                                <div class="d-flex my-3 justify-content-center">
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star text-primary"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <h4 class="mb-3">3.12 $</h4>
-                                <a href="add_to_cart.php" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                            </div>
+                        <div class="counter bg-white rounded p-5 text-center">
+                            <i class="fa fa-thumbs-up fa-3x text-secondary mb-3"></i>
+                            <h4>Quality of Service</h4>
+                            <h1>99%</h1>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5 text-center">
+                            <i class="fa fa-certificate fa-3x text-secondary mb-3"></i>
+                            <h4>Quality Certificates</h4>
+                            <h1>33</h1>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5 text-center">
+                            <i class="fa fa-box fa-3x text-secondary mb-3"></i>
+                            <h4>Available Products</h4>
+                            <h1><?php echo count($allProducts); ?></h1> <!-- Dynamic Count -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Bestsaler Product End -->
+    </div>
+    <!-- Fact Section End -->
 
-
-        <!-- Fact Start -->
-        <div class="container-fluid py-5">
-            <div class="container">
-                <div class="bg-light p-5 rounded">
-                    <div class="row g-4 justify-content-center">
-                        <div class="col-md-6 col-lg-6 col-xl-3">
-                            <div class="counter bg-white rounded p-5">
-                                <i class="fa fa-users text-secondary"></i>
-                                <h4>satisfied customers</h4>
-                                <h1>1963</h1>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 col-xl-3">
-                            <div class="counter bg-white rounded p-5">
-                                <i class="fa fa-users text-secondary"></i>
-                                <h4>quality of service</h4>
-                                <h1>99%</h1>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 col-xl-3">
-                            <div class="counter bg-white rounded p-5">
-                                <i class="fa fa-users text-secondary"></i>
-                                <h4>quality certificates</h4>
-                                <h1>33</h1>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6 col-xl-3">
-                            <div class="counter bg-white rounded p-5">
-                                <i class="fa fa-users text-secondary"></i>
-                                <h4>Available Products</h4>
-                                <h1>789</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Fact Start -->
 
 
         <!-- Tastimonial Start -->
