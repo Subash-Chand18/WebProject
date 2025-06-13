@@ -13,7 +13,7 @@ if (isset($_POST['login'])) {
 
     if ($con) {
         // Use prepared statement to prevent SQL injection
-        $stmt = $con->prepare("SELECT * FROM Users WHERE email = ? AND password = ? AND deleted_at IS NULL");
+        $stmt = $con->prepare("SELECT * FROM user WHERE email = ? AND password = ? AND deleted_at IS NULL");
         $stmt->bind_param("ss", $email, $password);
         $stmt->execute();
         $res = $stmt->get_result();
@@ -77,15 +77,6 @@ if (isset($_POST['login'])) {
         <div class="Signup-link">
             <p>Don't have an account? <a href="signup.php">Sign up</a></p>
         </div>
-
-        <div class="divider">
-            <hr><span>Or Login with</span><hr>
-        </div>
-
-        <button type="button" class="google-btn" onclick="alert('Google login coming soon!')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" alt="Google logo">
-            Sign in with Google
-        </button>
     </form>
 </div>
 </body>

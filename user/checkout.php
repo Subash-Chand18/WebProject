@@ -140,11 +140,6 @@ session_start();
                             </div>
 
                             <div class="form-item">
-                                <label class="form-label my-3" for="company_name">Company Name<sup>*</sup></label>
-                                <input type="text" id="company_name" name="company_name" class="form-control" required>
-                            </div>
-
-                            <div class="form-item">
                                 <label class="form-label my-3" for="address">Address<sup>*</sup></label>
                                 <input type="text" id="address" name="address" class="form-control" placeholder="House Number, Street Name" required>
                             </div>
@@ -157,11 +152,6 @@ session_start();
                             <div class="form-item">
                                 <label class="form-label my-3" for="country">Country<sup>*</sup></label>
                                 <input type="text" id="country" name="country" class="form-control" required>
-                            </div>
-
-                            <div class="form-item">
-                                <label class="form-label my-3" for="postcode">Postcode/Zip<sup>*</sup></label>
-                                <input type="text" id="postcode" name="postcode" class="form-control" required>
                             </div>
 
                             <div class="form-item">

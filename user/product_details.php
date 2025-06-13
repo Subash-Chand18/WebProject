@@ -1,5 +1,5 @@
 <?php
-$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
+$con = mysqli_connect("localhost", "root", "", "EClothingStore");
 
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
@@ -45,6 +45,12 @@ mysqli_close($con);
         .product-image {
             max-height: 100%;
             object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 128, 0, 0.3);
         }
         .category-badge {
             background-color: #ffc107;
@@ -61,6 +67,13 @@ mysqli_close($con);
         .btn-style {
             padding: 10px 20px;
             border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        /* Hover effect for Add to Cart and Back to Products buttons */
+        .btn-success:hover, .btn-outline-secondary:hover {
+            background-color: #218838 !important;
+            color: white !important;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -79,8 +92,8 @@ mysqli_close($con);
                 <p><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
                 <p><strong>Quantity Available:</strong> <?php echo htmlspecialchars($product['quantity']); ?></p>
                 <p class="price-tag">$<?php echo htmlspecialchars($product['price']); ?></p>
-                <a href="add_to_cart.php?id=<?php echo $product['id']; ?>" class="btn btn-success">
-                <i class="fa fa-shopping-cart me-2"></i>Add to Cart
+                <a href="add_to_cart.php?id=<?php echo $product['id']; ?>" class="btn btn-success btn-style">
+                    <i class="fa fa-shopping-cart me-2"></i>Add to Cart
                 </a>
                 <a href="../index.php" class="btn btn-outline-secondary btn-style ms-2">Back to Products</a>
             </div>

@@ -8,14 +8,12 @@ $con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (isset($_POST['submit'])) {
     $first_name = trim($_POST['first_name']);
     $last_name = trim($_POST['last_name']);
-    $company_name = trim($_POST['company_name']);
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $confirm = trim($_POST['confirm']);
     $phone = trim($_POST['phone']);
     $country = trim($_POST['country']);
     $city = trim($_POST['city']);
-    $zip_code = trim($_POST['zip_code']);
     $address = trim($_POST['address']);
 
     // Password match check
@@ -30,8 +28,8 @@ if (isset($_POST['submit'])) {
             $error = "Email already exists!";
         } else {
             // Insert user
-            $query = "INSERT INTO users (first_name, last_name, company_name, email, password, phone, country, city, zip_code, address)
-                      VALUES ('$first_name', '$last_name', '$company_name', '$email', '$hashed_password', '$phone', '$country', '$city', '$zip_code', '$address')";
+            $query = "INSERT INTO user (first_name, last_name, email, password, phone, country, city, address)
+                      VALUES ('$first_name', '$last_name','$email', '$hashed_password', '$phone', '$country', '$city','$address')";
             $result = mysqli_query($con, $query);
 
             if ($result) {
