@@ -51,9 +51,6 @@ if ($productQuery) {
         </div>
         <nav class="topnav-menu">
             <a href="#" class="nav-link active">Home</a>
-            <!-- <a href="#" class="nav-link">About Us</a>
-            <a href="#" class="nav-link">Contact Us</a>
-            <a href="#" class="nav-link">Help</a> -->
             <a href="logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
 
         </nav>

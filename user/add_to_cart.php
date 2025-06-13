@@ -46,5 +46,5 @@ if (isset($_SESSION['cart'][$product_id])) {
 }
 
 // Redirect back to product listing or previous page
-header("Location: index.php");
+header("Location: ../index.php");
 exit();

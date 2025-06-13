@@ -1,89 +1,92 @@
+
+
 <?php
-session_start(); // Start session to track user login
+session_start();
+$error = "";
 
 if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = md5($_POST['password']); // Hash password (note: use stronger hashing in production)
+    $email = trim($_POST['email']);
+    $password = md5(trim($_POST['password'])); // MD5 hashing (consider bcrypt for real-world apps)
 
-    // Connect to database
-    $con = mysqli_connect("localhost", "root", "", "EClothingStore");
+    // Database connection
+    $con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
     if ($con) {
-        // Check user credentials and ensure account is not deleted
-        $sql = "SELECT * FROM user WHERE email='$email' AND password='$password' AND deleted_at IS NULL";
-        $res = mysqli_query($con, $sql);
+        // Use prepared statement to prevent SQL injection
+        $stmt = $con->prepare("SELECT * FROM Users WHERE email = ? AND password = ? AND deleted_at IS NULL");
+        $stmt->bind_param("ss", $email, $password);
+        $stmt->execute();
+        $res = $stmt->get_result();
 
-        if ($res && mysqli_num_rows($res) > 0) {
-            $_SESSION['email'] = $email; // Save login in session
+        if ($res && $res->num_rows > 0) {
+            $_SESSION['email'] = $email;
 
-            // Handle "Remember Me" using cookie
             if (!empty($_POST['remember'])) {
-                setcookie("email", $email, time() + (86400 * 30), "/"); // Set for 30 days
+                setcookie("email", $email, time() + (86400 * 30), "/"); // 30 days
             } else {
-                setcookie("email", "", time() - 3600, "/"); // Clear cookie
+                setcookie("email", "", time() - 3600, "/"); // delete cookie
             }
 
-            header("Location: Userdashboard.php"); // Redirect to dashboard
+            header("Location: ../index.php");
             exit();
         } else {
-            echo "<script>alert('Invalid email or password!');</script>";
+            $error = "Invalid email or password!";
         }
     } else {
-        echo "<script>alert('Database connection failed!');</script>";
+        $error = "Database connection failed!";
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>E Clothing Store - Login</title>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E Clothing Store | Login</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <div class="wrapper">
-        <form action="Userlogin.php" method="POST">
-            <h1>E-Clothing Store</h1>
-            <div class="input-box">
-                <i class='bx bxs-user'></i>
-                <input type="email" name="email" placeholder="Email" required value="<?php echo isset($_COOKIE['email']) ? $_COOKIE['email'] : ''; ?>" />
-            </div>
-            <div class="input-box password-box">
-                <i class='bx bxs-lock-alt'></i>
-                <input type="password" name="password" id="password" placeholder="Password" required />
-                <i class='bx bx-show toggle-icon' id="togglePassword"></i> <!-- Show/hide icon -->
-            </div>
-            <div class="remember-forgot">
-                <label>
-                    <input type="checkbox" name="remember" <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?> /> Remember me
-                </label>
-                <a href="passwordreset.php">Forgot password?</a>
-            </div>
-            <button type="submit" name="login" class="btn">Login</button>
-            <div class="signup-link">
-                <p>Don't have an account? <a href="signup.php">Sign up</a></p>
-            </div>
-            <div class="divider">
-                <hr /><span>Or Login with</span><hr />
-            </div>
-            <button type="button" class="google-btn" onclick="alert('Button clicked!')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" alt="Google logo" width="20" />
-                Sign in with Google
-            </button>
-        </form>
-    </div>
-    <script>
-        const togglePassword = document.getElementById("togglePassword");
-        const passwordInput = document.getElementById("password");
+<div class="wrapper">
+    <form action="" method="post">
+        <h1>Login</h1>
 
-        togglePassword.addEventListener("click", function () {
-            const type = passwordInput.type === "password" ? "text" : "password";
-            passwordInput.type = type;
-            this.classList.toggle("bx-show");
-            this.classList.toggle("bx-hide");
-        });
-    </script>
+        <!-- Display error if any -->
+        <?php if (!empty($error)) : ?>
+            <p style="color: red; text-align: center; margin-bottom: 10px;"><?php echo $error; ?></p>
+        <?php endif; ?>
+
+        <div class="input-box"> 
+            <i class='bx bxs-user'></i>
+            <input type="email" placeholder="Email" name="email" 
+                   value="<?php echo isset($_COOKIE['email']) ? htmlspecialchars($_COOKIE['email']) : ''; ?>" 
+                   required>
+        </div>
+        <div class="input-box">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" placeholder="Password" name="password" required>  
+        </div>
+
+        <div class="remember-forgot">
+            <label><input type="checkbox" name="remember" <?php if (isset($_COOKIE['email'])) echo 'checked'; ?>> Remember me</label>
+            <a href="passwordreset.php">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn" name="login">Login</button><br><br>
+
+        <div class="Signup-link">
+            <p>Don't have an account? <a href="signup.php">Sign up</a></p>
+        </div>
+
+        <div class="divider">
+            <hr><span>Or Login with</span><hr>
+        </div>
+
+        <button type="button" class="google-btn" onclick="alert('Google login coming soon!')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" alt="Google logo">
+            Sign in with Google
+        </button>
+    </form>
+</div>
 </body>
 </html>

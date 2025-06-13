@@ -12,7 +12,7 @@
         <form action="" method="POST">
             
             <h1>Forgot Password</h1>
-            <p>Enter your email address and well send you a link to reset your password.</p>
+            <p>Enter your email address and we’ll send you a link to reset your password.</p>
             
             <div class="input-box">
                 <i class='bx bxs-envelope'></i>
@@ -22,7 +22,7 @@
             <button type="submit" class="btn">Send Reset Link</button>
             
             <div class="login-link">
-                <p>Remember your password? <a href="Userlogin.php">Login</a></p>
+                <p>Remember your password? <a href="login.php">Login</a></p>
             </div>
         </form>
     </div>

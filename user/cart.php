@@ -88,7 +88,7 @@ $(function() {
 <?php if (empty($cart)): ?>
     <p class="text-muted">Your cart is empty. Redirecting to homepage...</p>
     <script>
-        setTimeout(() => window.location.href = 'index.php', 1500);
+        setTimeout(() => window.location.href = '../index.php', 1000);
     </script>
 <?php else: ?>
     <table class="table table-bordered text-center align-middle">
@@ -123,7 +123,7 @@ $(function() {
         ?>
             <tr>
                 <td>
-                    <img src="assets/images/<?php echo htmlspecialchars($product['image']); ?>" 
+                    <img src="../assets/images/<?php echo htmlspecialchars($product['image']); ?>" 
                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
                          class="img-fluid" style="max-width: 100px;">
                 </td>
@@ -151,7 +151,7 @@ $(function() {
     </table>
 
     <div class="d-flex justify-content-between">
-        <a href="index.php" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+        <a href="../index.php" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
         <a href="checkout.php" class="btn btn-success">Proceed to Checkout <i class="fas fa-arrow-right"></i></a>
     </div>
 <?php endif; ?>

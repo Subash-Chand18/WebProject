@@ -468,7 +468,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                                             foreach ($allProducts as $row) { ?>
                                                 <div class="col-md-6 col-lg-4 col-xl-3">
                                                     <div class="rounded position-relative clothing-item">
-                                                        <a href="product_details.php?id=<?php echo $row['id']; ?>">
+                                                        <a href="user/product_details.php?id=<?php echo $row['id']; ?>">
                                                             <img src="assets/images/<?php echo $row['image']; ?>" class="img-fluid w-100 rounded-top" alt="<?php echo htmlspecialchars($row['name']); ?>">
                                                         </a>
                                                         <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
@@ -479,7 +479,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                                                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">Rs <?php echo number_format($row['price'], 2); ?></p>
-                                                                <a href="add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
                                                                     <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
                                                                 </a>
                                                             </div>
@@ -661,7 +661,7 @@ while ($row = mysqli_fetch_assoc($res)) {
 
 
 
-       <!-- Features Start -->
+        <!-- Features Start -->
         <div class="container-fluid service py-5" style="background-color: #f8f9fa; padding: 50px 0;">
             <style>
                 .service-item:hover {
