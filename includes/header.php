@@ -28,9 +28,6 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
         </div>
         <nav class="topnav-menu">
             <a href="#" class="nav-link active">Home</a>
-            <!-- <a href="../admin/about.php" class="nav-link">About Us</a>
-            <a href="../admin/contact.php" class="nav-link">Contact Us</a>
-            <a href="../admin/help.php" class="nav-link">Help</a> -->
             <a href="../admin/logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
         <div class="welcome-msg">
