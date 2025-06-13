@@ -1,83 +1,104 @@
-
-
 <?php
 session_start();
-$error = "";
+
+$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+if (!$con) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+$error = '';
 
 if (isset($_POST['login'])) {
     $email = trim($_POST['email']);
-    $password = md5(trim($_POST['password'])); // MD5 hashing (consider bcrypt for real-world apps)
+    $password = md5(trim($_POST['password'])); // Use stronger hashing in production
 
-    // Database connection
-    $con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
+    $query = "SELECT * FROM user WHERE email = '$email' AND password = '$password' AND deleted_at IS NULL";
+    $result = mysqli_query($con, $query);
 
-    if ($con) {
-        // Use prepared statement to prevent SQL injection
-        $stmt = $con->prepare("SELECT * FROM user WHERE email = ? AND password = ? AND deleted_at IS NULL");
-        $stmt->bind_param("ss", $email, $password);
-        $stmt->execute();
-        $res = $stmt->get_result();
+    if ($result && mysqli_num_rows($result) === 1) {
+        $user = mysqli_fetch_assoc($result);
 
-        if ($res && $res->num_rows > 0) {
-            $_SESSION['email'] = $email;
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['user_type'] = $user['user_type'];
 
-            if (!empty($_POST['remember'])) {
-                setcookie("email", $email, time() + (86400 * 30), "/"); // 30 days
-            } else {
-                setcookie("email", "", time() - 3600, "/"); // delete cookie
-            }
-
-            header("Location: ../index.php");
-            exit();
+        if (!empty($_POST['remember'])) {
+            setcookie("email", $email, time() + (86400 * 30), "/");
         } else {
-            $error = "Invalid email or password!";
+            setcookie("email", "", time() - 3600, "/");
         }
+
+        header("Location: ../index.php");
+        exit();
     } else {
-        $error = "Database connection failed!";
+        $error = "Invalid email or password!";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E Clothing Store | Login</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
-<body>
-<div class="wrapper">
-    <form action="" method="post">
-        <h1>Login</h1>
 
-        <!-- Display error if any -->
-        <?php if (!empty($error)) : ?>
-            <p style="color: red; text-align: center; margin-bottom: 10px;"><?php echo $error; ?></p>
+<head>
+    <meta charset="UTF-8" />
+    <title>User Login</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <form class="authForm" action="" method="post" novalidate>
+        <h2>User Login</h2>
+
+        <?php if ($error): ?>
+            <p style="color: red; font-weight: 600;"><?php echo htmlspecialchars($error); ?></p>
         <?php endif; ?>
 
-        <div class="input-box"> 
-            <i class='bx bxs-user'></i>
-            <input type="email" placeholder="Email" name="email" 
-                   value="<?php echo isset($_COOKIE['email']) ? htmlspecialchars($_COOKIE['email']) : ''; ?>" 
-                   required>
-        </div>
-        <div class="input-box">
-            <i class='bx bxs-lock-alt'></i>
-            <input type="password" placeholder="Password" name="password" required>  
+        <div class="form-group">
+            <input type="email" name="email" id="email" placeholder=" "required value="<?php echo isset($_COOKIE['email']) ? htmlspecialchars($_COOKIE['email']) : ''; ?>"
+            />
+            <label for="email">Email</label>
         </div>
 
-        <div class="remember-forgot">
-            <label><input type="checkbox" name="remember" <?php if (isset($_COOKIE['email'])) echo 'checked'; ?>> Remember me</label>
-            <a href="passwordreset.php">Forgot password?</a>
+        <div class="form-group" style="position: relative;">
+        <i class="bx bx-show toggle-icon" id="togglePassword" ...></i>
+        <input type="password" name="password" id="password" placeholder=" " required />
+        <label for="password">Password</label>
         </div>
 
-        <button type="submit" class="btn" name="login">Login</button><br><br>
-
-        <div class="Signup-link">
-            <p>Don't have an account? <a href="signup.php">Sign up</a></p>
+        <div class="form-options">
+            <label> <input type="checkbox" name="remember" <?php if (isset($_COOKIE['email'])) echo 'checked'; ?> />  Remember me  </label>
+            <a href="passwordreset.php">Forgot Password?</a>
         </div>
+
+        <div class="button-group">
+            <button type="submit" name="login">Login</button>
+        </div>
+
+        <p>
+            Don't have an account? <a href="Signup.php">Sign Up</a>
+        </p>
     </form>
-</div>
+
+    <script>
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+
+        togglePassword.addEventListener("click", () => {
+            const type = passwordInput.type === "password" ? "text" : "password";
+            passwordInput.type = type;
+            togglePassword.classList.toggle('bx-show');
+            togglePassword.classList.toggle('bx-hide');
+        });
+
+        togglePassword.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                togglePassword.click();
+            }
+        });
+    </script>
 </body>
+
 </html>

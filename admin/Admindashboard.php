@@ -17,7 +17,7 @@ $totalProducts = mysqli_fetch_assoc($res)['total'] ?? 0;
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM user WHERE deleted_at IS NULL");
 $totalUsers = mysqli_fetch_assoc($res)['total'] ?? 0;
 
-$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM `order` WHERE order_status='pending'");
+$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM orders WHERE order_status='pending'");
 $pendingOrders = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 $res = mysqli_query($con, "SELECT SUM(total) AS total FROM orderdetail");

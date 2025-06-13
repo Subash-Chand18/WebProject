@@ -20,8 +20,9 @@ body {
 
 form.authForm {
     background: #ffffff;
-    width: 500px;
-    padding: 50px 50px;
+    width: 720px; /* decreased width */
+    min-height: 400px; /* increased length (height) */
+    padding: 60px 40px;
     border-radius: 20px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
     animation: fadeIn 0.6s ease;
@@ -44,7 +45,7 @@ form.authForm {
 
 form.authForm h2 {
     color: #6a1b9a;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 600;
     margin-bottom: 10px;
     text-align: center;
@@ -55,11 +56,10 @@ form.authForm h2 {
     margin-bottom: 20px;
 }
 
-/* Increased height for email and password inputs */
 .form-group input {
     width: 100%;
-    height: 64px; /* increased from 48px */
-    padding: 18px 45px 18px 20px; /* increased vertical padding for text centering */
+    height: 64px;
+    padding: 18px 45px 18px 20px;
     border: 2px solid #d1c4e9;
     border-radius: 12px;
     font-size: 16px;
@@ -76,7 +76,7 @@ form.authForm h2 {
 
 .form-group label {
     position: absolute;
-    top: 20px; /* adjusted for bigger input */
+    top: 20px;
     left: 20px;
     font-size: 14px;
     color: #777;
@@ -108,56 +108,16 @@ form.authForm h2 {
     font-size: 20px;
     color: #6a1b9a;
     z-index: 2;
+    height: 24px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toggle-icon:focus {
     outline: 2px solid #6a1b9a;
     outline-offset: 2px;
-}
-
-.form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    font-size: 14px;
-    color: #555;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    gap: 10px;
-}
-
-.form-options label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-}
-
-.form-options input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: #6a1b9a;
-    cursor: pointer;
-}
-
-.form-options a {
-    background-color: #6a1b9a;
-    color: white;
-    text-decoration: none;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.form-options a:hover,
-.form-options a:focus {
-    background-color: #4a148c;
-    transform: scale(1.03);
-    outline: none;
 }
 
 .button-group {
@@ -184,6 +144,27 @@ form.authForm h2 {
     outline: none;
 }
 
+.button-group a {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    background-color: #f8bbd0;
+    color: #4a148c;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-group a:hover,
+.button-group a:focus {
+    background-color: #f48fb1;
+    transform: scale(1.03);
+    outline: none;
+}
+
 form.authForm p {
     text-align: center;
     margin-top: 12px;
@@ -203,7 +184,8 @@ form.authForm p a:focus {
     outline: none;
 }
 
-form.authForm > p[style*="color: red"] {
+form.authForm > p[style*="color: red"],
+form.authForm > p[style*="color: green"] {
     margin-bottom: 15px;
     font-weight: 600;
     text-align: center;
@@ -215,14 +197,7 @@ form.authForm > p[style*="color: red"] {
         padding: 30px 25px;
     }
 
-    .form-options {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .form-options a {
+    .button-group a {
         width: 100%;
-        text-align: center;
     }
 }

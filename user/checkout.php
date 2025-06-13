@@ -127,14 +127,8 @@ session_start();
                             <div class="row">
                                 <div class="col-md-12 col-lg-6">
                                     <div class="form-item w-100">
-                                        <label class="form-label my-3" for="first_name">First Name<sup>*</sup></label>
+                                        <label class="form-label my-3" for="first_name">Full Name<sup>*</sup></label>
                                         <input type="text" id="first_name" name="first_name" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 col-lg-6">
-                                    <div class="form-item w-100">
-                                        <label class="form-label my-3" for="last_name">Last Name<sup>*</sup></label>
-                                        <input type="text" id="last_name" name="last_name" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +149,7 @@ session_start();
                             </div>
 
                             <div class="form-item">
-                                <label class="form-label my-3" for="mobile">Mobile<sup>*</sup></label>
+                                <label class="form-label my-3" for="mobile">Phone Number<sup>*</sup></label>
                                 <input type="tel" id="mobile" name="mobile" class="form-control" required>
                             </div>
 
