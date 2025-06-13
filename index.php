@@ -109,7 +109,6 @@ while ($row = mysqli_fetch_assoc($res)) {
                         <div class="navbar-nav mx-auto">
                             <a href="index.php" class="nav-item nav-link active">Home</a>
                             <a href="#" class="nav-item nav-link">Shop</a>
-                            <a href="#" class="nav-item nav-link">Shop Detail</a>
                             <a href="#" class="nav-item nav-link">Contact</a>
                         </div>
 
@@ -133,8 +132,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                                     <?php echo isset($cartCount) ? $cartCount : 0; ?>
                                 </span>
                             </a>
-                            <a href="#" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
+                            <a href="#" class="my-auto"><i class="fas fa-user fa-2x"></i>
                             </a>
                         </div>
                     </div>

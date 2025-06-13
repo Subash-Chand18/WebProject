@@ -65,7 +65,6 @@ session_start();
                         <div class="navbar-nav mx-auto">
                             <a href="../index.php" class="nav-item nav-link">Home</a>
                             <a href="#" class="nav-item nav-link">Shop</a>
-                            <a href="#" class="nav-item nav-link">Shop Detail</a>
                             <a href="#" class="nav-item nav-link">Contact</a>
                         </div>
                          <div class="d-flex m-3 me-0">
