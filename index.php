@@ -125,6 +125,10 @@ while ($rowNew = mysqli_fetch_assoc($resNew)) {
                             <a href="index.php" class="nav-item nav-link active">Home</a>
                             <a href="#" class="nav-item nav-link">Shop</a>
                             <a href="#" class="nav-item nav-link">Contact</a>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                            <!-- Show this link only when the user is logged in -->
+                                <a href="user/myorders.php" class="nav-item nav-link">My Orders</a>
+                            <?php endif; ?>
                         </div>
 
                         <div class="d-flex align-items-center gap-3">
@@ -1180,7 +1184,7 @@ while ($rowNew = mysqli_fetch_assoc($resNew)) {
                                     <img src="design-assets/img/mukesh.jpeg" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="">
                                 </div>
                                 <div class="ms-4 d-block">
-                                    <h4 class="text-dark">Mukesh Shaha</h4>
+                                    <h4 class="text-dark">Mukesh Shahu</h4>
                                     <p class="m-0 pb-3">Student</p>
                                     <div class="d-flex pe-5">
                                         <i class="fas fa-star text-primary"></i>

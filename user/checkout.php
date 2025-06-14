@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login if user is not logged in
+    header("Location: Userlogin.php?redirect=checkout.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +53,7 @@ session_start();
                 <div class="d-flex justify-content-between">
                     <div class="top-info ps-2">
                         <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">Dhangadhi, Kailali</a></small>
-                        <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">user@Example.com</a></small>
+                        <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">user@gmail.com</a></small>
                     </div>
                     <div class="top-link pe-2">
                         <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
@@ -55,27 +61,46 @@ session_start();
                     </div>
                 </div>
             </div>
+
             <div class="container px-0">
                 <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                    <a href="../index.php" class="navbar-brand"><h1 class="text-primary display-6">shop</h1></a>
+                    <a href="../index.php" class="navbar-brand"><h2 class="text-primary display-6">E-Clothing Store</h2></a>
                     <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="fa fa-bars text-primary"></span>
                     </button>
+
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="../index.php" class="nav-item nav-link">Home</a>
+                            <a href="../index.php" class="nav-item nav-link active">Home</a>
                             <a href="#" class="nav-item nav-link">Shop</a>
                             <a href="#" class="nav-item nav-link">Contact</a>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                            <!-- Show this link only when the user is logged in -->
+                                <a href="myorders.php" class="nav-item nav-link">My Orders</a>
+                            <?php endif; ?>
                         </div>
-                         <div class="d-flex m-3 me-0">
-                            <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-                            <a href="cart.php" class="position-relative me-4 my-auto">
-                                <i class="fa fa-shopping-bag fa-2x"></i>
 
-                                <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;"><?php echo $cartCount; ?></span>
+                        <div class="d-flex align-items-center gap-3">
+                            <?php if (!isset($_SESSION['user_id'])): ?>
+                                <a href="Userlogin.php" class="btn btn-outline-dark">Login</a>
+                            <?php else: ?>
+                                <span class="text-dark fw-bold">Welcome, <?= htmlspecialchars($_SESSION['user_name']); ?></span>
+                                <a href="logout.php" class="btn btn-danger">Logout</a>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="d-flex m-3 me-0">
+                            <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                <i class="fas fa-search text-primary"></i>
+                            </button>
+                            <a href="user/cart.php" class="position-relative me-4 my-auto">
+                                <i class="fa fa-shopping-bag fa-2x"></i>
+                                <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+                                    style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
+                                    <?php echo isset($cartCount) ? $cartCount : 0; ?>
+                                </span>
                             </a>
-                            <a href="#" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
+                            <a href="#" class="my-auto"><i class="fas fa-user fa-2x"></i>
                             </a>
                         </div>
                     </div>
@@ -119,7 +144,7 @@ session_start();
         <div class="container-fluid py-5">
             <div class="container py-5">
                 <h1 class="mb-4">Billing Details</h1>
-                <form action="" method="" enctype="multipart/form-data">
+                <form action="order.php" method="POST" enctype="multipart/form-data">
                     <div class="row g-5">
                         <!-- Billing Details Form -->
                         <div class="col-md-12 col-lg-6 col-xl-7">
@@ -139,14 +164,14 @@ session_start();
                             </div>
 
                             <div class="form-item">
-                                <label class="form-label my-3" for="billing_address">Shipping Address<sup>*</sup></label>
-                                <input type="text" id="billing_address" name="billing_address" class="form-control" placeholder="" required>
+                                <label class="form-label my-3" for="billing_address">Billing Address<sup>*</sup></label>
+                                <input type="text" id="billing_address" name="billing_address" class="form-control" required>
                             </div>
 
                             <div class="form-item">
                                 <label class="form-label my-3" for="shipping_address">Shipping Address<sup>*</sup></label>
-                                <input type="text" id="shipping_address" name="shipping_address" class="form-control" placeholder="" required>
-                            </div>  
+                                <input type="text" id="shipping_address" name="shipping_address" class="form-control" required>
+                            </div>
 
                             <div class="form-item">
                                 <label class="form-label my-3" for="country">Country<sup>*</sup></label>
@@ -196,9 +221,7 @@ session_start();
                                             <td class="py-5 align-middle"><?php echo (int)$item['quantity']; ?></td>
                                             <td class="py-5 align-middle">Rs <?php echo number_format($itemTotal, 2); ?></td>
                                         </tr>
-                                        <?php
-                                            endforeach;
-                                        ?>
+                                        <?php endforeach; ?>
 
                                         <!-- Subtotal -->
                                         <tr>
@@ -208,7 +231,7 @@ session_start();
                                             </td>
                                             <td class="py-5">
                                                 <div class="py-3 border-bottom border-top">
-                                                    <p class="mb-0 text-dark">Rs <?php echo number_format($grandTotal, 2); ?></p>
+                                                    <p class="mb-0 text-dark" id="subtotal">Rs <?php echo number_format($grandTotal, 2); ?></p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -219,13 +242,13 @@ session_start();
                                                 <p class="mb-0 text-dark py-4">Shipping</p>
                                             </td>
                                             <td colspan="3" class="py-5">
-                                                <div class="form-check text-start">
-                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping" id="Shipping-2" value="500">
-                                                    <label class="form-check-label" for="Shipping-2">Flat rate: Rs 500</label>
+                                                <div class="form-check text-start mb-2">
+                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping_charge" id="Shipping-500" value="500" required onchange="updateGrandTotal(500)">
+                                                    <label class="form-check-label" for="Shipping-500">Flat rate: Rs 500</label>
                                                 </div>
                                                 <div class="form-check text-start">
-                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping" id="Shipping-3" value="300">
-                                                    <label class="form-check-label" for="Shipping-3">Local Pickup: Rs 300</label>
+                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping_charge" id="Shipping-300" value="300" required onchange="updateGrandTotal(300)">
+                                                    <label class="form-check-label" for="Shipping-300">Local Pickup: Rs 300</label>
                                                 </div>
                                             </td>
                                         </tr>
@@ -260,7 +283,7 @@ session_start();
 
                             <!-- Place Order Button -->
                             <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                                <a href="order.php" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</a>
+                                <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
                             </div>
                         </div>
                     </div>
@@ -268,6 +291,17 @@ session_start();
             </div>
         </div>
         <!-- Checkout Page End -->
+
+        <!-- JavaScript to update Grand Total -->
+        <script>
+            let baseTotal = <?php echo $grandTotal; ?>;
+
+            function updateGrandTotal(shippingCharge) {
+                let grandTotal = baseTotal + shippingCharge;
+                document.getElementById('grand-total').innerText = 'Rs ' + grandTotal.toFixed(2);
+            }
+        </script>
+
 
 
 

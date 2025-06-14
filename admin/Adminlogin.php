@@ -49,7 +49,7 @@ if (isset($_POST['login'])) {
 
 <body>
     <form class="authForm" action="" method="post" novalidate>
-        <h2>User Login</h2>
+        <h2>E-Clothing Store</h2>
 
         <?php if ($error): ?>
             <p style="color: red; font-weight: 600;"><?php echo htmlspecialchars($error); ?></p>
