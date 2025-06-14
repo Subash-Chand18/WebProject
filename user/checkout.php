@@ -139,14 +139,14 @@ session_start();
                             </div>
 
                             <div class="form-item">
-                                <label class="form-label my-3" for="address">Address<sup>*</sup></label>
-                                <input type="text" id="address" name="address" class="form-control" placeholder="House Number, Street Name" required>
+                                <label class="form-label my-3" for="billing_address">Shipping Address<sup>*</sup></label>
+                                <input type="text" id="billing_address" name="billing_address" class="form-control" placeholder="" required>
                             </div>
 
                             <div class="form-item">
-                                <label class="form-label my-3" for="city">Town/City<sup>*</sup></label>
-                                <input type="text" id="city" name="city" class="form-control" required>
-                            </div>
+                                <label class="form-label my-3" for="shipping_address">Shipping Address<sup>*</sup></label>
+                                <input type="text" id="shipping_address" name="shipping_address" class="form-control" placeholder="" required>
+                            </div>  
 
                             <div class="form-item">
                                 <label class="form-label my-3" for="country">Country<sup>*</sup></label>
@@ -163,17 +163,7 @@ session_start();
                                 <input type="email" id="email" name="email" class="form-control" required>
                             </div>
 
-                            <div class="form-check my-3">
-                                <input type="checkbox" class="form-check-input" id="create_account" name="create_account" value="1">
-                                <label class="form-check-label" for="create_account">Create an account?</label>
-                            </div>
-
                             <hr>
-
-                            <div class="form-item">
-                                <label class="form-label my-3" for="order_notes">Order Notes (Optional)</label>
-                                <textarea id="order_notes" name="order_notes" class="form-control" cols="30" rows="6" placeholder="Order Notes (Optional)"></textarea>
-                            </div>
                         </div>
 
                         <!-- Order Summary -->
@@ -270,7 +260,7 @@ session_start();
 
                             <!-- Place Order Button -->
                             <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                                <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
+                                <a href="order.php" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</a>
                             </div>
                         </div>
                     </div>
