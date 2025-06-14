@@ -98,7 +98,6 @@ while ($rowNew = mysqli_fetch_assoc($resNew)) {
         </div>
         <!-- Spinner End -->
 
-
         <!-- Navbar start -->
         <div class="container-fluid fixed-top">
             <div class="container topbar bg-primary d-none d-lg-block">
@@ -156,6 +155,7 @@ while ($rowNew = mysqli_fetch_assoc($resNew)) {
             </div>
         </div>
         <!-- Navbar End -->
+
 
 
 
