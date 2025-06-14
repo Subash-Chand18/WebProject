@@ -15,8 +15,6 @@ $sql = "SELECT p.*, c.name AS category_name
         ORDER BY p.id DESC";
 $res = mysqli_query($con, $sql);
 
-
-
 // Group products by category name
 $productsByCategory = [];
 $allProducts = [];
@@ -26,7 +24,25 @@ while ($row = mysqli_fetch_assoc($res)) {
     $category = $row['category_name'] ?? 'Uncategorized';
     $productsByCategory[$category][] = $row;
 }
+
+// Fetch ONLY New Products (within the last 2 days)
+$sqlNew = "SELECT p.*, c.name AS category_name 
+           FROM product p
+           LEFT JOIN category c ON p.category_id = c.id
+           WHERE p.created_at >= NOW() - INTERVAL 2 DAY
+           ORDER BY p.created_at DESC";
+
+$resNew = mysqli_query($con, $sqlNew);
+
+// Store New Products
+$newProducts = [];
+
+while ($rowNew = mysqli_fetch_assoc($resNew)) {
+    $newProducts[] = $rowNew;
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -257,68 +273,68 @@ while ($row = mysqli_fetch_assoc($res)) {
 
         <!-- Features Section Start -->
         <style>
-  /* Container background */
-  .featurs {
-    background-color: #f8f9fa;
-  }
+            /* Container background */
+            .featurs {
+                background-color: #f8f9fa;
+            }
 
-  /* Feature item base styles */
-  .featurs-item {
-    background-color: #f8f9fa;
-    background-clip: padding-box;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    text-align: center;
-    background-color: #f8f9fa;
-    cursor: pointer;
+            /* Feature item base styles */
+            .featurs-item {
+                background-color: #f8f9fa;
+                background-clip: padding-box;
+                border-radius: 0.5rem;
+                padding: 1.5rem;
+                text-align: center;
+                background-color: #f8f9fa;
+                cursor: pointer;
 
-    /* Transition for smooth hover */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
+                /* Transition for smooth hover */
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
 
-  /* Hover effect with green shadow and slight scale */
-  .featurs-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* green shadow */
-    z-index: 2;
-  }
+            /* Hover effect with green shadow and slight scale */
+            .featurs-item:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* green shadow */
+                z-index: 2;
+            }
 
-  /* Icon container common styles */
-  .featurs-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 1rem auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+            /* Icon container common styles */
+            .featurs-icon {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                margin: 0 auto 1rem auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
 
-  /* Gradient backgrounds for icons */
-  .bg-gradient-blue {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  }
+            /* Gradient backgrounds for icons */
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            }
 
-  .bg-gradient-orange {
-    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-  }
+            .bg-gradient-orange {
+                background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+            }
 
-  .bg-gradient-green {
-    background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
-  }
+            .bg-gradient-green {
+                background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            }
 
-  .bg-gradient-red {
-    background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
-  }
+            .bg-gradient-red {
+                background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
+            }
 
-  /* Text styling */
-  .featurs-content h5 {
-    margin-bottom: 0.5rem;
-  }
+            /* Text styling */
+            .featurs-content h5 {
+                margin-bottom: 0.5rem;
+            }
 
-  .text-muted {
-    color: #6c757d;
-  }
+            .text-muted {
+                color: #6c757d;
+            }
         </style>
 
         <div class="container-fluid featurs py-5" style="background-color: #f8f9fa;">
@@ -463,7 +479,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                     </div>
 
                     <div class="tab-content">
-                        <!-- All Products Tab -->
+                       <!-- All Products Tab -->
                         <div id="tab-1" class="tab-pane fade show p-0 active">
                             <div class="row g-4">
                                 <div class="col-lg-12">
@@ -483,9 +499,16 @@ while ($row = mysqli_fetch_assoc($res)) {
                                                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">Rs <?php echo number_format($row['price'], 2); ?></p>
-                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
-                                                                </a>
+
+                                                                <?php if ($row['quantity'] > 0) { ?>
+                                                                    <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                        <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                <?php } ?>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -521,16 +544,23 @@ while ($row = mysqli_fetch_assoc($res)) {
                                                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">Rs <?php echo number_format($row['price'], 2); ?></p>
-                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
-                                                                </a>
+
+                                                                <?php if ($row['quantity'] > 0) { ?>
+                                                                    <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                        <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                <?php } ?>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             <?php }
                                         } else {
-                                            echo "<p class='text-center'>No productfound in this category.</p>";
+                                            echo "<p class='text-center'>No product found in this category.</p>";
                                         }
                                         ?>
                                     </div>
@@ -538,8 +568,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                             </div>
                         </div>
 
-
-                        <!-- Women Tab -->
+                       <!-- Women Tab -->
                         <div id="tab-3" class="tab-pane fade show p-0">
                             <div class="row g-4">
                                 <div class="col-lg-12">
@@ -561,23 +590,29 @@ while ($row = mysqli_fetch_assoc($res)) {
                                                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">Rs <?php echo number_format($row['price'], 2); ?></p>
-                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
-                                                                </a>
+
+                                                                <?php if ($row['quantity'] > 0) { ?>
+                                                                    <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                        <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                <?php } ?>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             <?php }
                                         } else {
-                                            echo "<p class='text-center'>No products found in this category.</p>";
+                                            echo "<p class='text-center'>No product found in this category.</p>";
                                         }
                                         ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
 
                         <!-- Babies Tab -->
                         <div id="tab-4" class="tab-pane fade show p-0">
@@ -601,9 +636,16 @@ while ($row = mysqli_fetch_assoc($res)) {
                                                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">Rs <?php echo number_format($row['price'], 2); ?></p>
-                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
-                                                                </a>
+
+                                                                <?php if ($row['quantity'] > 0) { ?>
+                                                                    <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                        <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                <?php } ?>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -617,7 +659,6 @@ while ($row = mysqli_fetch_assoc($res)) {
                                 </div>
                             </div>
                         </div>
-
 
                         <!-- Free Sized Tab -->
                         <div id="tab-5" class="tab-pane fade show p-0">
@@ -641,9 +682,16 @@ while ($row = mysqli_fetch_assoc($res)) {
                                                             <p><?php echo htmlspecialchars($row['description']); ?></p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">Rs <?php echo number_format($row['price'], 2); ?></p>
-                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
-                                                                </a>
+
+                                                                <?php if ($row['quantity'] > 0) { ?>
+                                                                    <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                        <i class="fa fa-tshirt me-2 text-primary"></i> Add to cart
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                <?php } ?>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -657,6 +705,8 @@ while ($row = mysqli_fetch_assoc($res)) {
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
                 </div>
             </div>
@@ -907,6 +957,77 @@ while ($row = mysqli_fetch_assoc($res)) {
         </div>
         <!-- Bestseller Products End -->
 
+
+        <!-- New Products Section -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <h1 class="mb-0">New Products</h1>
+                <div class="row g-4 mt-4">
+
+                    <?php if (!empty($newProducts)) {
+                        foreach ($newProducts as $product) { ?>
+                            <div class="col-md-6 col-lg-4 col-xl-3">
+                                <div class="rounded position-relative clothing-item">
+
+                                    <!-- Product Image -->
+                                    <a href="user/product_details.php?id=<?php echo $product['id']; ?>">
+                                        <img src="assets/images/<?php echo $product['image']; ?>" 
+                                            class="img-fluid w-100 rounded-top" 
+                                            alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                    </a>
+
+                                    <!-- Category Name -->
+                                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" 
+                                        style="top: 10px; left: 10px;">
+                                        <?php echo htmlspecialchars($product['category_name']); ?>
+                                    </div>
+
+                                    <!-- New Badge -->
+                                    <div class="text-white bg-danger px-3 py-1 rounded position-absolute" 
+                                        style="top: 10px; right: 10px;">
+                                        New
+                                    </div>
+
+                                    <!-- Product Details -->
+                                    <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                        <!-- Name -->
+                                        <h4><?php echo htmlspecialchars($product['name']); ?></h4>
+
+                                        <!-- Description -->
+                                        <p><?php echo htmlspecialchars($product['description']); ?></p>
+
+                                        <!-- Price and Add to Cart -->
+                                        <div class="d-flex justify-content-between flex-lg-wrap">
+                                            <p class="text-dark fs-5 fw-bold mb-0">
+                                                Rs <?php echo number_format($product['price'], 2); ?>
+                                            </p>
+
+                                            <?php if ($product['quantity'] > 0) { ?>
+                                                <!-- Add to Cart Button Active -->
+                                                <a href="user/add_to_cart.php?id=<?php echo $product['id']; ?>" 
+                                                class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                                </a>
+                                            <?php } else { ?>
+                                                <!-- Disabled Button when Out of Stock -->
+                                                <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
+                                                    Out of Stock
+                                                </button>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        <?php }
+                    } else {
+                        echo "<p class='text-center'>No new products available.</p>";
+                    } ?>
+
+                </div>
+            </div>
+        </div>
+        <!-- New Products Section End -->
 
 
         <!-- Fact Section Start -->

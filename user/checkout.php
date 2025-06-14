@@ -126,8 +126,14 @@ session_start();
                             <div class="row">
                                 <div class="col-md-12 col-lg-6">
                                     <div class="form-item w-100">
-                                        <label class="form-label my-3" for="first_name">Full Name<sup>*</sup></label>
+                                        <label class="form-label my-3" for="first_name">First Name<sup>*</sup></label>
                                         <input type="text" id="first_name" name="first_name" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-6">
+                                    <div class="form-item w-100">
+                                        <label class="form-label my-3" for="last_name">Last Name<sup>*</sup></label>
+                                        <input type="text" id="last_name" name="last_name" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
@@ -224,10 +230,6 @@ session_start();
                                             </td>
                                             <td colspan="3" class="py-5">
                                                 <div class="form-check text-start">
-                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping" id="Shipping-1" value="0" checked>
-                                                    <label class="form-check-label" for="Shipping-1">Free Shipping</label>
-                                                </div>
-                                                <div class="form-check text-start">
                                                     <input type="radio" class="form-check-input bg-primary border-0" name="shipping" id="Shipping-2" value="500">
                                                     <label class="form-check-label" for="Shipping-2">Flat rate: Rs 500</label>
                                                 </div>
@@ -276,6 +278,7 @@ session_start();
             </div>
         </div>
         <!-- Checkout Page End -->
+
 
 
         <!-- Footer Start -->

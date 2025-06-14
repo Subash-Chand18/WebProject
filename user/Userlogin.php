@@ -22,6 +22,7 @@ if (isset($_POST['login'])) {
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['user_type'] = $user['user_type'];
+        $_SESSION['user_image'] = $user['image']; // Store user image in session
 
         if (!empty($_POST['remember'])) {
             setcookie("email", $email, time() + (86400 * 30), "/");
@@ -56,19 +57,18 @@ if (isset($_POST['login'])) {
         <?php endif; ?>
 
         <div class="form-group">
-            <input type="email" name="email" id="email" placeholder=" "required value="<?php echo isset($_COOKIE['email']) ? htmlspecialchars($_COOKIE['email']) : ''; ?>"
-            />
+            <input type="email" name="email" id="email" placeholder=" " required value="<?php echo isset($_COOKIE['email']) ? htmlspecialchars($_COOKIE['email']) : ''; ?>" />
             <label for="email">Email</label>
         </div>
 
         <div class="form-group" style="position: relative;">
-        <i class="bx bx-show toggle-icon" id="togglePassword" ...></i>
-        <input type="password" name="password" id="password" placeholder=" " required />
-        <label for="password">Password</label>
+            <i class="bx bx-show toggle-icon" id="togglePassword" style="position: absolute; right: 10px; top: 35%; cursor: pointer;"></i>
+            <input type="password" name="password" id="password" placeholder=" " required />
+            <label for="password">Password</label>
         </div>
 
         <div class="form-options">
-            <label> <input type="checkbox" name="remember" <?php if (isset($_COOKIE['email'])) echo 'checked'; ?> />  Remember me  </label>
+            <label> <input type="checkbox" name="remember" <?php if (isset($_COOKIE['email'])) echo 'checked'; ?> /> Remember me </label>
             <a href="passwordreset.php">Forgot Password?</a>
         </div>
 
