@@ -1,17 +1,25 @@
 <?php
 session_start();
 
-$cart_empty_message = "";
-if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
-    $cart_empty_message = "Please first add any products to the cart.";
-}
-
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login if user is not logged in
     header("Location: Userlogin.php?redirect=checkout.php");
     exit;
 }
-// Calculate grand total if cart not empty
+
+$cart_empty_message = "";
+if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+    $cart_empty_message = "Please first add products to the cart.";
+}
+
+// Get user details from session
+$user_name = $_SESSION['user_name']; // Full name
+$user_email = $_SESSION['email'];    // Email
+
+// If you stored full name and want to separate first/last name:
+$name_parts = explode(' ', $user_name, 2);
+$first_name = $name_parts[0];
+$last_name = isset($name_parts[1]) ? $name_parts[1] : '';
+
 $grandTotal = 0;
 if (empty($cart_empty_message)) {
     foreach ($_SESSION['cart'] as $item) {
@@ -19,6 +27,7 @@ if (empty($cart_empty_message)) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -167,16 +176,16 @@ if (empty($cart_empty_message)) {
                             <!-- Billing Details Form -->
                             <div class="col-md-12 col-lg-6 col-xl-7">
                                 <div class="row">
-                                    <div class="col-md-12 col-lg-6">
+                                   <div class="col-md-12 col-lg-6">
                                         <div class="form-item w-100">
                                             <label class="form-label my-3" for="first_name">First Name<sup>*</sup></label>
-                                            <input type="text" id="first_name" name="first_name" class="form-control" required>
+                                            <input type="text" id="first_name" name="first_name" class="form-control" required readonly value="<?= htmlspecialchars($first_name) ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-lg-6">
                                         <div class="form-item w-100">
                                             <label class="form-label my-3" for="last_name">Last Name<sup>*</sup></label>
-                                            <input type="text" id="last_name" name="last_name" class="form-control" required>
+                                            <input type="text" id="last_name" name="last_name" class="form-control" required readonly value="<?= htmlspecialchars($last_name) ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -203,7 +212,7 @@ if (empty($cart_empty_message)) {
 
                                 <div class="form-item">
                                     <label class="form-label my-3" for="email">Email Address<sup>*</sup></label>
-                                    <input type="email" id="email" name="email" class="form-control" required>
+                                    <input type="email" id="email" name="email" class="form-control" required readonly value="<?= htmlspecialchars($user_email) ?>">
                                 </div>
 
                                 <hr>
@@ -314,7 +323,6 @@ if (empty($cart_empty_message)) {
                 <?php endif; ?>
             </div>
         </div>
-
         <!-- Checkout Page End -->
 
         <!-- Footer Start -->
