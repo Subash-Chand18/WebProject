@@ -47,7 +47,7 @@ if (isset($_POST['signup'])) {
             $stmt = mysqli_prepare($con, $insertQuery);
             mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $password, $image);
             if (mysqli_stmt_execute($stmt)) {
-                $success = "Registration successful! You can now <a href='Userlogin.php'>login</a>.";
+                $success = "Registration successful! You can now...... <a href='Userlogin.php'>login</a>.";
             } else {
                 $error = "Registration failed: " . mysqli_error($con);
             }

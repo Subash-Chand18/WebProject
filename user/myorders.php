@@ -25,7 +25,6 @@ $orderResult = mysqli_query($con, $orderQuery);
     <meta charset="UTF-8" />
     <title>My Orders</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         body {
@@ -42,7 +41,7 @@ $orderResult = mysqli_query($con, $orderQuery);
         }
 
         .order-card {
-            background: #ffffff;
+            background: #fff;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgb(100 116 139 / 0.1);
             margin-bottom: 2rem;
@@ -54,6 +53,7 @@ $orderResult = mysqli_query($con, $orderQuery);
             box-shadow: 0 20px 40px rgb(100 116 139 / 0.15);
         }
 
+        /* The button that toggles */
         .order-header {
             background: linear-gradient(135deg, #4f46e5, #3b82f6);
             color: white;
@@ -61,23 +61,38 @@ $orderResult = mysqli_query($con, $orderQuery);
             font-weight: 600;
             font-size: 1.1rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             cursor: pointer;
             user-select: none;
+            border: none;
+            width: 100%;
+            text-align: left;
             border-radius: 12px 12px 0 0;
         }
 
-        .order-header[aria-expanded="true"]::after {
-            content: '▲';
-            font-size: 1.2rem;
+        /* The group holding order ID, date, badge */
+        .order-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
+        /* The arrow on right side */
         .order-header::after {
             content: '▼';
             font-size: 1.2rem;
+            margin-left: auto; /* pushes arrow right */
+            transition: transform 0.3s ease;
         }
 
+        /* When expanded, arrow points up */
+        .order-header[aria-expanded="true"]::after {
+            content: '▲';
+        }
+
+        /* Badge styling */
         .badge-status {
             padding: 6px 16px;
             border-radius: 9999px;
@@ -97,24 +112,21 @@ $orderResult = mysqli_query($con, $orderQuery);
             color: #14532d;
         }
 
+        /* Collapse content */
         .order-body {
             padding: 25px 30px;
-            animation: fadeInDown 0.3s ease forwards;
             background: #fefefe;
             border-top: 3px solid #4f46e5;
             border-radius: 0 0 12px 12px;
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* New scroll container for the table */
+        .order-table-wrapper {
+            max-height: 300px; /* max height for scroll */
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgb(0 0 0 / 0.05);
         }
 
         table {
@@ -134,6 +146,10 @@ $orderResult = mysqli_query($con, $orderQuery);
 
         thead th {
             padding: 14px 12px;
+            position: sticky;
+            top: 0;
+            background: #4f46e5;
+            z-index: 1;
         }
 
         tbody tr {
@@ -204,33 +220,13 @@ $orderResult = mysqli_query($con, $orderQuery);
                 gap: 15px;
                 font-size: 1.05rem;
             }
+
+            .order-info {
+                flex-direction: column;
+                gap: 6px;
+            }
         }
     </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const headers = document.querySelectorAll('.order-header');
-            headers.forEach(header => {
-                header.addEventListener('click', function () {
-                    const targetId = this.getAttribute('data-bs-target').substring(1);
-                    const content = document.getElementById(targetId);
-
-                    const expanded = this.getAttribute('aria-expanded') === 'true';
-                    this.setAttribute('aria-expanded', !expanded);
-
-                    if (content.classList.contains('show')) {
-                        // Collapse
-                        content.classList.remove('show');
-                        content.style.height = null;
-                    } else {
-                        // Expand
-                        content.classList.add('show');
-                        content.style.height = content.scrollHeight + "px";
-                    }
-                });
-            });
-        });
-    </script>
 </head>
 
 <body>
@@ -249,13 +245,10 @@ $orderResult = mysqli_query($con, $orderQuery);
                         data-bs-target="#orderDetails<?= $count ?>"
                         aria-expanded="false"
                         aria-controls="orderDetails<?= $count ?>"
-                        id="order-header-<?= $count ?>"
                     >
-                        <div>
-                            Order ID: <strong><?= $order['id'] ?></strong> |
-                            Date: <strong><?= date('d M Y, h:i A', strtotime($order['created_at'])) ?></strong>
-                        </div>
-                        <div>
+                        <div class="order-info">
+                            <span>Order ID: <strong><?= $order['id'] ?></strong></span>
+                            <span>Date: <strong><?= date('d M Y, h:i A', strtotime($order['created_at'])) ?></strong></span>
                             <span class="badge-status <?= strtolower($order['order_status']) === 'pending' ? 'pending' : 'completed' ?>">
                                 <?= htmlspecialchars($order['order_status']) ?>
                             </span>
@@ -272,35 +265,37 @@ $orderResult = mysqli_query($con, $orderQuery);
                         $detailsResult = mysqli_query($con, $detailsQuery);
                         ?>
 
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Product</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Unit Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $subtotal = 0;
-                                $totalShipping = 0;
-                                while ($detail = mysqli_fetch_assoc($detailsResult)):
-                                    $itemTotal = $detail['unit_price'] * $detail['quantity'];
-                                    $subtotal += $itemTotal;
-                                    $totalShipping += $detail['shipping_charge'];
-                                ?>
+                        <div class="order-table-wrapper">
+                            <table>
+                                <thead>
                                     <tr>
-                                        <td><img src="../assets/images/<?= htmlspecialchars($detail['image']) ?>" alt="<?= htmlspecialchars($detail['name']) ?>" /></td>
-                                        <td><?= htmlspecialchars($detail['name']) ?></td>
-                                        <td>Rs <?= number_format($detail['unit_price'], 2) ?></td>
-                                        <td><?= (int)$detail['quantity'] ?></td>
-                                        <td>Rs <?= number_format($itemTotal, 2) ?></td>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Unit Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Total</th>
                                     </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $subtotal = 0;
+                                    $totalShipping = 0;
+                                    while ($detail = mysqli_fetch_assoc($detailsResult)):
+                                        $itemTotal = $detail['unit_price'] * $detail['quantity'];
+                                        $subtotal += $itemTotal;
+                                        $totalShipping += $detail['shipping_charge'];
+                                    ?>
+                                        <tr>
+                                            <td><img src="../assets/images/<?= htmlspecialchars($detail['image']) ?>" alt="<?= htmlspecialchars($detail['name']) ?>" /></td>
+                                            <td><?= htmlspecialchars($detail['name']) ?></td>
+                                            <td>Rs <?= number_format($detail['unit_price'], 2) ?></td>
+                                            <td><?= (int)$detail['quantity'] ?></td>
+                                            <td>Rs <?= number_format($itemTotal, 2) ?></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
 
                         <div class="summary-container" role="region" aria-label="Order Summary">
                             <div class="summary-item" tabindex="0">Shipping Charge: Rs <?= number_format($totalShipping, 2) ?></div>
@@ -323,6 +318,7 @@ $orderResult = mysqli_query($con, $orderQuery);
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
