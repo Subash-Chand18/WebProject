@@ -1,10 +1,22 @@
 <?php
 session_start();
 
+$cart_empty_message = "";
+if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+    $cart_empty_message = "Please first add any products to the cart.";
+}
+
 if (!isset($_SESSION['user_id'])) {
     // Redirect to login if user is not logged in
     header("Location: Userlogin.php?redirect=checkout.php");
     exit;
+}
+// Calculate grand total if cart not empty
+$grandTotal = 0;
+if (empty($cart_empty_message)) {
+    foreach ($_SESSION['cart'] as $item) {
+        $grandTotal += $item['price'] * $item['quantity'];
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -93,7 +105,7 @@ if (!isset($_SESSION['user_id'])) {
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal">
                                 <i class="fas fa-search text-primary"></i>
                             </button>
-                            <a href="user/cart.php" class="position-relative me-4 my-auto">
+                            <a href="cart.php" class="position-relative me-4 my-auto">
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
                                     style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
@@ -144,166 +156,166 @@ if (!isset($_SESSION['user_id'])) {
         <div class="container-fluid py-5">
             <div class="container py-5">
                 <h1 class="mb-4">Billing Details</h1>
-                <form action="order.php" method="POST" enctype="multipart/form-data">
-                    <div class="row g-5">
-                        <!-- Billing Details Form -->
-                        <div class="col-md-12 col-lg-6 col-xl-7">
-                            <div class="row">
-                                <div class="col-md-12 col-lg-6">
-                                    <div class="form-item w-100">
-                                        <label class="form-label my-3" for="first_name">First Name<sup>*</sup></label>
-                                        <input type="text" id="first_name" name="first_name" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 col-lg-6">
-                                    <div class="form-item w-100">
-                                        <label class="form-label my-3" for="last_name">Last Name<sup>*</sup></label>
-                                        <input type="text" id="last_name" name="last_name" class="form-control" required>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="form-item">
-                                <label class="form-label my-3" for="billing_address">Billing Address<sup>*</sup></label>
-                                <input type="text" id="billing_address" name="billing_address" class="form-control" required>
-                            </div>
-
-                            <div class="form-item">
-                                <label class="form-label my-3" for="shipping_address">Shipping Address<sup>*</sup></label>
-                                <input type="text" id="shipping_address" name="shipping_address" class="form-control" required>
-                            </div>
-
-                            <div class="form-item">
-                                <label class="form-label my-3" for="country">Country<sup>*</sup></label>
-                                <input type="text" id="country" name="country" class="form-control" required>
-                            </div>
-
-                            <div class="form-item">
-                                <label class="form-label my-3" for="mobile">Phone Number<sup>*</sup></label>
-                                <input type="tel" id="mobile" name="mobile" class="form-control" required>
-                            </div>
-
-                            <div class="form-item">
-                                <label class="form-label my-3" for="email">Email Address<sup>*</sup></label>
-                                <input type="email" id="email" name="email" class="form-control" required>
-                            </div>
-
-                            <hr>
-                        </div>
-
-                        <!-- Order Summary -->
-                        <div class="col-md-12 col-lg-6 col-xl-5">
-                            <div class="table-responsive">
-                                <table class="table align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th scope="col">Product</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Quantity</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])):
-                                            $grandTotal = 0;
-                                            foreach ($_SESSION['cart'] as $item):
-                                                $itemTotal = $item['price'] * $item['quantity'];
-                                                $grandTotal += $itemTotal;
-                                        ?>
-                                        <tr>
-                                            <th scope="row" class="align-middle">
-                                                <img src="../assets/images/<?php echo htmlspecialchars($item['image']); ?>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="<?php echo htmlspecialchars($item['name']); ?>">
-                                            </th>
-                                            <td class="py-5 align-middle"><?php echo htmlspecialchars($item['name']); ?></td>
-                                            <td class="py-5 align-middle">Rs <?php echo number_format($item['price'], 2); ?></td>
-                                            <td class="py-5 align-middle"><?php echo (int)$item['quantity']; ?></td>
-                                            <td class="py-5 align-middle">Rs <?php echo number_format($itemTotal, 2); ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-
-                                        <!-- Subtotal -->
-                                        <tr>
-                                            <td colspan="3"></td>
-                                            <td class="py-5">
-                                                <p class="mb-0 text-dark py-3">Subtotal: </p>
-                                            </td>
-                                            <td class="py-5">
-                                                <div class="py-3 border-bottom border-top">
-                                                    <p class="mb-0 text-dark" id="subtotal">Rs <?php echo number_format($grandTotal, 2); ?></p>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Shipping Options -->
-                                        <tr>
-                                            <td colspan="2" class="py-5">
-                                                <p class="mb-0 text-dark py-4">Shipping</p>
-                                            </td>
-                                            <td colspan="3" class="py-5">
-                                                <div class="form-check text-start mb-2">
-                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping_charge" id="Shipping-500" value="500" required onchange="updateGrandTotal(500)">
-                                                    <label class="form-check-label" for="Shipping-500">Flat rate: Rs 500</label>
-                                                </div>
-                                                <div class="form-check text-start">
-                                                    <input type="radio" class="form-check-input bg-primary border-0" name="shipping_charge" id="Shipping-300" value="300" required onchange="updateGrandTotal(300)">
-                                                    <label class="form-check-label" for="Shipping-300">Local Pickup: Rs 300</label>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Grand Total -->
-                                        <tr>
-                                            <td colspan="3"></td>
-                                            <td class="py-5">
-                                                <p class="mb-0 text-dark text-uppercase py-3">Grand Total: </p>
-                                            </td>
-                                            <td class="py-5">
-                                                <div class="py-3 border-bottom border-top">
-                                                    <p class="mb-0 text-dark fw-bold" id="grand-total">Rs <?php echo number_format($grandTotal, 2); ?></p>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                                <?php endif; ?>
-                            </div>
-
-                            <!-- Payment Method -->
-                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                <div class="col-12">
-                                    <div class="form-check text-start my-3">
-                                        <input type="radio" class="form-check-input bg-primary border-0" id="PaymentCOD" name="payment_method" value="Cash on Delivery" required>
-                                        <label class="form-check-label" for="PaymentCOD">Cash On Delivery</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Place Order Button -->
-                            <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                                <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
-                            </div>
-                        </div>
+                <?php if ($cart_empty_message): ?>
+                    <div style="color: red; font-weight: bold; font-size: 1.5rem; text-align: center; margin: 50px 0;">
+                        <?= htmlspecialchars($cart_empty_message) ?>
                     </div>
-                </form>
+                <?php else: ?>
+                    <form action="order.php" method="POST" enctype="multipart/form-data">
+                        <div class="row g-5">
+                            <!-- Billing Details Form -->
+                            <div class="col-md-12 col-lg-6 col-xl-7">
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-6">
+                                        <div class="form-item w-100">
+                                            <label class="form-label my-3" for="first_name">First Name<sup>*</sup></label>
+                                            <input type="text" id="first_name" name="first_name" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-6">
+                                        <div class="form-item w-100">
+                                            <label class="form-label my-3" for="last_name">Last Name<sup>*</sup></label>
+                                            <input type="text" id="last_name" name="last_name" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label my-3" for="billing_address">Billing Address<sup>*</sup></label>
+                                    <input type="text" id="billing_address" name="billing_address" class="form-control" required>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label my-3" for="shipping_address">Shipping Address<sup>*</sup></label>
+                                    <input type="text" id="shipping_address" name="shipping_address" class="form-control" required>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label my-3" for="country">Country<sup>*</sup></label>
+                                    <input type="text" id="country" name="country" class="form-control" required>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label my-3" for="mobile">Phone Number<sup>*</sup></label>
+                                    <input type="tel" id="mobile" name="mobile" class="form-control" required>
+                                </div>
+
+                                <div class="form-item">
+                                    <label class="form-label my-3" for="email">Email Address<sup>*</sup></label>
+                                    <input type="email" id="email" name="email" class="form-control" required>
+                                </div>
+
+                                <hr>
+                            </div>
+
+                            <!-- Order Summary -->
+                            <div class="col-md-12 col-lg-6 col-xl-5">
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th scope="col">Product</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Price</th>
+                                                <th scope="col">Quantity</th>
+                                                <th scope="col">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($_SESSION['cart'] as $item): 
+                                                $itemTotal = $item['price'] * $item['quantity'];
+                                            ?>
+                                            <tr>
+                                                <th scope="row" class="align-middle">
+                                                    <img src="../assets/images/<?= htmlspecialchars($item['image']) ?>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="<?= htmlspecialchars($item['name']) ?>">
+                                                </th>
+                                                <td class="py-5 align-middle"><?= htmlspecialchars($item['name']) ?></td>
+                                                <td class="py-5 align-middle">Rs <?= number_format($item['price'], 2) ?></td>
+                                                <td class="py-5 align-middle"><?= (int)$item['quantity'] ?></td>
+                                                <td class="py-5 align-middle">Rs <?= number_format($itemTotal, 2) ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+
+                                            <!-- Subtotal -->
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td class="py-5">
+                                                    <p class="mb-0 text-dark py-3">Subtotal: </p>
+                                                </td>
+                                                <td class="py-5">
+                                                    <div class="py-3 border-bottom border-top">
+                                                        <p class="mb-0 text-dark" id="subtotal">Rs <?= number_format($grandTotal, 2) ?></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Shipping Options -->
+                                            <tr>
+                                                <td colspan="2" class="py-5">
+                                                    <p class="mb-0 text-dark py-4">Shipping (per item)</p>
+                                                </td>
+                                                <td colspan="3" class="py-5">
+                                                    <div class="form-check text-start mb-2">
+                                                        <input type="radio" class="form-check-input bg-primary border-0" name="shipping_charge" id="Shipping-500" value="500" required onchange="updateGrandTotal(500)">
+                                                        <label class="form-check-label" for="Shipping-500">Flat rate: Rs 500</label>
+                                                    </div>
+                                                    <div class="form-check text-start">
+                                                        <input type="radio" class="form-check-input bg-primary border-0" name="shipping_charge" id="Shipping-300" value="300" required onchange="updateGrandTotal(300)">
+                                                        <label class="form-check-label" for="Shipping-300">Local Pickup: Rs 300</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Grand Total -->
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td class="py-5">
+                                                    <p class="mb-0 text-dark text-uppercase py-3">Grand Total: </p>
+                                                </td>
+                                                <td class="py-5">
+                                                    <div class="py-3 border-bottom border-top">
+                                                        <p class="mb-0 text-dark fw-bold" id="grand-total">Rs <?= number_format($grandTotal, 2) ?></p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div class="col-12">
+                                        <div class="form-check text-start my-3">
+                                            <input type="radio" class="form-check-input bg-primary border-0" id="PaymentCOD" name="payment_method" value="Cash on Delivery" required>
+                                            <label class="form-check-label" for="PaymentCOD">Cash On Delivery</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Place Order Button -->
+                                <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                                    <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- JavaScript to update Grand Total -->
+                    <script>
+                        let baseTotal = <?= $grandTotal ?>;
+
+                        function updateGrandTotal(shippingCharge) {
+                            let grandTotal = baseTotal + shippingCharge;
+                            document.getElementById('grand-total').innerText = 'Rs ' + grandTotal.toFixed(2);
+                        }
+                    </script>
+                <?php endif; ?>
             </div>
         </div>
+
         <!-- Checkout Page End -->
-
-        <!-- JavaScript to update Grand Total -->
-        <script>
-            let baseTotal = <?php echo $grandTotal; ?>;
-
-            function updateGrandTotal(shippingCharge) {
-                let grandTotal = baseTotal + shippingCharge;
-                document.getElementById('grand-total').innerText = 'Rs ' + grandTotal.toFixed(2);
-            }
-        </script>
-
-
-
 
         <!-- Footer Start -->
         <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
