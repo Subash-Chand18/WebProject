@@ -199,52 +199,69 @@ $orderResult = mysqli_query($con, $orderQuery);
         object-fit: cover;
     }
 
-    .summary-container {
-        margin-top: 30px;
-        background: #d2f3cb; /* soft green */
-        border-radius: 14px;
-        padding: 22px 36px;
+    .success-container-wrapper {
         display: flex;
-        justify-content: flex-end;
-        gap: 42px;
+        justify-content: center;
+        align-items: center;
+        padding-top: 100px;
+        min-height: calc(100vh - 100px);
+        background: #f8f9fa; /* very light gray background */
+    }
+
+    .success-container {
+        text-align: center;
+        background: #fff;
+        padding: 50px 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        color: #212529;
+        max-width: 700px;
+        width: 90%;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .success-container i {
+        font-size: 80px;
+        color: #28a745; /* green success */
+        margin-bottom: 20px;
+        animation: popIn 0.6s ease;
+    }
+
+    .success-container h1 {
+        color: #28a745;
+        margin-bottom: 20px;
+        font-size: 36px;
         font-weight: 700;
-        font-size: 1.2rem;
-        color: #1f4635;
-        box-shadow: 0 10px 28px rgba(50, 110, 72, 0.3);
-        user-select: none;
+        animation: fadeInUp 0.6s ease;
     }
 
-    .summary-item {
-        background: #54ba4e; /* green */
+    .success-container p {
+        font-size: 20px;
+        margin-bottom: 35px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: #212529;
+        animation: fadeInUp 0.7s ease;
+    }
+
+    .success-container a {
+        display: inline-block;
+        margin: 0 15px;
+        padding: 14px 28px;
+        text-decoration: none;
+        background-color: #007bff;
         color: white;
-        padding: 14px 36px;
-        border-radius: 60px;
-        box-shadow: 0 6px 22px rgba(84, 186, 78, 0.6);
-        transition: background-color 0.3s ease;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
     }
 
-    .summary-item:hover {
-        background-color: #459b40;
-    }
-
-    @media (max-width: 576px) {
-        .order-header {
-            flex-direction: column;
-            gap: 10px;
-            font-size: 1rem;
-        }
-
-        .summary-container {
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 18px;
-            font-size: 1.1rem;
-        }
-
-        .order-info {
-            flex-direction: column;
-            gap: 8px;
-        }
+    .success-container a:hover {
+        background-color: #0056b3;
+        transform: scale(1.08);
+        box-shadow: 0 6px 15px rgba(0, 86, 179, 0.7);
     }
 
     /* Centering the order details */
@@ -398,19 +415,18 @@ $orderResult = mysqli_query($con, $orderQuery);
                     <?php $count++; ?>
                 <?php endwhile; ?>
             <?php else: ?>
-                <!-- No Orders Message Start -->
-            <div class="success-container-wrapper">
-                <div class="success-container">
-                    <i class="fas fa-shopping-cart mb-3 animate__animated animate__bounceIn"></i>
-                    <h1 class="animate__animated animate__fadeInDown">No Orders Yet 😞</h1>
-                    <p class="animate__animated animate__fadeInUp">Start shopping now to place your first order!</p>
-                    <div class="mt-4">
-                        <a href="../index.php" class="animate__animated animate__fadeInLeft">Shop Now</a>
+               <!-- No Orders Message Start -->
+                <div class="success-container-wrapper">
+                    <div class="success-container">
+                        <i class="fas fa-shopping-cart mb-3 animate__animated animate__bounceIn"></i>
+                        <h1 class="animate__animated animate__fadeInDown">No Orders Yet 😞</h1>
+                        <p class="animate__animated animate__fadeInUp">Start shopping now to place your first order!</p>
+                        <div class="mt-4">
+                            <a href="../index.php" class="animate__animated animate__fadeInLeft">Shop Now</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- No Orders Message End -->
-
+                <!-- No Orders Message End -->
             <?php endif; ?>
         </div>
         <!-- Order table end -->
