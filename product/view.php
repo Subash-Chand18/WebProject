@@ -10,7 +10,7 @@ $result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORD
 $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
-<?php include '../includes/header.php'; ?>
+<?php include '../includes/adminheader.php'; ?>
 
 <div class="dashboard-content">
 
@@ -109,7 +109,7 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 </div>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/adminfooter.php'; ?>
 
 <script>
 const searchInput = document.getElementById('searchInput');

@@ -53,204 +53,83 @@ $orderResult = mysqli_query($con, $orderQuery);
 
 
         <style>
-            body {
-                background-color: #f9fbff;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                padding: 40px 20px;
-            }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff; /* match navbar white */
+            font-family: 'Arial', sans-serif;
+            color: #212529; /* dark text */
+            min-height: 100vh;
+        }
 
-            h1 {
-                font-weight: 700;
-                color: #334155;
-                margin-bottom: 2rem;
-                text-align: center;
-            }
+        /* Container centers vertically & horizontally, large box */
+        .success-container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 100px;
+            min-height: calc(100vh - 100px);
+            background: #f8f9fa; /* very light gray background */
+        }
 
-            .order-card {
-                background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgb(100 116 139 / 0.1);
-                margin-bottom: 2rem;
-                overflow: hidden;
-                transition: box-shadow 0.3s ease;
-            }
+        /* Big box with white bg, subtle shadow */
+        .success-container {
+            text-align: center;
+            background: #fff; /* white background */
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            color: #212529;
+            max-width: 700px;
+            width: 90%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
 
-            .order-card:hover {
-                box-shadow: 0 20px 40px rgb(100 116 139 / 0.15);
-            }
+        .success-container i {
+            font-size: 80px;
+            color: #28a745; /* green success */
+            margin-bottom: 20px;
+        }
 
-            .order-header {
-                background: linear-gradient(135deg, #4f46e5, #3b82f6);
-                color: white;
-                padding: 20px 30px;
-                font-weight: 600;
-                font-size: 1.1rem;
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                cursor: pointer;
-                user-select: none;
-                border: none;
-                width: 100%;
-                text-align: left;
-                border-radius: 12px 12px 0 0;
-            }
+        .success-container h1 {
+            color: #28a745; /* green success */
+            margin-bottom: 20px;
+            font-size: 36px;
+            font-weight: 700;
+        }
 
-            .order-info {
-                display: flex;
-                gap: 1rem;
-                align-items: center;
-                flex-wrap: wrap;
-            }
+        .success-container p {
+            font-size: 20px;
+            margin-bottom: 35px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: #212529;
+        }
 
-            .order-header::after {
-                content: '▼';
-                font-size: 1.2rem;
-                margin-left: auto;
-                transition: transform 0.3s ease;
-            }
+        .success-container a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 14px 28px;
+            text-decoration: none;
+            background-color: #007bff; /* bootstrap primary blue */
+            color: white;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
+        }
 
-            .order-header[aria-expanded="true"]::after {
-                content: '▲';
-            }
+        .success-container a:hover {
+            background-color: #0056b3;
+            transform: scale(1.08);
+            box-shadow: 0 6px 15px rgba(0, 86, 179, 0.7);
+        }
 
-            .badge-status {
-                padding: 6px 16px;
-                border-radius: 9999px;
-                font-weight: 600;
-                font-size: 0.9rem;
-                box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
-                user-select: none;
-            }
-
-            .badge-status.pending {
-                background-color: #facc15;
-                color: #78350f;
-            }
-
-            .badge-status.completed {
-                background-color: #22c55e;
-                color: #14532d;
-            }
-
-            .order-body {
-                padding: 25px 30px;
-                background: #fefefe;
-                border-top: 3px solid #4f46e5;
-                border-radius: 0 0 12px 12px;
-            }
-
-            .order-table-wrapper {
-                max-height: 300px;
-                overflow-y: auto;
-                margin-bottom: 20px;
-                border-radius: 10px;
-                box-shadow: inset 0 0 10px rgb(0 0 0 / 0.05);
-            }
-
-            table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0 12px;
-            }
-
-            thead tr {
-                background: #4f46e5;
-                color: white;
-                text-transform: uppercase;
-                font-size: 0.85rem;
-                font-weight: 700;
-                border-radius: 12px;
-            }
-
-            thead th {
-                padding: 14px 12px;
-                position: sticky;
-                top: 0;
-                background: #4f46e5;
-                z-index: 1;
-            }
-
-            tbody tr {
-                background: #eef2ff;
-                box-shadow: 0 4px 8px rgb(79 70 229 / 0.1);
-                transition: background-color 0.3s ease;
-                border-radius: 10px;
-            }
-
-            tbody tr:hover {
-                background-color: #dbeafe;
-            }
-
-            tbody td {
-                padding: 14px 12px;
-                vertical-align: middle;
-                font-weight: 600;
-                color: #334155;
-                border: none;
-            }
-
-            tbody td img {
-                border-radius: 10px;
-                box-shadow: 0 3px 10px rgb(0 0 0 / 0.15);
-                width: 70px;
-                height: 70px;
-                object-fit: cover;
-            }
-
-            .summary-container {
-                margin-top: 25px;
-                background: #e0e7ff;
-                border-radius: 12px;
-                padding: 20px 30px;
-                display: flex;
-                justify-content: flex-end;
-                gap: 40px;
-                font-weight: 700;
-                font-size: 1.15rem;
-                color: #3730a3;
-                box-shadow: 0 8px 20px rgb(99 102 241 / 0.2);
-                user-select: none;
-            }
-
-            .summary-item {
-                background: #4338ca;
-                color: white;
-                padding: 14px 30px;
-                border-radius: 50px;
-                box-shadow: 0 5px 20px rgb(67 56 202 / 0.5);
-                transition: background-color 0.3s ease;
-            }
-
-            .summary-item:hover {
-                background-color: #3730a3;
-            }
-
-            @media (max-width: 576px) {
-                .order-header {
-                    flex-direction: column;
-                    gap: 10px;
-                    font-size: 1rem;
-                }
-
-                .summary-container {
-                    flex-direction: column;
-                    align-items: flex-end;
-                    gap: 15px;
-                    font-size: 1.05rem;
-                }
-
-                .order-info {
-                    flex-direction: column;
-                    gap: 6px;
-                }
-            }
-
-            /* Centering the order details */
-            .order-details {
-                text-align: center;
-                margin: 20px 0;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
         </style>
     </head>
     <body>
@@ -396,16 +275,20 @@ $orderResult = mysqli_query($con, $orderQuery);
                     <?php $count++; ?>
                 <?php endwhile; ?>
             <?php else: ?>
-                <div class="text-center my-5">
-                    <h3 class="text-muted">😞 You have no orders yet.</h3>
-                    <p>Start shopping now to place your first order!</p>
-                    <a href="../index.php" class="btn btn-success btn-lg mt-3">Shop Now</a>
+                <!-- No Orders Message Start -->
+            <div class="success-container-wrapper">
+                <div class="success-container">
+                    <i class="fas fa-shopping-cart mb-3 animate__animated animate__bounceIn"></i>
+                    <h1 class="animate__animated animate__fadeInDown">No Orders Yet 😞</h1>
+                    <p class="animate__animated animate__fadeInUp">Start shopping now to place your first order!</p>
+                    <div class="mt-4">
+                        <a href="../index.php" class="animate__animated animate__fadeInLeft">Shop Now</a>
+                    </div>
                 </div>
-            <?php endif; ?>
-
-            <div class="text-center mt-4">
-                <a href="../index.php" class="btn btn-primary btn-lg px-5">Continue Shopping</a>
             </div>
+            <!-- No Orders Message End -->
+
+            <?php endif; ?>
         </div>
         <!-- Order table end -->
 

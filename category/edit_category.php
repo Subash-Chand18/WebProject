@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
 }
 ?>
 
-<?php include '../includes/header.php'; ?>
+<?php include '../includes/adminheader.php'; ?>
 
 <link rel="stylesheet" href="../assets/css/edit_category.css">
 
@@ -68,4 +68,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     </form>
 </section>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/adminfooter.php'; ?>

@@ -1,5 +1,5 @@
 <?php
-include '../includes/header.php';
+include '../includes/adminheader.php';
 
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 if (!$con) {
@@ -92,7 +92,7 @@ $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
     </div>
 </div>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/adminfooter.php'; ?>
 
 <script>
 // Search functionality

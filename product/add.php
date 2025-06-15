@@ -1,5 +1,5 @@
 <?php
-include '../includes/header.php';
+include '../includes/adminheader.php';
 
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 if (!$con) {
@@ -122,4 +122,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
     });
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../includes/adminfooter.php'; ?>
