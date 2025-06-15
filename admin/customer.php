@@ -35,6 +35,7 @@ $res = mysqli_query($con, $sql);
     <table class="table table-bordered table-hover">
         <thead class="table-success">
             <tr>
+                <th>S.N</th>
                 <th>#User ID</th>
                 <th>Profile Image</th>
                 <th>Name</th>
@@ -43,24 +44,39 @@ $res = mysqli_query($con, $sql);
             </tr>
         </thead>
         <tbody>
-            <?php if ($res && mysqli_num_rows($res) > 0): ?>
-                <?php while ($user = mysqli_fetch_assoc($res)): ?>
+            <?php 
+            if ($res && mysqli_num_rows($res) > 0): 
+                $sn = 1;  // Initialize serial number
+                while ($user = mysqli_fetch_assoc($res)): 
+            ?>
                 <tr>
+                    <td><?= $sn++ ?></td>
                     <td><?= htmlspecialchars($user['id']) ?></td>
                     <td>
-                        <?php if (!empty($user['image'])): ?>
-                            <img src="<?= htmlspecialchars($user['image']) ?>" alt="Profile Image">
-                        <?php else: ?>
-                            <img src="../design-assets/img/default-profile.png" alt="Default Image">
-                        <?php endif; ?>
+                        <?php
+                        // Build the server path to image file
+                        $imageFile = __DIR__ . '/../design-assets/img/' . $user['image'];
+                        // Web path to image for <img src="">
+                        $imageUrl = '../design-assets/img/' . htmlspecialchars($user['image']);
+
+                        if (!empty($user['image']) && file_exists($imageFile)) {
+                            $imgSrc = $imageUrl;
+                        } else {
+                            // Default image path (relative to this PHP file)
+                            $imgSrc = '../design-assets/img/default-profile.png';
+                        }
+                        ?>
+                        <img src="<?= $imgSrc ?>" alt="Profile Image">
                     </td>
                     <td><?= htmlspecialchars($user['name']) ?></td>
                     <td><?= htmlspecialchars($user['email']) ?></td>
                     <td><?= date('Y-m-d h:i A', strtotime($user['created_at'])) ?></td>
                 </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr><td colspan="5" class="text-center text-muted">No customers found.</td></tr>
+            <?php 
+                endwhile; 
+            else: 
+            ?>
+                <tr><td colspan="6" class="text-center text-muted">No customers found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
