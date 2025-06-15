@@ -1,6 +1,8 @@
 <?php
 session_start();
-if(!isset($_SESSION['email'])){
+
+// Check if the logged-in user is an admin
+if (!isset($_SESSION['email']) || $_SESSION['user_type'] !== 'admin') {
     header("Location: Adminlogin.php");
     exit();
 }
@@ -23,19 +25,12 @@ $pendingOrders = mysqli_fetch_assoc($res)['total'] ?? 0;
 $res = mysqli_query($con, "SELECT SUM(total) AS total FROM orderdetail");
 $totalRevenue = mysqli_fetch_assoc($res)['total'] ?? 0;
 
-$adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
-
-// Fetch products for table
-$productQuery = mysqli_query($con, "SELECT * FROM product");
-$products = [];
-if ($productQuery) {
-    while ($row = mysqli_fetch_assoc($productQuery)) {
-        $products[] = $row;
-    }
-}
+// Use admin's name from session
+$adminName = $_SESSION['user_name'] ?? $_SESSION['email'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -43,6 +38,7 @@ if ($productQuery) {
     <link rel="stylesheet" href="../assets/css/Admindashboard.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
+
 <body>
     <!-- Top Navigation -->
     <header class="topnav">
@@ -52,7 +48,6 @@ if ($productQuery) {
         <nav class="topnav-menu">
             <a href="#" class="nav-link active">Home</a>
             <a href="logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-
         </nav>
         <div class="welcome-msg">
             <i class="fas fa-user-circle"></i> Welcome, <strong><?php echo htmlspecialchars($adminName); ?></strong>
@@ -64,7 +59,7 @@ if ($productQuery) {
         <ul class="sidebar-menu">
             <li><a href="#" class="sidebar-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
 
-            <!-- Products with dropdown -->
+            <!-- Products Dropdown -->
             <li class="dropdown">
                 <a href="#" class="sidebar-link dropdown-toggle">
                     <i class="fas fa-box-open"></i> Products <i class="fas fa-chevron-down"></i>
@@ -75,7 +70,7 @@ if ($productQuery) {
                 </ul>
             </li>
 
-            <!-- Categories with dropdown -->
+            <!-- Categories Dropdown -->
             <li class="dropdown">
                 <a href="#" class="sidebar-link dropdown-toggle">
                     <i class="fas fa-tags"></i> Categories <i class="fas fa-chevron-down"></i>
@@ -129,7 +124,7 @@ if ($productQuery) {
 
     <!-- Scripts -->
     <script>
-        // Dropdown toggle for categories and products
+        // Dropdown toggle for sidebar
         document.querySelectorAll('.dropdown-toggle').forEach(function(el) {
             el.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -137,7 +132,7 @@ if ($productQuery) {
             });
         });
 
-        // Sidebar link active state toggle
+        // Sidebar active state toggle
         document.querySelectorAll('.sidebar-link').forEach(function(link) {
             link.addEventListener('click', function() {
                 document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
@@ -145,7 +140,7 @@ if ($productQuery) {
             });
         });
 
-        // Topnav menu active state toggle
+        // Topnav active state toggle
         document.querySelectorAll('.topnav-menu .nav-link').forEach(function(link) {
             link.addEventListener('click', function() {
                 document.querySelectorAll('.topnav-menu .nav-link').forEach(el => el.classList.remove('active'));
