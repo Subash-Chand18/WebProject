@@ -2,7 +2,7 @@
 session_start();
 
 // Check admin login
-if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] !== 'admin') {
+if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
     header("Location: Adminlogin.php");
     exit;
 }
@@ -41,16 +41,24 @@ $sql = "
 ";
 
 $res = mysqli_query($con, $sql);
-
-// ✅ Include admin header
-include '../includes/adminheader.php';
 ?>
 
-<!-- Main Content -->
-<div class="container p-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin - Orders Management</title>
+    <link href="../design-assets/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        table { margin-top: 20px; }
+        th, td { vertical-align: middle !important; }
+        .status-select { width: 150px; }
+    </style>
+</head>
+<body>
     <h1>Orders Management</h1>
-
-    <table class="table table-bordered table-hover mt-4">
+    <table class="table table-bordered table-hover">
         <thead class="table-success">
             <tr>
                 <th>#Order ID</th>
@@ -79,7 +87,7 @@ include '../includes/adminheader.php';
                     <td>
                         <form method="POST" action="admin_orders.php" class="d-flex align-items-center gap-2">
                             <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
-                            <select name="order_status" class="form-select" style="width: 150px;" onchange="this.form.submit()">
+                            <select name="order_status" class="form-select status-select" onchange="this.form.submit()">
                                 <?php 
                                 $statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
                                 foreach ($statuses as $status):
@@ -97,6 +105,7 @@ include '../includes/adminheader.php';
             <?php endif; ?>
         </tbody>
     </table>
-</div>
 
-<?php include '../includes/adminfooter.php'; ?>
+    <script src="../design-assets/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

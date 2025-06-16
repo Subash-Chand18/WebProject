@@ -1,4 +1,14 @@
 
+<?php
+session_start();
+
+// Check admin login
+if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
+    header("Location: Adminlogin.php");
+    exit;
+}
+$adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

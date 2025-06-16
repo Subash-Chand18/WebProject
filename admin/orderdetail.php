@@ -19,37 +19,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && !empty($_GET['search'])) {
     $search_condition = "AND (o.id LIKE '%$search%' OR u.name LIKE '%$search%')";
 }
 
-// Fetch order details including product names
+// Fetch order details grouped per order
 $sql = "
     SELECT 
         o.id AS order_id, o.name AS order_name, o.order_status, o.shipping_charge, o.created_at,
         s.shipping_address, s.delivery_address,
         u.name AS user_name, u.email AS user_email,
         GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS product_names,
-        od.quantity, od.unit_price,
-        (od.quantity * od.unit_price + o.shipping_charge) AS total_price
+        SUM(od.quantity) AS total_quantity,
+        SUM(od.unit_price * od.quantity) + o.shipping_charge AS total_price
     FROM orders o
     LEFT JOIN user u ON o.user_id = u.id
     LEFT JOIN shipping s ON s.order_id = o.id
     LEFT JOIN orderdetail od ON od.order_id = o.id
     LEFT JOIN product p ON od.product_id = p.id
     WHERE o.deleted_at IS NULL $search_condition
-    GROUP BY od.id
+    GROUP BY o.id
     ORDER BY o.created_at ASC
 ";
 
 $res = mysqli_query($con, $sql);
-
-// ✅ Include admin header
-include '../includes/adminheader.php';
 ?>
 
-<!-- Main Content -->
-<div class="container p-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Order Details</title>
+    <link href="../design-assets/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        table { margin-top: 20px; }
+        th, td { vertical-align: middle !important; }
+    </style>
+</head>
+<body>
     <h1>Order Details</h1>
     
-    <form method="GET" action="orderdetail.php" class="mb-4 d-flex gap-2">
-        <input type="text" name="search" placeholder="Search by Order ID or Username" class="form-control w-25" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+    <form method="GET" action="orderdetail.php" class="mb-3">
+        <input type="text" name="search" placeholder="Search by Order ID or Username" class="form-control w-25 d-inline" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
@@ -64,8 +72,7 @@ include '../includes/adminheader.php';
                 <th>Shipping Address</th>
                 <th>Delivery Address</th>
                 <th>Shipping Charge (Rs)</th>
-                <th>Quantity</th>
-                <th>Unit Price (Rs)</th>
+                <th>Total Quantity</th>
                 <th>Total (Rs)</th>
                 <th>Order Date</th>
             </tr>
@@ -82,17 +89,17 @@ include '../includes/adminheader.php';
                     <td><?= htmlspecialchars($order['shipping_address']) ?></td>
                     <td><?= htmlspecialchars($order['delivery_address']) ?></td>
                     <td><?= number_format($order['shipping_charge'], 2) ?></td>
-                    <td><?= (int)$order['quantity'] ?></td>
-                    <td><?= number_format($order['unit_price'], 2) ?></td>
+                    <td><?= (int)$order['total_quantity'] ?></td>
                     <td><?= number_format($order['total_price'], 2) ?></td>
                     <td><?= date('Y-m-d h:i A', strtotime($order['created_at'])) ?></td>
                 </tr>
                 <?php endwhile; ?>
             <?php else: ?>
-                <tr><td colspan="12" class="text-center text-muted">No order details found.</td></tr>
+                <tr><td colspan="11" class="text-center text-muted">No order details found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
-</div>
 
-<?php include '../includes/adminfooter.php'; ?>
+    <script src="../design-assets/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

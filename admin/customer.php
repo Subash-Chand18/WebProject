@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// Check admin login
-if (!isset($_SESSION['admin_type']) || $_SESSION['admin_type'] !== 'admin') {
+// ✅ Check admin login
+if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
     header("Location: Adminlogin.php");
     exit;
 }
@@ -12,19 +12,29 @@ if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
-// Fetch all non-admin users
+// ✅ Fetch all non-admin users
 $sql = "SELECT id, name, email, image, created_at FROM user WHERE user_type != 'admin' ORDER BY created_at ASC";
 $res = mysqli_query($con, $sql);
-
-// ✅ Include admin header
-include '../includes/adminheader.php';
 ?>
 
-<!-- Main Content -->
-<div class="container p-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - Customer Details</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        table { margin-top: 20px; }
+        th, td { vertical-align: middle !important; }
+        img { width: 50px; height: 50px; object-fit: cover; border-radius: 50%; }
+    </style>
+</head>
+<body>
     <h1>Customer Details</h1>
-
-    <table class="table table-bordered table-hover mt-4">
+    <table class="table table-bordered table-hover">
         <thead class="table-success">
             <tr>
                 <th>S.N</th>
@@ -38,7 +48,7 @@ include '../includes/adminheader.php';
         <tbody>
             <?php 
             if ($res && mysqli_num_rows($res) > 0): 
-                $sn = 1;  // Initialize serial number
+                $sn = 1;
                 while ($user = mysqli_fetch_assoc($res)): 
             ?>
                 <tr>
@@ -46,19 +56,15 @@ include '../includes/adminheader.php';
                     <td><?= htmlspecialchars($user['id']) ?></td>
                     <td>
                         <?php
-                        // Build the server path to image file
-                        $imageFile = __DIR__ . '/../design-assets/img/' . $user['image'];
-                        // Web path to image for <img src="">
                         $imageUrl = '../design-assets/img/' . htmlspecialchars($user['image']);
 
-                        if (!empty($user['image']) && file_exists($imageFile)) {
+                        if (!empty($user['image']) && file_exists(__DIR__ . '/../design-assets/img/' . $user['image'])) {
                             $imgSrc = $imageUrl;
                         } else {
-                            // Default image path
                             $imgSrc = '../design-assets/img/default-profile.png';
                         }
                         ?>
-                        <img src="<?= $imgSrc ?>" alt="Profile Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                        <img src="<?= $imgSrc ?>" alt="Profile Image">
                     </td>
                     <td><?= htmlspecialchars($user['name']) ?></td>
                     <td><?= htmlspecialchars($user['email']) ?></td>
@@ -68,10 +74,13 @@ include '../includes/adminheader.php';
                 endwhile; 
             else: 
             ?>
-                <tr><td colspan="6" class="text-center text-muted">No customers found.</td></tr>
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No customers found.</td>
+                </tr>
             <?php endif; ?>
         </tbody>
     </table>
-</div>
 
-<?php include '../includes/adminfooter.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
