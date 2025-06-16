@@ -6,13 +6,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
-
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate and sanitize form data
+    // Sanitize form data
     $first_name = mysqli_real_escape_string($con, $_POST['first_name']);
     $last_name = mysqli_real_escape_string($con, $_POST['last_name']);
     $billing_address = mysqli_real_escape_string($con, $_POST['billing_address']);
@@ -20,16 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $country = mysqli_real_escape_string($con, $_POST['country']);
     $mobile = mysqli_real_escape_string($con, $_POST['mobile']);
     $email = mysqli_real_escape_string($con, $_POST['email']);
-
-    // Shipping charge for this order (per product as per your schema)
-    $shipping_charge = isset($_POST['shipping_charge']) ? (float)$_POST['shipping_charge'] : 0;
-
     $payment_method = mysqli_real_escape_string($con, $_POST['payment_method']);
+    
+    // Get shipping charge from form, default 0 if not provided
+    $shipping_charge = isset($_POST['shipping_charge']) ? (float)$_POST['shipping_charge'] : 0;
 
     $user_id = $_SESSION['user_id'];
     $customer_name = $first_name . ' ' . $last_name;
 
-    // Check stock
+    // Check stock availability
     foreach ($_SESSION['cart'] as $item) {
         $product_id = $item['id'];
         $quantity = $item['quantity'];
@@ -44,8 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Insert into orders
-    $insertOrderQuery = "INSERT INTO orders (user_id, name, payment_method) VALUES ('$user_id', '$customer_name', '$payment_method')";
+    // Insert into orders including shipping_charge
+    $insertOrderQuery = "INSERT INTO orders (user_id, name, payment_method, shipping_charge) 
+                         VALUES ('$user_id', '$customer_name', '$payment_method', '$shipping_charge')";
     if (mysqli_query($con, $insertOrderQuery)) {
         $order_id = mysqli_insert_id($con);
 
@@ -60,13 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $quantity = $item['quantity'];
             $unit_price = $item['price'];
 
-            // Calculate total for this product line including shipping_charge per product
-            $total = ($quantity * $unit_price) + $shipping_charge;
+            // Calculate total (without shipping here, as it's handled in orders)
+            $total = $quantity * $unit_price;
 
             $insertOrderDetailQuery = "INSERT INTO orderdetail 
-                (order_id, product_id, quantity, unit_price, shipping_charge, total) 
+                (order_id, product_id, quantity, unit_price, total) 
                 VALUES 
-                ('$order_id', '$product_id', '$quantity', '$unit_price', '$shipping_charge', '$total')";
+                ('$order_id', '$product_id', '$quantity', '$unit_price', '$total')";
             mysqli_query($con, $insertOrderDetailQuery);
 
             // Update stock
@@ -85,6 +84,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     header("Location: checkout.php");
     exit;
-    
 }
 ?>

@@ -263,7 +263,7 @@ if (empty($cart_empty_message)) {
                                             <!-- Shipping Options -->
                                             <tr>
                                                 <td colspan="2" class="py-5">
-                                                    <p class="mb-0 text-dark py-4">Shipping (per item)</p>
+                                                    <p class="mb-0 text-dark py-4"> Shipping </p>   
                                                 </td>
                                                 <td colspan="3" class="py-5">
                                                     <div class="form-check text-start mb-2">

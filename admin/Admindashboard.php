@@ -16,7 +16,7 @@ if (!$con) {
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM product WHERE deleted_at IS NULL");
 $totalProducts = mysqli_fetch_assoc($res)['total'] ?? 0;
 
-$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM user WHERE deleted_at IS NULL");
+$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM user WHERE user_type = 'user' AND deleted_at IS NULL");
 $totalUsers = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM orders WHERE order_status='pending'");
