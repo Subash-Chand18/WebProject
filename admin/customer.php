@@ -15,24 +15,16 @@ if (!$con) {
 // Fetch all non-admin users
 $sql = "SELECT id, name, email, image, created_at FROM user WHERE user_type != 'admin' ORDER BY created_at ASC";
 $res = mysqli_query($con, $sql);
+
+// ✅ Include admin header
+include '../includes/adminheader.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Admin - Customer Details</title>
-    <link href="../design-assets/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body { padding: 20px; font-family: Arial, sans-serif; }
-        table { margin-top: 20px; }
-        th, td { vertical-align: middle !important; }
-        img { width: 50px; height: 50px; object-fit: cover; border-radius: 50%; }
-    </style>
-</head>
-<body>
+<!-- Main Content -->
+<div class="container p-4">
     <h1>Customer Details</h1>
-    <table class="table table-bordered table-hover">
+
+    <table class="table table-bordered table-hover mt-4">
         <thead class="table-success">
             <tr>
                 <th>S.N</th>
@@ -62,11 +54,11 @@ $res = mysqli_query($con, $sql);
                         if (!empty($user['image']) && file_exists($imageFile)) {
                             $imgSrc = $imageUrl;
                         } else {
-                            // Default image path (relative to this PHP file)
+                            // Default image path
                             $imgSrc = '../design-assets/img/default-profile.png';
                         }
                         ?>
-                        <img src="<?= $imgSrc ?>" alt="Profile Image">
+                        <img src="<?= $imgSrc ?>" alt="Profile Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
                     </td>
                     <td><?= htmlspecialchars($user['name']) ?></td>
                     <td><?= htmlspecialchars($user['email']) ?></td>
@@ -80,7 +72,6 @@ $res = mysqli_query($con, $sql);
             <?php endif; ?>
         </tbody>
     </table>
+</div>
 
-    <script src="../design-assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include '../includes/adminfooter.php'; ?>

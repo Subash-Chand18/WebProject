@@ -41,24 +41,16 @@ $sql = "
 ";
 
 $res = mysqli_query($con, $sql);
+
+// ✅ Include admin header
+include '../includes/adminheader.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Admin - Orders Management</title>
-    <link href="../design-assets/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body { padding: 20px; font-family: Arial, sans-serif; }
-        table { margin-top: 20px; }
-        th, td { vertical-align: middle !important; }
-        .status-select { width: 150px; }
-    </style>
-</head>
-<body>
+<!-- Main Content -->
+<div class="container p-4">
     <h1>Orders Management</h1>
-    <table class="table table-bordered table-hover">
+
+    <table class="table table-bordered table-hover mt-4">
         <thead class="table-success">
             <tr>
                 <th>#Order ID</th>
@@ -87,7 +79,7 @@ $res = mysqli_query($con, $sql);
                     <td>
                         <form method="POST" action="admin_orders.php" class="d-flex align-items-center gap-2">
                             <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
-                            <select name="order_status" class="form-select status-select" onchange="this.form.submit()">
+                            <select name="order_status" class="form-select" style="width: 150px;" onchange="this.form.submit()">
                                 <?php 
                                 $statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
                                 foreach ($statuses as $status):
@@ -105,7 +97,6 @@ $res = mysqli_query($con, $sql);
             <?php endif; ?>
         </tbody>
     </table>
+</div>
 
-    <script src="../design-assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include '../includes/adminfooter.php'; ?>
