@@ -12,34 +12,36 @@ if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
-// ✅ Handle search
+// ✅ Handle search input safely
 $search_condition = "";
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && !empty($_GET['search'])) {
     $search = mysqli_real_escape_string($con, $_GET['search']);
-    $search_condition = "AND (o.id LIKE '%$search%' OR u.name LIKE '%$search%')";
+    // search by order id or user name (partial match)
+    $search_condition = " AND (o.id LIKE '%$search%' OR u.name LIKE '%$search%') ";
 }
 
-// ✅ Fetch order details grouped per order
+// ✅ Fetch order details grouped by order
 $sql = "
     SELECT 
-        o.id AS order_id, 
-        o.name AS order_name, 
-        o.order_status, 
-        o.shipping_charge, 
+        o.id AS order_id,
+        o.name AS order_name,
+        o.order_status,
+        o.shipping_charge,
         o.created_at,
-        s.shipping_address, 
+        s.shipping_address,
         s.delivery_address,
-        u.name AS user_name, 
+        u.name AS user_name,
         u.email AS user_email,
         GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS product_names,
         SUM(od.quantity) AS total_quantity,
         SUM(od.unit_price * od.quantity) + o.shipping_charge AS total_price
     FROM orders o
-    LEFT JOIN user u ON o.user_id = u.id
-    LEFT JOIN shipping s ON s.order_id = o.id
-    LEFT JOIN orderdetail od ON od.order_id = o.id
-    LEFT JOIN product p ON od.product_id = p.id
-    WHERE o.deleted_at IS NULL $search_condition
+    LEFT JOIN user u ON o.user_id = u.id AND u.deleted_at IS NULL
+    LEFT JOIN shipping s ON s.order_id = o.id AND s.deleted_at IS NULL
+    LEFT JOIN orderdetail od ON od.order_id = o.id AND od.deleted_at IS NULL
+    LEFT JOIN product p ON od.product_id = p.id AND p.deleted_at IS NULL
+    WHERE o.deleted_at IS NULL
+    $search_condition
     GROUP BY o.id
     ORDER BY o.created_at ASC
 ";
@@ -50,9 +52,9 @@ $res = mysqli_query($con, $sql);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Admin - Order Details</title>
-    <link href="../design-assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../design-assets/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         body { padding: 20px; font-family: Arial, sans-serif; }
         table { margin-top: 20px; }
@@ -62,13 +64,19 @@ $res = mysqli_query($con, $sql);
 <body>
     <h1>Order Details</h1>
 
-    <!-- ✅ Search Form -->
+    <!-- Search form -->
     <form method="GET" action="orderdetail.php" class="mb-3">
-        <input type="text" name="search" placeholder="Search by Order ID or Username" class="form-control w-25 d-inline" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Search by Order ID or Username" 
+            class="form-control w-25 d-inline" 
+            value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" 
+        />
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
-    <!-- ✅ Order Details Table -->
+    <!-- Orders table -->
     <table class="table table-bordered table-hover">
         <thead class="table-info">
             <tr>

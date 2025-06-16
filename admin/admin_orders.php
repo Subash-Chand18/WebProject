@@ -26,8 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['o
 // Fetch orders with user and product details
 $sql = "
     SELECT 
-        o.id AS order_id, o.name AS order_name, o.order_status, o.payment_method, o.created_at,
-        u.name AS user_name, u.email AS user_email,
+        o.id AS order_id, 
+        o.name AS order_name, 
+        o.order_status, 
+        o.payment_method, 
+        o.created_at,
+        u.name AS user_name, 
+        u.email AS user_email,
         GROUP_CONCAT(p.name SEPARATOR ', ') AS product_names,
         SUM(od.quantity) AS total_quantity,
         SUM(od.unit_price * od.quantity) AS total_price

@@ -12,8 +12,8 @@ if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
-// ✅ Fetch all non-admin users
-$sql = "SELECT id, name, email, image, created_at FROM user WHERE user_type != 'admin' ORDER BY created_at ASC";
+// ✅ Fetch all non-admin users who are not soft deleted (deleted_at IS NULL)
+$sql = "SELECT id, name, email, image, created_at FROM user WHERE user_type != 'admin' AND deleted_at IS NULL ORDER BY created_at ASC";
 $res = mysqli_query($con, $sql);
 ?>
 
@@ -24,7 +24,7 @@ $res = mysqli_query($con, $sql);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin - Customer Details</title>
     <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         body { padding: 20px; font-family: Arial, sans-serif; }
         table { margin-top: 20px; }
@@ -56,9 +56,12 @@ $res = mysqli_query($con, $sql);
                     <td><?= htmlspecialchars($user['id']) ?></td>
                     <td>
                         <?php
+                        // Construct image path
+                        $imagePath = __DIR__ . '/../design-assets/img/' . $user['image'];
                         $imageUrl = '../design-assets/img/' . htmlspecialchars($user['image']);
 
-                        if (!empty($user['image']) && file_exists(__DIR__ . '/../design-assets/img/' . $user['image'])) {
+                        // Use default image if no image or file missing
+                        if (!empty($user['image']) && file_exists($imagePath)) {
                             $imgSrc = $imageUrl;
                         } else {
                             $imgSrc = '../design-assets/img/default-profile.png';
