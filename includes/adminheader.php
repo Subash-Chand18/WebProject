@@ -63,9 +63,9 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
                 </ul>
             </li>
 
-            <li><a href="customer.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
-            <li><a href="admin_orders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-            <li><a href="orderdetail.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
+            <li><a href="../admin/customer.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
+            <li><a href="../admin/admin_orders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="../admin/orderdetail.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
             <li><a href="#" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
             <li><a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
         </ul>
