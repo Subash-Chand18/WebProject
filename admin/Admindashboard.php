@@ -1,11 +1,12 @@
 <?php
 session_start();
 
-// Check if the logged-in user is an admin
-if (!isset($_SESSION['email']) || $_SESSION['user_type'] !== 'admin') {
+// ✅ Check admin login
+if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
     header("Location: Adminlogin.php");
-    exit();
+    exit;
 }
+
 
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 if (!$con) {
@@ -26,7 +27,7 @@ $res = mysqli_query($con, "SELECT SUM(total) AS total FROM orderdetail");
 $totalRevenue = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 // Use admin's name from session
-$adminName = $_SESSION['user_name'] ?? $_SESSION['email'];
+$adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -12,7 +12,7 @@ $success = '';
 if (isset($_POST['signup'])) {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
-    $password = md5(trim($_POST['password'])); // For demo only, use stronger hashing in prod
+    $password = md5(trim($_POST['password'])); // For demo only, use stronger hashing in production
     $confirm_password = md5(trim($_POST['confirm_password']));
 
     // Handle image upload
@@ -35,7 +35,7 @@ if (isset($_POST['signup'])) {
     }
 
     if (!$error) {
-        // Check if email already exists (and not deleted)
+        // Check if email already exists and is not deleted
         $checkQuery = "SELECT id FROM user WHERE email = '$email' AND deleted_at IS NULL";
         $checkResult = mysqli_query($con, $checkQuery);
 

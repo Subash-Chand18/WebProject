@@ -47,7 +47,7 @@ if (isset($_POST['login'])) {
         header("Location: " . $redirectUrl);
         exit();
     } else {
-        $error = "Invalid email or password!";
+        $error = "Invalid User credentials!";
     }
 }
 ?>
