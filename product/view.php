@@ -1,183 +1,278 @@
 <?php
 session_start();
+if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
+    header("Location: Adminlogin.php");
+    exit;
+}
+
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 if (!$con) {
     die("DB connection failed: " . mysqli_connect_error());
 }
 
-$result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at ASC");
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header("Location: view.php");
+    exit;
+}
 
-$products = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$id = (int)$_GET['id'];
+
+// Fetch existing product data
+$query = "SELECT * FROM product WHERE id = ? AND deleted_at IS NULL LIMIT 1";
+$stmt = mysqli_prepare($con, $query);
+mysqli_stmt_bind_param($stmt, 'i', $id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$product = mysqli_fetch_assoc($result);
+
+if (!$product) {
+    // Product not found or deleted
+    header("Location: view.php");
+    exit;
+}
+
+$errors = [];
+$success = '';
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+    // Sanitize and validate inputs
+    $name = trim($_POST['name']);
+    $description = trim($_POST['description']);
+    $price = trim($_POST['price']);
+    $quantity = trim($_POST['quantity']);
+    $sku = trim($_POST['sku']);
+
+    if ($name === '') {
+        $errors[] = "Product name is required.";
+    }
+    if ($price === '' || !is_numeric($price) || $price < 0) {
+        $errors[] = "Valid price is required.";
+    }
+    if ($quantity === '' || !ctype_digit($quantity) || (int)$quantity < 0) {
+        $errors[] = "Valid quantity is required.";
+    }
+    if ($sku === '') {
+        $errors[] = "SKU is required.";
+    }
+
+    // Handle image upload (optional)
+    $imageFileName = $product['image']; // Keep existing by default
+    if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            if (in_array($_FILES['image']['type'], $allowedTypes)) {
+                $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $imageFileName = uniqid('prod_') . '.' . $ext;
+                $targetPath = "../assets/images/" . $imageFileName;
+
+                if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+                    $errors[] = "Failed to upload image.";
+                } else {
+                    // Optionally delete old image file here if you want
+                    if ($product['image'] && file_exists("../assets/images/" . $product['image'])) {
+                        @unlink("../assets/images/" . $product['image']);
+                    }
+                }
+            } else {
+                $errors[] = "Invalid image type. Allowed: JPG, PNG, GIF.";
+            }
+        } else {
+            $errors[] = "Error uploading image.";
+        }
+    }
+
+    if (empty($errors)) {
+        $updateQuery = "UPDATE product SET name = ?, description = ?, price = ?, quantity = ?, sku = ?, image = ?, updated_at = NOW() WHERE id = ?";
+        $stmt2 = mysqli_prepare($con, $updateQuery);
+        mysqli_stmt_bind_param($stmt2, "ssdisii", $name, $description, $price, $quantity, $sku, $imageFileName, $id);
+
+        if (mysqli_stmt_execute($stmt2)) {
+            $success = "Product updated successfully.";
+            // Refresh product data after update
+            $product['name'] = $name;
+            $product['description'] = $description;
+            $product['price'] = $price;
+            $product['quantity'] = $quantity;
+            $product['sku'] = $sku;
+            $product['image'] = $imageFileName;
+        } else {
+            $errors[] = "Database update failed: " . mysqli_error($con);
+        }
+    }
+}
+$adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
 ?>
 
-<?php include '../includes/adminheader.php'; ?>
-
-<div class="dashboard-content">
-
-    <header class="page-header center-content text-center">
-        <h1><i class="fas fa-box-open"></i> Our Products</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E-Clothing Store Admin Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/Admindashboard.css" />
+    <link rel="stylesheet" href="../assets/css/add_product.css" />
+    <link rel="stylesheet" href="../assets/css/view_product_table.css" />
+    <link rel="stylesheet" href="../assets/css/edit_product.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <!-- Top Navigation -->
+    <header class="topnav">
+        <div class="logo">
+            <i class="fas fa-tshirt"></i> E-Clothing Store
+        </div>
+        <nav class="topnav-menu">
+            <a href="#" class="nav-link active">Home</a>
+            <a href="../admin/logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="welcome-msg">
+            <i class="fas fa-user-circle"></i> Welcome, <strong><?php echo htmlspecialchars($adminName); ?></strong>
+        </div>
     </header>
 
-    <div class="search-wrapper">
-        <input type="search" id="searchInput" placeholder="Search by ID, Name or SKU..." autocomplete="off" aria-label="Search products" />
-       
-        <button type="button" class="page-close-btn" title="Back to Dashboard" aria-label="Close and return to dashboard" onclick="window.location.href='../admin/Admindashboard.php'">
-            &times;
-        </button>
-    </div>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="../admin/Admindashboard.php" class="sidebar-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
 
-    <div class="table-container" role="region" aria-live="polite" aria-relevant="all">
-        <table id="productTable" class="product-table" aria-label="List of products">
-            <thead>
-                <tr>
-                    <th>S.N.</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price (Rs)</th>
-                    <th>Quantity</th>
-                    <th>SKU</th>
-                    <th>Created At</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($products) > 0):
-                    $sn = 1;
-                    foreach ($products as $p):
-                        $descShort = strlen($p['description']) > 80 ? substr($p['description'], 0, 80) . '...' : $p['description'];
-                        $imgPath = "../assets/images/" . htmlspecialchars($p['image']);
-                ?>
-                <tr data-id="<?= $p['id'] ?>" data-name="<?= htmlspecialchars(strtolower($p['name'])) ?>" data-sku="<?= htmlspecialchars(strtolower($p['sku'])) ?>">
-                    <td><?= $sn++ ?></td>
-                    <td><img src="<?= $imgPath ?>" alt="<?= htmlspecialchars($p['name']) ?>" class="table-img" /></td>
-                    <td><?= htmlspecialchars($p['name']) ?></td>
-                    <td title="<?= htmlspecialchars($p['description']) ?>"><?= htmlspecialchars($descShort) ?></td>
-                    <td><?= number_format($p['price'], 2) ?></td>
-                    <td><?= htmlspecialchars($p['quantity']) ?></td>
-                    <td><?= htmlspecialchars($p['sku']) ?></td>
-                    <td><?= date("Y-m-d H:i", strtotime($p['created_at'])) ?></td>
-                    <td class="text-center">
-                        <div class="actions">
-                            <button class="btn view-btn" aria-label="View details of <?= htmlspecialchars($p['name']) ?>"
-                                onclick='openProductModal(<?= json_encode($p, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <a href="edit.php?id=<?= $p['id'] ?>" class="btn edit-btn" aria-label="Edit <?= htmlspecialchars($p['name']) ?>">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="delete.php?id=<?= $p['id'] ?>" class="btn delete-btn" aria-label="Delete <?= htmlspecialchars($p['name']) ?>"
-                                onclick="return confirm('Are you sure you want to delete this product?');">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; else: ?>
-                <tr><td colspan="9" class="no-data">No products found.</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+            <!-- Products with dropdown -->
+            <li class="dropdown">
+                <a href="#" class="sidebar-link dropdown-toggle">
+                    <i class="fas fa-box-open"></i> Products <i class="fas fa-chevron-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="../product/add.php" class="sidebar-sublink">Add Product</a></li>
+                    <li><a href="../product/view.php" class="sidebar-sublink">View Products</a></li>
+                </ul>
+            </li>
 
-    <!-- Product Modal -->
-    <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName" style="display:none;">
-        <div class="modal-content">
-            <button class="modal-close-btn" aria-label="Close product details" onclick="closeProductModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="modal-body">
-                <img id="modalImage" src="" alt="Product Image" class="modal-image" tabindex="0" onclick="openImageView()" />
-                <div class="modal-details">
-                    <h2 id="modalName"></h2>
-                    <p id="modalDesc" class="desc-font"></p>
-                    <p><strong>Price:</strong> Rs <span id="modalPrice"></span></p>
-                    <p><strong>Quantity:</strong> <span id="modalQty"></span></p>
-                    <p><strong>SKU:</strong> <span id="modalSKU"></span></p>
-                </div>
+            <!-- Categories with dropdown -->
+            <li class="dropdown">
+                <a href="#" class="sidebar-link dropdown-toggle">
+                    <i class="fas fa-tags"></i> Categories <i class="fas fa-chevron-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="../category/add_category.php" class="sidebar-sublink">Add Category</a></li>
+                    <li><a href="../category/view_category.php" class="sidebar-sublink">View Categories</a></li>
+                </ul>
+            </li>
+
+            <li><a href="../admin/customer.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
+            <li><a href="../admin/admin_orders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="../admin/orderdetail.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="dashboard-content">
+        <header class="page-header center-content text-center">
+            <h1><i class="fas fa-edit"></i> Edit Product</h1>
+        </header>
+
+        <div class="form-wrapper">
+        <?php if (!empty($errors)): ?>
+            <div class="alert alert-error" role="alert">
+                <ul>
+                    <?php foreach ($errors as $e): ?>
+                        <li><?= htmlspecialchars($e) ?></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
-        </div>
-    </div>
+        <?php endif; ?>
 
-    <!-- Image View Modal -->
-    <div id="imageViewModal" class="modal" role="dialog" aria-modal="true" style="display:none;" onclick="closeImageView(event)">
-        <button class="modal-close-btn close-image" aria-label="Close image view" onclick="closeImageView(event)">
-            <i class="fas fa-times"></i>
-        </button>
-        <img id="largeImage" src="" alt="Large product image view" />
+        <?php if ($success): ?>
+            <div class="alert alert-success" role="alert">
+                <?= htmlspecialchars($success) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" enctype="multipart/form-data" aria-label="Edit product form">
+            <div class="form-group">
+                <label for="name">Name<span aria-hidden="true">*</span></label>
+                <input type="text" id="name" name="name" value="<?= htmlspecialchars($product['name']) ?>" required />
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4"><?= htmlspecialchars($product['description']) ?></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price (Rs)<span aria-hidden="true">*</span></label>
+                <input type="number" id="price" name="price" value="<?= htmlspecialchars($product['price']) ?>" min="0" step="0.01" required />
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity<span aria-hidden="true">*</span></label>
+                <input type="number" id="quantity" name="quantity" value="<?= htmlspecialchars($product['quantity']) ?>" min="0" step="1" required />
+            </div>
+
+            <div class="form-group">
+                <label for="sku">SKU<span aria-hidden="true">*</span></label>
+                <input type="text" id="sku" name="sku" value="<?= htmlspecialchars($product['sku']) ?>" required />
+            </div>
+
+            <div class="form-group">
+                <label>Current Image</label><br />
+                <?php if ($product['image'] && file_exists("../assets/images/" . $product['image'])): ?>
+                    <img src="<?= "../assets/images/" . htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="form-img" />
+                <?php else: ?>
+                    <p>No image available</p>
+                <?php endif; ?>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Change Image (optional)</label>
+                <input type="file" id="image" name="image" accept="image/*" aria-describedby="imageHelp" />
+                <small id="imageHelp">Allowed types: JPG, PNG, GIF. Leave empty to keep current image.</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" name="submit" class="btn btn-primary">Update Product</button>
+                <a href="view.php" class="btn btn-secondary" role="button">Cancel</a>
+            </div>
+        </form>
     </div>
 
 </div>
 
-<?php include '../includes/adminfooter.php'; ?>
+    </main>
 
-<script>
-const searchInput = document.getElementById('searchInput');
-const productTable = document.getElementById('productTable');
-const tbodyRows = productTable.tBodies[0].rows;
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 E-Clothing Store. All Rights Reserved.</p>
+    </footer>
 
-searchInput.addEventListener('input', () => {
-    filterTable(searchInput.value);
-});
+    <!-- Scripts -->
+    <script>
+        // Dropdown toggle for categories and products
+        document.querySelectorAll('.dropdown-toggle').forEach(function(el) {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.parentElement.classList.toggle('open');
+            });
+        });
 
+        // Sidebar link active state toggle
+        document.querySelectorAll('.sidebar-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
-function filterTable(query) {
-    const q = query.trim().toLowerCase();
-    for (let row of tbodyRows) {
-        const id = row.getAttribute('data-id');
-        const name = row.getAttribute('data-name');
-        const sku = row.getAttribute('data-sku');
+        // Topnav menu active state toggle
+        document.querySelectorAll('.topnav-menu .nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.topnav-menu .nav-link').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
 
-        if (
-            id.includes(q) ||
-            name.includes(q) ||
-            sku.includes(q)
-        ) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    }
-}
-
-// Modal logic
-const productModal = document.getElementById('productModal');
-const modalImage = document.getElementById('modalImage');
-const modalName = document.getElementById('modalName');
-const modalDesc = document.getElementById('modalDesc');
-const modalPrice = document.getElementById('modalPrice');
-const modalQty = document.getElementById('modalQty');
-const modalSKU = document.getElementById('modalSKU');
-
-const imageViewModal = document.getElementById('imageViewModal');
-const largeImage = document.getElementById('largeImage');
-
-function openProductModal(product) {
-    modalImage.src = '../assets/images/' + product.image;
-    modalImage.alt = product.name + " image";
-    modalName.textContent = product.name;
-    modalDesc.textContent = product.description;
-    modalPrice.textContent = parseFloat(product.price).toFixed(2);
-    modalQty.textContent = product.quantity;
-    modalSKU.textContent = product.sku;
-    productModal.style.display = 'flex';
-    // Focus modal for accessibility
-    modalName.focus();
-}
-
-function closeProductModal() {
-    productModal.style.display = 'none';
-}
-
-function openImageView() {
-    largeImage.src = modalImage.src;
-    largeImage.alt = modalImage.alt;
-    imageViewModal.style.display = 'flex';
-}
-
-function closeImageView(event) {
-    if (!event || event.target === imageViewModal || event.target.classList.contains('close-image')) {
-        imageViewModal.style.display = 'none';
-    }
-}
-</script>
