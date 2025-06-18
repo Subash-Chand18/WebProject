@@ -74,9 +74,9 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
             </ul>
         </li>
 
-        <li><a href="customer.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
-        <li><a href="admin_orders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-        <li><a href="orderdetail.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
+        <li><a href="customers.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
+        <li><a href="Adminorders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+        <li><a href="orderdetails.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
         <li><a href="#" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
         <li><a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
@@ -108,36 +108,36 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
         </div>
     </div>
 </main>
+ <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 E-Clothing Store. All Rights Reserved.</p>
+    </footer>
 
-<footer class="footer">
-    <p>&copy; 2025 E-Clothing Store. All Rights Reserved.</p>
-</footer>
-
-<script>
-    // Dropdown Menu Toggle
-    document.querySelectorAll('.dropdown-toggle').forEach(function(el) {
-        el.addEventListener('click', function(e) {
-            e.preventDefault();
-            this.parentElement.classList.toggle('open');
+    <!-- Scripts -->
+    <script>
+        // Dropdown toggle for categories and products
+        document.querySelectorAll('.dropdown-toggle').forEach(function(el) {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.parentElement.classList.toggle('open');
+            });
         });
-    });
 
-    // Sidebar Active Link Highlight
-    document.querySelectorAll('.sidebar-link').forEach(function(link) {
-        link.addEventListener('click', function() {
-            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-            this.classList.add('active');
+        // Sidebar link active state toggle
+        document.querySelectorAll('.sidebar-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
-    });
 
-    // Topnav Active Link Highlight
-    document.querySelectorAll('.topnav-menu .nav-link').forEach(function(link) {
-        link.addEventListener('click', function() {
-            document.querySelectorAll('.topnav-menu .nav-link').forEach(el => el.classList.remove('active'));
-            this.classList.add('active');
+        // Topnav menu active state toggle
+        document.querySelectorAll('.topnav-menu .nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.topnav-menu .nav-link').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>

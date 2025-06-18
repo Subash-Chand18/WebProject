@@ -9,7 +9,6 @@ if (!$id) {
     exit;
 }
 
-// Soft delete by setting deleted_at
 mysqli_query($con, "UPDATE product SET deleted_at = NOW() WHERE id = '$id'");
 header("Location: view.php");
 exit;

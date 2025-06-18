@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 $con = mysqli_connect("localhost", "root", "", "EClothingStore");
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
@@ -8,9 +7,9 @@ if (!$con) {
 
 $error = '';
 
-if (isset($_POST['login'])) {
+if (isset($_POST['adminlogin'])) {
     $email = trim($_POST['email']);
-    $password = md5(trim($_POST['password'])); // Use password_hash in production
+    $password = md5(trim($_POST['password'])); 
 
     $query = "SELECT * FROM user WHERE email = '$email' AND password = '$password' AND deleted_at IS NULL AND user_type = 'admin'";
     $result = mysqli_query($con, $query);
@@ -61,7 +60,7 @@ if (isset($_POST['login'])) {
         </div>
 
         <div class="form-group" style="position: relative;">
-            <i class="bx bx-show toggle-icon" id="togglePassword"></i>
+        <i class="bx bx-show toggle-icon" id="togglePassword"></i>
             <input type="password" name="password" id="password" placeholder=" " required />
             <label for="password">Password</label>
         </div>
@@ -71,14 +70,13 @@ if (isset($_POST['login'])) {
                 <input type="checkbox" name="remember" <?php if (isset($_COOKIE['admin_email'])) echo 'checked'; ?> />
                 Remember me
             </label>
-            <a href="passwordreset.php">Forgot Password?</a>
+            <a href="forgotpassword.php">Forgot Password?</a>
         </div>
 
         <div class="button-group">
-            <button type="submit" name="login">Login</button>
+            <button type="submit" name="adminlogin">Login</button>
         </div>
 
-        <p>Don't have an admin account? <a href="AdminSignup.php">Sign Up</a></p>
     </form>
 
     <script>
@@ -98,6 +96,7 @@ if (isset($_POST['login'])) {
                 togglePassword.click();
             }
         });
+
     </script>
 </body>
 </html>

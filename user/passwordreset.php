@@ -1,30 +1,39 @@
+<?php
+    $user_id = $_GET['id'];
+
+    if(isset($_POST['submit'])){
+        $pass = $_POST['pass'];
+        $cpass = $_POST['cpass'];
+        if($pass == $cpass){
+            $sql = "update users set pass = '".md5($pass)."' where id =".$user_id;
+            $res = mysqli_query($con, $sql);
+            if($res){
+                echo "Passowrd changed";
+                header("Location: Userlogin.php");
+            }else{
+                echo 'Some problem during pass reset';
+            }
+        }
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
-    <link rel="stylesheet" href="../assets/css/passwordreset.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Reset Password</title>
 </head>
 <body>
-    <div class="forgot-password-wrapper">
-        <form action="" method="POST">
-            
-            <h1>Forgot Password</h1>
-            <p>Enter your email address and we’ll send you a link to reset your password.</p>
-            
-            <div class="input-box">
-                <i class='bx bxs-envelope'></i>
-                <input type="email" placeholder="Email Address" name="email" required>
-            </div>
-            
-            <button type="submit" class="btn">Send Reset Link</button>
-            
-            <div class="login-link">
-                <p>Remember your password? <a href="login.php">Login</a></p>
-            </div>
-        </form>
-    </div>
+    
+    <form action="" method="post">
+        <label for="login">New Password</label>
+        <input type="password" name="pass">
+
+        <label for="Password">Confirm Password</label>
+        <input type="pasword" name="cpass">
+
+        <input type="submit" name="submit" value="Change password">
+
+    </form>
 </body>
 </html>

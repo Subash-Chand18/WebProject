@@ -30,17 +30,17 @@ if (isset($_POST['login'])) {
             setcookie("email", "", time() - 3600, "/");
         }
 
-        // Default redirect to admin dashboard
+        // Default redirect to  shop
         $redirectUrl = '../index.php';
 
         // Optional: Dynamic redirect if set and safe
         if (isset($_GET['redirect']) && !empty($_GET['redirect'])) {
-            $allowedPages = ['checkout.php', 'index.php']; // Allowed pages
+            $allowedPages = ['chackout.php', 'index.php']; // Allowed pages
             $requestedPage = basename($_GET['redirect']);
 
             if (in_array($requestedPage, $allowedPages)) {
                 // Adjust folder path if needed
-                $redirectUrl = ($requestedPage == 'checkout.php') ? 'checkout.php' : '../index.php';
+                $redirectUrl = ($requestedPage == 'chackout.php') ? 'chackout.php' : '../index.php';
             }
         }
 
@@ -57,7 +57,7 @@ if (isset($_POST['login'])) {
 
 <head>
     <meta charset="UTF-8" />
-    <title>Admin Login - E-Clothing Store</title>
+    <title>User Login - E-Clothing Store</title>
     <link rel="stylesheet" href="../assets/css/style.css" />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
 </head>
@@ -88,7 +88,7 @@ if (isset($_POST['login'])) {
                 <input type="checkbox" name="remember" <?php if (isset($_COOKIE['email'])) echo 'checked'; ?> />
                 Remember me
             </label>
-            <a href="passwordreset.php">Forgot Password?</a>
+            <a href="passwordforgot.php">Forgot Password?</a>
         </div>
 
         <div class="button-group">

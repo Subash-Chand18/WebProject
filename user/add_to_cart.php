@@ -12,9 +12,12 @@ if (!isset($_SESSION['cart'])) {
 }
 
 if (isset($_SESSION['cart'][$product_id])) {
+    // Increase quantity
     $_SESSION['cart'][$product_id]['quantity'] += 1;
 } else {
+    // First time adding product - fetch product details
     $con = mysqli_connect("localhost", "root", "", "EClothingStore");
+
     if (!$con) {
         die("Database connection failed: " . mysqli_connect_error());
     }
@@ -27,17 +30,14 @@ if (isset($_SESSION['cart'][$product_id])) {
     if ($result && mysqli_num_rows($result) > 0) {
         $product = mysqli_fetch_assoc($result);
 
-        // Store only image filename (not full path)
         $_SESSION['cart'][$product_id] = [
             'id' => $product['id'],
             'name' => $product['name'],
             'price' => $product['price'],
-            'image' => $product['image'],  // Only filename
+            'image' => $product['image'],
             'quantity' => 1
         ];
     } else {
-        mysqli_stmt_close($stmt);
-        mysqli_close($con);
         die("Product not found.");
     }
 
@@ -45,6 +45,5 @@ if (isset($_SESSION['cart'][$product_id])) {
     mysqli_close($con);
 }
 
-// Redirect back to product listing or previous page
 header("Location: ../index.php");
-exit();
+exit;

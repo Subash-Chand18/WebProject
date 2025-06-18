@@ -12,12 +12,11 @@ $success = '';
 if (isset($_POST['signup'])) {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
-    $password = md5(trim($_POST['password'])); // For demo only, use stronger hashing in production
-    $confirm_password = md5(trim($_POST['confirm_password']));
+    $password_raw = trim($_POST['password']);
+    $confirm_password_raw = trim($_POST['confirm_password']);
 
-    // Handle image upload
     $upload_dir = "../assets/images/";
-    $image = null;
+    $image = "default-profile.png"; // Default image if none uploaded
 
     if (!empty($_FILES['userfile']['name'])) {
         $image = basename($_FILES['userfile']['name']);
@@ -30,24 +29,26 @@ if (isset($_POST['signup'])) {
         }
     }
 
-    if ($password !== $confirm_password) {
+    if (empty($name) || empty($email) || empty($password_raw) || empty($confirm_password_raw)) {
+        $error = "All fields except profile image are required!";
+    } elseif ($password_raw !== $confirm_password_raw) {
         $error = "Passwords do not match!";
-    }
+    } else {
+        $password = md5($password_raw);
 
-    if (!$error) {
-        // Check if email already exists and is not deleted
         $checkQuery = "SELECT id FROM user WHERE email = '$email' AND deleted_at IS NULL";
         $checkResult = mysqli_query($con, $checkQuery);
 
         if ($checkResult && mysqli_num_rows($checkResult) > 0) {
             $error = "Email is already registered!";
         } else {
-            // Insert user, image can be NULL if no upload
             $insertQuery = "INSERT INTO user (name, email, password, image) VALUES (?, ?, ?, ?)";
             $stmt = mysqli_prepare($con, $insertQuery);
             mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $password, $image);
             if (mysqli_stmt_execute($stmt)) {
-                $success = "Registration successful! You can now...... <a href='Userlogin.php'>login</a>.";
+                // Show success message with clickable login link including email param
+                $success = "Registration successful! You can now <a href='Userlogin.php?email=" . urlencode($email) . "'>login</a>.";
+                unset($_POST['name'], $_POST['email'], $_POST['password'], $_POST['confirm_password']);
             } else {
                 $error = "Registration failed: " . mysqli_error($con);
             }
@@ -63,7 +64,7 @@ if (isset($_POST['signup'])) {
 <head>
     <meta charset="UTF-8" />
     <title>User Signup</title>
-    <link rel="stylesheet" href="../assets/css/signup-style.css" />
+    <link rel="stylesheet" href="../assets/css/signup.css" />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
 </head>
 
@@ -103,21 +104,23 @@ if (isset($_POST['signup'])) {
                 role="button" tabindex="0"></i>
         </div>
 
-        <!-- Image Upload -->
         <div class="form-group">
-            <label for="userfile">Profile Image</label>
+            <label for="userfile">Profile Image (Optional)</label>
             <input type="file" name="userfile" id="userfile" accept="image/*" />
         </div>
 
         <div class="button-group">
             <button type="submit" name="signup">Sign Up</button>
-            <a href="Userlogin.php" class="cancel-btn"
+
+            <!-- Back to Login with JS passing email -->
+            <a href="Userlogin.php" id="backToLogin" class="cancel-btn"
                 style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; margin-top: 10px;">Back
                 to Login</a>
         </div>
     </form>
 
     <script>
+    // Password visibility toggle (same as before)
     function toggleVisibility(toggleId, inputId) {
         const toggleIcon = document.getElementById(toggleId);
         const inputField = document.getElementById(inputId);
@@ -139,6 +142,17 @@ if (isset($_POST['signup'])) {
 
     toggleVisibility("togglePassword", "password");
     toggleVisibility("toggleConfirmPassword", "confirm_password");
+
+    // Pass current email to login when clicking "Back to Login"
+    document.getElementById("backToLogin").addEventListener("click", function (e) {
+        e.preventDefault();
+        const emailValue = document.getElementById("email").value.trim();
+        let loginUrl = "Userlogin.php";
+        if (emailValue) {
+            loginUrl += "?email=" + encodeURIComponent(emailValue);
+        }
+        window.location.href = loginUrl;
+    });
     </script>
 </body>
 

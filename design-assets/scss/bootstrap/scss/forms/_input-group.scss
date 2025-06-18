@@ -14,7 +14,7 @@
     position: relative; // For focus state's z-index
     flex: 1 1 auto;
     width: 1%;
-    min-width: 0; // https://stackoverflow.com/questions/36247140/why-dont-flex-items-shrink-past-content-size
+    min-width: 0; 
   }
 
   // Bring the "active" form control to the top of surrounding elements
@@ -22,9 +22,6 @@
   > .form-select:focus {
     z-index: 3;
   }
-
-  // Ensure buttons are always above inputs for more visually pleasing borders.
-  // This isn't needed for `.input-group-text` since it shares the same border-color
   // as our inputs.
   .btn {
     position: relative;

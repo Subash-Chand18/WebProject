@@ -178,7 +178,7 @@
 
 /*** Hero Header ***/
 .hero-header {
-    background: linear-gradient(rgba(248, 223, 173, 0.1), rgba(248, 223, 173, 0.1)), url(../img/login-bg.jpg);
+    background: linear-gradient(rgba(248, 223, 173, 0.1), rgba(248, 223, 173, 0.1)), url(../img/shoppingmall.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -276,81 +276,81 @@
 /*** service End ***/
 
 
-/*** Fruits Start ***/
-.fruite .tab-class .nav-item a.active {
+/*** Clothes Start ***/
+.clothing .tab-class .nav-item a.active {
     background: var(--bs-secondary) !important;
 }
 
-.fruite .tab-class .nav-item a.active span {
+.clothing .tab-class .nav-item a.active span {
     color: var(--bs-white) !important; 
 }
 
-.fruite .fruite-categorie .fruite-name {
+.clothing .clothing-categorie .clothing-name {
     line-height: 40px;
 }
 
-.fruite .fruite-categorie .fruite-name a {
+.clothing .clothing-categorie .clothing-name a {
     transition: 0.5s;
 }
 
-.fruite .fruite-categorie .fruite-name a:hover {
+.clothing .clothing-categorie .clothing-name a:hover {
     color: var(--bs-secondary);
 }
 
-.fruite .fruite-item {
+.clothing .clothing-item {
     height: 100%;
     transition: 0.5s;
 }
-.fruite .fruite-item:hover {
+.clothing .clothing-item:hover {
     box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
 }
 
-.fruite .fruite-item .fruite-img {
+.clothing .clothing-item .clothing-img {
     overflow: hidden;
     transition: 0.5s;
     border-radius: 10px 10px 0 0;
 }
 
-.fruite .fruite-item .fruite-img img {
+.clothing .clothing-item .clothing-img img {
     transition: 0.5s;
 }
 
-.fruite .fruite-item .fruite-img img:hover {
+.clothing .clothing-item .clothing-img img:hover {
     transform: scale(1.3);
 }
-/*** Fruits End ***/
+/*** Clothes End ***/
 
 
-/*** vesitable Start ***/
-.vesitable .vesitable-item {
+/*** brandedproducts Start ***/
+.brandedproducts .brandedproducts-item {
     height: 100%;
     transition: 0.5s;
 }
 
-.vesitable .vesitable-item:hover {
+.brandedproducts .brandedproducts-item:hover {
     box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
 }
 
-.vesitable .vesitable-item .vesitable-img {
+.brandedproducts .brandedproducts-item .brandedproducts-img {
     overflow: hidden;
     transition: 0.5s;
     border-radius: 10px 10px 0 0;
 }
 
-.vesitable .vesitable-item .vesitable-img img {
+.brandedproducts .brandedproducts-item .brandedproducts-img img {
     transition: 0.5s;
 }
 
-.vesitable .vesitable-item .vesitable-img img:hover {
+.brandedproducts .brandedproducts-item .brandedproducts-img img:hover {
     transform: scale(1.2);
 }
 
-.vesitable .owl-stage {
+.brandedproducts .owl-stage {
     margin: 50px 0;
     position: relative;
 }
 
-.vesitable .owl-nav .owl-prev {
+.brandedproducts .owl-nav .owl-prev {
     position: absolute;
     top: -8px;
     right: 0;
@@ -362,12 +362,12 @@
 
 }
 
-.vesitable .owl-nav .owl-prev:hover {
+.brandedproducts .owl-nav .owl-prev:hover {
     background: var(--bs-secondary);
     color: var(--bs-white);
 }
 
-.vesitable .owl-nav .owl-next {
+.brandedproducts .owl-nav .owl-next {
     position: absolute;
     top: -8px;
     right: 88px;
@@ -378,11 +378,11 @@
     transition: 0.5s;
 }
 
-.vesitable .owl-nav .owl-next:hover {
+.brandedproducts .owl-nav .owl-next:hover {
     background: var(--bs-secondary);
     color: var(--bs-white);
 }
-/*** vesitable End ***/
+/*** brandedproducts End ***/
 
 
 /*** Banner Section Start ***/

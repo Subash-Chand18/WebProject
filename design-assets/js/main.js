@@ -78,8 +78,8 @@
     });
 
 
-    // vegetable carousel
-    $(".vegetable-carousel").owlCarousel({
+    // Clothes carousel
+    $(".clothes-carousel").owlCarousel({
         autoplay: true,
         smartSpeed: 1500,
         center: false,

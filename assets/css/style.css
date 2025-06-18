@@ -226,3 +226,20 @@ form.authForm > p[style*="color: red"] {
         text-align: center;
     }
 }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+    display: none !important;
+    pointer-events: none;
+    opacity: 0;
+}
+input[type="password"] {
+    appearance: none;
+    -webkit-appearance: none;
+}
