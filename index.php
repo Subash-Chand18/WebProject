@@ -265,12 +265,12 @@ $total_products = $product_row['total_products'];
                     <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
                         <div class="carousel-inner" role="listbox">
                             <div class="carousel-item active rounded">
-                                <img src="design-assets/img/blackcoat.webp"
+                                <img src="design-assets/img/blackcoat.jpg"
                                     class="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide">
                                 <a href="#" class="btn px-4 py-2 text-white rounded">Men</a>
                             </div>
                             <div class="carousel-item rounded">
-                                <img src="design-assets/img/Red-WeddingBridalGown.avif"
+                                <img src="design-assets/img/Red-WeddingBridalGown.jpg"
                                     class="img-fluid w-100 h-100 rounded" alt="Second slide">
                                 <a href="#" class="btn px-4 py-2 text-white rounded">Women</a>
                             </div>
@@ -512,7 +512,7 @@ $total_products = $product_row['total_products'];
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-dark rounded border border-dark">
-                            <img src="design-assets/img/blackcoat.webp" class="img-fluid rounded-top w-100" alt="">
+                            <img src="design-assets/img/blackcoat.jpg" class="img-fluid rounded-top w-100" alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-light text-center p-4 rounded">
                                     <h5 class="text-primary">Brand clothes</h5>
@@ -630,7 +630,7 @@ $total_products = $product_row['total_products'];
                 </div>
                 <div class="col-lg-6">
                     <div class="position-relative">
-                        <img src="design-assets/img/banner-1.avif" class="img-fluid w-100 rounded" alt="" width="10">
+                        <img src="design-assets/img/banner-1.png" class="img-fluid w-100 rounded" alt="" width="10">
                         <div class="d-flex align-items-center justify-content-center bg-white rounded-circle position-absolute"
                             style="width: 140px; height: 140px; top: 0; left: 0;">
                             <h1 style="font-size: 100px;">1</h1>
