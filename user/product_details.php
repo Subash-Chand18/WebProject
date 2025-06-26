@@ -1,6 +1,6 @@
 <?php
 session_start();
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
@@ -32,7 +32,7 @@ if (isset($_GET['id'])) {
         // Fetch all reviews
         $review_sql = "SELECT pr.rating, pr.review, u.name, pr.created_at 
                        FROM product_ratings pr 
-                       JOIN user u ON pr.user_id = u.id 
+                       JOIN users u ON pr.user_id = u.id 
                        WHERE pr.product_id = $id 
                        ORDER BY pr.created_at DESC";
         $reviews_result = mysqli_query($con, $review_sql);

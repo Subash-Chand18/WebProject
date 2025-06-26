@@ -1,39 +1,25 @@
 <?php
 include("includes/header.php");
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
-// Handle search query
-$search = '';
-$where = '';
-
-if (!empty($_GET['search'])) {
-    $search = mysqli_real_escape_string($con, $_GET['search']);
-    $where = "WHERE 
-        p.id LIKE '%$search%' OR
-        p.name LIKE '%$search%' OR
-        p.sku LIKE '%$search%' OR
-        p.price LIKE '%$search%'";
-}
-
-// Get all products
 $sql = "SELECT p.*, c.name AS category_name 
         FROM product p 
         LEFT JOIN category c ON p.category_id = c.id 
-        $where
+        WHERE p.deleted_at IS NULL 
         ORDER BY p.id DESC";
 $result = mysqli_query($con, $sql);
 ?>
 <br><br><br><br><br>
-<!-- Shop Page Products Section -->
+
 <div class="container-fluid clothing py-5">
     <div class="container py-5">
-
         <div class="text-center mb-5">
             <h1 class="mb-4">All Products</h1>
-            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
-                <input type="text" id="searchInput" placeholder="Search by ID, Name, SKU, or Price"
-                    class="form-control w-50" style="max-width: 400px;">
-                <button type="button" onclick="clearSearch()" class="btn btn-outline-secondary">Clear</button>
+            <div class="input-group mb-3 w-50 mx-auto">
+                <input type="text" id="searchBox"
+                    placeholder="Search by name, ID, price, SKU, category, or price range like 100-500"
+                    class="form-control">
+                <button class="btn btn-outline-secondary" type="button" id="clearBtn">X</button>
             </div>
         </div>
 
@@ -41,7 +27,8 @@ $result = mysqli_query($con, $sql);
             <?php while ($product = mysqli_fetch_assoc($result)): ?>
                 <div class="col-md-6 col-lg-4 col-xl-3 product-card" data-id="<?= $product['id']; ?>"
                     data-name="<?= strtolower($product['name']); ?>" data-sku="<?= strtolower($product['sku']); ?>"
-                    data-price="<?= $product['price']; ?>">
+                    data-description="<?= strtolower($product['description']); ?>" data-price="<?= $product['price']; ?>"
+                    data-category="<?= strtolower($product['category_name']); ?>">
 
                     <div class="rounded position-relative clothing-item">
                         <a href="product_details.php?id=<?= $product['id']; ?>">
@@ -58,20 +45,17 @@ $result = mysqli_query($con, $sql);
                             <h5><?= htmlspecialchars($product['name']); ?></h5>
                             <p><?= htmlspecialchars($product['description']); ?></p>
 
-                            <!-- Price and Add to Cart or Out of Stock -->
                             <div class="d-flex justify-content-between flex-lg-wrap">
                                 <span class="text-dark fs-5 fw-bold">
                                     Rs <?= number_format($product['price'], 2); ?>
                                 </span>
 
                                 <?php if ($product['quantity'] > 0): ?>
-                                    <!-- Active Add to Cart -->
                                     <a href="add_to_cart.php?id=<?= $product['id']; ?>&quantity=1"
                                         class="btn border border-secondary rounded-pill px-3 text-primary">
                                         <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                                     </a>
                                 <?php else: ?>
-                                    <!-- Disabled when out of stock -->
                                     <button class="btn border border-secondary rounded-pill px-3 text-danger" disabled>
                                         Out of Stock
                                     </button>
@@ -82,46 +66,60 @@ $result = mysqli_query($con, $sql);
                 </div>
             <?php endwhile; ?>
         </div>
-
-        <div class="text-center mt-4" id="noResults" style="display:none;">
-            <p class="text-danger"> No matching products found.</p>
-        </div>
-
     </div>
 </div>
 
 <?php include("includes/footer.php"); ?>
 <script>
-    const searchInput = document.getElementById("searchInput");
-    const productCards = document.querySelectorAll(".product-card");
-    const noResults = document.getElementById("noResults");
-
-    searchInput.addEventListener("input", function () {
+    document.getElementById('searchBox').addEventListener('input', function () {
         const query = this.value.trim().toLowerCase();
-        let matchCount = 0;
+        const productCards = document.querySelectorAll('.product-card');
+
+        let minPrice = null, maxPrice = null;
+        const priceRangeMatch = query.match(/^(\d+)\s*-\s*(\d+)$/);
+
+        if (priceRangeMatch) {
+            minPrice = parseFloat(priceRangeMatch[1]);
+            maxPrice = parseFloat(priceRangeMatch[2]);
+        }
 
         productCards.forEach(card => {
-            const id = card.dataset.id.toLowerCase();
+            const id = card.dataset.id;
             const name = card.dataset.name;
             const sku = card.dataset.sku;
-            const price = card.dataset.price;
+            const description = card.dataset.description;
+            const price = parseFloat(card.dataset.price);
+            const category = card.dataset.category;
 
-            const matches = id.includes(query) || name.includes(query) || sku.includes(query) || price.includes(query);
+            let matches = false;
 
-            if (matches) {
-                card.style.display = "block";
-                matchCount++;
+            if (priceRangeMatch) {
+                if (price >= minPrice && price <= maxPrice) {
+                    matches = true;
+                }
             } else {
-                card.style.display = "none";
+                if (
+                    id.includes(query) ||
+                    name.includes(query) ||
+                    sku.includes(query) ||
+                    description.includes(query) ||
+                    category.includes(query) ||
+                    price.toString().includes(query)
+                ) {
+                    matches = true;
+                }
             }
-        });
 
-        noResults.style.display = matchCount === 0 ? "block" : "none";
+            card.style.display = matches ? '' : 'none';
+        });
+    });
+    // Clear Button functionality
+    document.getElementById('clearBtn').addEventListener('click', function () {
+        document.getElementById('searchBox').value = '';
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.style.display = '';
+        });
     });
 
-    function clearSearch() {
-        searchInput.value = "";
-        productCards.forEach(card => card.style.display = "block");
-        noResults.style.display = "none";
-    }
 </script>

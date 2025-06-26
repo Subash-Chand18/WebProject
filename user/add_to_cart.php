@@ -16,7 +16,7 @@ if (isset($_SESSION['cart'][$product_id])) {
     $_SESSION['cart'][$product_id]['quantity'] += 1;
 } else {
     // First time adding product - fetch product details
-    $con = mysqli_connect("localhost", "root", "", "EClothingStore");
+    $con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
     if (!$con) {
         die("Database connection failed: " . mysqli_connect_error());

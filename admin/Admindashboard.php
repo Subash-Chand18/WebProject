@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
     exit();
 }
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
@@ -15,7 +15,7 @@ if (!$con) {
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM product WHERE deleted_at IS NULL");
 $totalProducts = mysqli_fetch_assoc($res)['total'] ?? 0;
 
-$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM user WHERE user_type = 'user' AND deleted_at IS NULL");
+$res = mysqli_query($con, "SELECT COUNT(*) AS total FROM users WHERE user_type = 'user' AND deleted_at IS NULL");
 $totalUsers = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 $res = mysqli_query($con, "SELECT COUNT(*) AS total FROM orders WHERE order_status='pending' AND deleted_at IS NULL");
@@ -77,6 +77,7 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
         <li><a href="customers.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
         <li><a href="Adminorders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
         <li><a href="orderdetails.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
+         <li><a href="product_rating_review.php" class="sidebar-link"><i class="fas fa-comment-dots"></i> Review</a></li>
         <li><a href="#" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
         <li><a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
@@ -89,22 +90,24 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
         <div class="stat-box">
             <i class="fas fa-box stat-icon"></i>
             <h3>Total Products</h3>
-            <p><?= $totalProducts ?></p>
+           <p><span class="count" data-target="<?= $totalProducts ?>">0</span></p>
+
         </div>
         <div class="stat-box">
             <i class="fas fa-users stat-icon"></i>
             <h3>Total Users</h3>
-            <p><?= $totalUsers ?></p>
+            <p><span class="count" data-target="<?= $totalUsers ?>">0</span></p>
         </div>
         <div class="stat-box">
             <i class="fas fa-hourglass-half stat-icon"></i>
             <h3>Pending Orders</h3>
-            <p><?= $pendingOrders ?></p>
+            <p><span class="count" data-target="<?= $pendingOrders ?>">0</span></p>
         </div>
         <div class="stat-box">
             <i class="fas fa-dollar-sign stat-icon"></i>
             <h3>Total Revenue</h3>
-            <p>Rs. <?= number_format($totalRevenue, 2) ?></p>
+            <p>Rs. <span class="count" data-target="<?= (int)$totalRevenue ?>">0</span>.00</p>
+
         </div>
     </div>
 </main>
@@ -139,5 +142,30 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
             });
         });
     </script>
+    <script>
+    const counters = document.querySelectorAll('.count');
+    const speed = 100; // animation speed, adjust as needed
+
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let count = 0;
+
+        const updateCount = () => {
+            const increment = Math.ceil(target / speed);
+
+            if (count < target) {
+                count += increment;
+                if (count > target) count = target;
+                counter.innerText = count.toLocaleString('en-IN'); // adds commas for thousands
+                setTimeout(updateCount, 20);
+            } else {
+                counter.innerText = target.toLocaleString('en-IN');
+            }
+        };
+
+        updateCount();
+    });
+</script>
+
 </body>
 </html>

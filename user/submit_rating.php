@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = mysqli_connect("localhost", "root", "", "EClothingStore");
+$conn = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());

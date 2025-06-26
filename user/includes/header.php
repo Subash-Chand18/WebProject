@@ -32,7 +32,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <link href="../design-assets/css/product_details.css" rel="stylesheet">
     <link href="../design-assets/css/order_success.css" rel="stylesheet">
     <link href="../design-assets/css/myorder.css" rel="stylesheet">
-    <link href="../design-assets/css/style.css" rel="stylesheet">
+    <link href="../design-assets/css/style.css" rel="stylesheet"> 
 </head>
 
 <body>

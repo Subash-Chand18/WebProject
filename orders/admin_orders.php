@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
@@ -32,7 +32,7 @@ $sql = "
         SUM(od.quantity) AS total_quantity,
         SUM(od.unit_price * od.quantity) AS total_price
     FROM orders o
-    LEFT JOIN user u ON o.user_id = u.id
+    LEFT JOIN users u ON o.user_id = u.id
     LEFT JOIN orderdetail od ON od.order_id = o.id
     LEFT JOIN product p ON od.product_id = p.id
     WHERE o.deleted_at IS NULL

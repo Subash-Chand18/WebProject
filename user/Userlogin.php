@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
@@ -12,7 +12,7 @@ if (isset($_POST['login'])) {
     $email = trim($_POST['email']);
     $password = md5(trim($_POST['password'])); // In production, use password_hash()
 
-    $query = "SELECT * FROM user WHERE email = '$email' AND password = '$password' AND deleted_at IS NULL";
+    $query = "SELECT * FROM users WHERE email = '$email' AND password = '$password' AND deleted_at IS NULL";
     $result = mysqli_query($con, $query);
 
     if ($result && mysqli_num_rows($result) === 1) {

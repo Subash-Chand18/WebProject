@@ -23,7 +23,7 @@ $sql = "
         SUM(od.quantity) AS total_quantity,
         SUM(od.unit_price * od.quantity) + o.shipping_charge AS total_price
     FROM orders o
-    LEFT JOIN user u ON o.user_id = u.id
+    LEFT JOIN users u ON o.user_id = u.id
     LEFT JOIN shipping s ON s.order_id = o.id
     LEFT JOIN orderdetail od ON od.order_id = o.id
     LEFT JOIN product p ON od.product_id = p.id
@@ -35,13 +35,13 @@ $sql = "
 $res = mysqli_query($con, $sql);
 ?>
 
-<style>
+<!-- <style>
     th, .table td, .table th {
         text-align: center;
     }
 
     .blue-hover tbody tr:hover {
-        background-color: rgb(232, 241, 241);
+        background-color: rgb(215, 218, 218);
         box-shadow: 0 0 10px rgba(228, 238, 246, 0.2);
         transition: all 0.3s ease-in-out;
     }
@@ -86,7 +86,60 @@ $res = mysqli_query($con, $sql);
         border-radius: 8px;
         border: 1px solid #ccc;
     }
+</style> -->
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content{
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 25px;
+        border-radius: 10px;
+        max-width: 600px;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.3s ease-in-out;
+        text-align: center;
+    }
+
+    .modal-product-images img {
+        width: 100px;
+        height: auto;
+        margin: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Responsive for small screens */
+    @media (max-width: 768px) {
+        .table th,
+        .table td {
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        .modal-content {
+            width: 90%;
+        }
+    }
 </style>
+
 <div class="dashboard-content">
     <header class="page-header center-content text-center">
         <h1><i class="fas fa-box-open"></i> Order Details</h1>
@@ -94,14 +147,14 @@ $res = mysqli_query($con, $sql);
 
     <div class="search-wrapper">
         <input type="search" id="searchInput" placeholder="Search by ID, product Name or Username..." autocomplete="off" aria-label="Search products" />
-        <button type="button" class="page-close-btn" title="Back to Dashboard" onclick="window.location.href='../admin/Admindashboard.php'">
+        <button type="button" class="page-close-btn" title="Back to Dashboard" onclick="window.location.href='Admindashboard.php'">
             &times;
         </button>
     </div>
 
-    <div class="table-responsive table-container">
-        <table id="orderTable" class="table table-bordered table-hover blue-hover">
-            <thead class="table-info">
+     <div class="table-container" role="region" aria-live="polite" aria-relevant="all">
+        <table id="usertTable" class="user-table" aria-label="List of user">
+            <thead>
                 <tr>
                     <th>Order ID</th>
                     <th>Customer Name</th>
@@ -204,7 +257,7 @@ $res = mysqli_query($con, $sql);
 
     document.getElementById('searchInput').addEventListener('input', function () {
         let filter = this.value.toLowerCase();
-        document.querySelectorAll('#orderTable tbody tr').forEach(row => {
+        document.querySelectorAll('#usertTable tbody tr').forEach(row => {
             row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
         });
     });

@@ -1,12 +1,13 @@
 <?php
 session_start();
+require_once'Mail/order_mailer.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: Userlogin.php");
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
@@ -83,15 +84,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_query($con, $updateProductQuery);
         }
 
-        // Clear cart
+
+        //  Fetch ordered product details
+        $orderItemsQuery = "SELECT p.name, od.quantity, od.unit_price, od.total
+                            FROM orderdetail od
+                            JOIN product p ON od.product_id = p.id
+                            WHERE od.order_id = $order_id";
+        $result = mysqli_query($con, $orderItemsQuery);
+
+        //  Prepare email body
+        $table = "<h2>Thank you for your order, $customer_name!</h2>";
+        $table .= "<p><strong>Order ID:</strong> #$order_id<br>
+                   <strong>Payment:</strong> $payment_method<br>
+                   <strong>Shipping Charge:</strong> Rs. $shipping_charge<br>
+                   <strong>Shipping Address:</strong> $shipping_address<br>
+                   <strong>Billing Address:</strong> $billing_address<br>
+                   <strong>Country:</strong> $country<br>
+                   <strong>Mobile:</strong> $mobile<br>
+                   <strong>Email:</strong> $email</p>";
+
+        $table .= "<table border='1' cellpadding='8' cellspacing='0'>
+                   <tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>";
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            $table .= "<tr>
+                        <td>{$row['name']}</td>
+                        <td>{$row['quantity']}</td>
+                        <td>Rs. {$row['unit_price']}</td>
+                        <td>Rs. {$row['total']}</td>
+                      </tr>";
+        }
+
+        $table .= "</table><p><strong>Grand Total: Rs. $total</strong></p>";
+
+        //  Email subjects and addresses
+       // $user_subject = "🧾 Order Confirmation - Order #$order_id";
+        $user_subject = "🧾 Order Placed - Order #$order_id";
+        $admin_subject = "📦 New Order Received - Order #$order_id";
+
+        $admin_email = "subashchan31@gmail.com";
+        $admin_name = "E-Clothing Admin";
+
+        //  Send email to user
+        if (!mailer($email, $customer_name, $user_subject, $table)) {
+            error_log(" Failed to send confirmation email to user: $email");
+        }
+
+        // Send email to admin
+        if (!mailer($admin_email, $admin_name, $admin_subject, $table)) {
+            error_log(" Failed to send admin notification email to: $admin_email");
+        }
+
+        //  Clear cart
         unset($_SESSION['cart']);
 
-        // Redirect to success page with order ID
         header("Location: order_success.php?order_id=$order_id");
         exit;
+
     } else {
-        echo "Error placing order: " . mysqli_error($con);
+        echo " Error placing order: " . mysqli_error($con);
     }
+
 } else {
     header("Location: chackout.php");
     exit;

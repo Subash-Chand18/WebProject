@@ -5,16 +5,16 @@ if (!$con) die("Connection failed: " . mysqli_connect_error());
 
 $id = intval($_GET['id'] ?? 0);
 if (!$id) {
-    header("Location: orderdetails.php");
+    header("Location: customers.php");
     exit;
 }
 
 // Soft delete
-$query = "UPDATE orders SET deleted_at = NOW() WHERE id = $id";
+$query = "UPDATE users SET deleted_at = NOW() WHERE id = $id";
 if (!mysqli_query($con, $query)) {
     die("Error deleting record: " . mysqli_error($con));
 }
 
-header("Location: orderdetails.php");
+header("Location: customers.php");
 exit;
 ?>

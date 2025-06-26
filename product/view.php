@@ -1,10 +1,10 @@
 <?php
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("DB connection failed: " . mysqli_connect_error());
 }
 
-$result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at ASC");
+$result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at DESC");
 
 $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
@@ -111,12 +111,16 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 <?php include '../includes/footer.php'; ?>
 
 <script>
-const searchInput = document.getElementById('searchInput');
-const productTable = document.getElementById('productTable');
-const tbodyRows = productTable.tBodies[0].rows;
 
-searchInput.addEventListener('input', () => {
-    filterTable(searchInput.value);
+// Search functionality
+document.getElementById('searchInput').addEventListener('keyup', function () {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#productTable tbody tr');
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
 });
 
 

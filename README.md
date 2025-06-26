@@ -1,3 +1,3 @@
 # E Clothing Store 
 This is our web based college project III .
-Author - Subash chand 
+Author - Dipa Bist

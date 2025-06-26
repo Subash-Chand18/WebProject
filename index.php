@@ -4,7 +4,7 @@ session_start();
 $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
@@ -59,7 +59,7 @@ while ($row = mysqli_fetch_assoc($res)) {
 }
 
 // Count total Users
-$user_result = mysqli_query($con, "SELECT COUNT(*) AS total_users FROM user where deleted_at is null");
+$user_result = mysqli_query($con, "SELECT COUNT(*) AS total_users FROM users where deleted_at is null");
 $user_row = mysqli_fetch_assoc($user_result);
 $total_users = $user_row['total_users'];
 
@@ -98,6 +98,8 @@ $total_products = $product_row['total_products'];
 
     <!-- Template Stylesheet -->
     <link href="design-assets/css/style.css" rel="stylesheet">
+     <link href="assets/css/view_product.css" rel="stylesheet">
+
     <style>
         /* Smooth transition for the entire card */
         .clothing-item {
@@ -161,13 +163,26 @@ $total_products = $product_row['total_products'];
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="index.php" class="nav-item nav-link active">Home</a>
-                        <a href="user/our_shop.php" class="nav-item nav-link">Shop</a>
-                        <a href="user/contact.php" class="nav-item nav-link">Contact</a>
-                        <?php if (isset($_SESSION['user_id'])): ?><a href="user/myorders.php"
-                                class="nav-item nav-link">My Orders</a><?php endif; ?>
+                        <a href="index.php"
+                            class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'index.php')
+                                echo 'active'; ?>">Home</a>
 
+                        <a href="user/our_shop.php"
+                            class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'our_shop.php')
+                                echo 'active'; ?>">Shop</a>
+
+                        <a href="user/contact.php"
+                            class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'contact.php')
+                                echo 'active'; ?>">Contact</a>
+
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <a href="user/myorders.php"
+                                class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'myorders.php')
+                                    echo 'active'; ?>">My
+                                Orders</a>
+                        <?php endif; ?>
                     </div>
+
                     <div class="d-flex align-items-center gap-3">
 
                         <div class="d-flex align-items-center gap-3">
@@ -180,10 +195,21 @@ $total_products = $product_row['total_products'];
                             <?php endif; ?>
                         </div>
                         <div class="d-flex m-3 me-0">
-                            <button
-                                class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
-                                data-bs-toggle="modal" data-bs-target="#searchModal"><i
-                                    class="fas fa-search text-primary"></i></button>
+                            <button id="searchToggle"
+                                class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4">
+                                <i class="fas fa-search text-primary"></i>
+                            </button>
+
+                            <!-- Search Input with Clear Button -->
+                            <div id="searchWrapper" class="d-none position-relative">
+                                <input type="text" id="searchBox" class="form-control ps-2 pe-5" style="width: 280px;">
+
+                                <!-- Clear Button inside input -->
+                                <button id="clearSearch" class="btn btn-sm btn-light border position-absolute"
+                                    style="right: 5px; top: 50%; transform: translateY(-50%);">
+                                    ✖
+                                </button>
+                            </div>
                             <a href="user/cart.php" class="position-relative me-4 my-auto">
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span
@@ -422,23 +448,27 @@ $total_products = $product_row['total_products'];
                                                         <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
                                                             style="top: 10px; left: 10px;"><?php echo $row['category_name']; ?>
                                                         </div>
-                                                        <div class="d-flex justify-content-between flex-lg-wrap">
-                                                            <p class="text-dark fs-5 fw-bold mb-0">Rs
-                                                                <?php echo number_format($row['price'], 2); ?>
-                                                            </p>
+                                                        <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                            <h4><?php echo $row['name']; ?></h4>
+                                                            <p><?php echo $row['description']; ?></p>
+                                                            <div class="d-flex justify-content-between flex-lg-wrap">
+                                                                <p class="text-dark fs-5 fw-bold mb-0">Rs
+                                                                    <?php echo number_format($row['price'], 2); ?>
+                                                                </p>
 
-                                                            <?php if ($row['quantity'] > 0) { ?>
-                                                                <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>"
-                                                                    class="btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-                                                                </a>
-                                                            <?php } else { ?>
-                                                                <button
-                                                                    class="btn border border-secondary rounded-pill px-3 text-danger"
-                                                                    disabled>
-                                                                    Out of Stock
-                                                                </button>
-                                                            <?php } ?>
+                                                                <?php if ($row['quantity'] > 0) { ?>
+                                                                    <a href="user/add_to_cart.php?id=<?php echo $row['id']; ?>"
+                                                                        class="btn border border-secondary rounded-pill px-3 text-primary">
+                                                                        <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <button
+                                                                        class="btn border border-secondary rounded-pill px-3 text-danger"
+                                                                        disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                <?php } ?>
+                                                            </div>
                                                         </div>
 
                                                     </div>
@@ -662,44 +692,44 @@ $total_products = $product_row['total_products'];
     </div>
     <!-- Bestsaler Product End -->
 
-<!-- Fact Start -->
-<div class="container-fluid py-5">
-    <div class="container">
-        <div class="bg-light p-5 rounded">
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Satisfied Customers</h4>
-                        <h1><?php echo $total_users; ?></h1>
+    <!-- Fact Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="bg-light p-5 rounded">
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5">
+                            <i class="fa fa-users text-secondary"></i>
+                            <h4>Satisfied Customers</h4>
+                            <h1 class="count" data-target="<?php echo $total_users; ?>">0</h1>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Quality of Service</h4>
-                        <h1>99%</h1>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5">
+                            <i class="fa fa-users text-secondary"></i>
+                            <h4>Quality of Service</h4>
+                            <h1>99%</h1>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Quality Certificates</h4>
-                        <h1>33</h1>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5">
+                            <i class="fa fa-users text-secondary"></i>
+                            <h4>Quality Certificates</h4>
+                            <h1>33</h1>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Available Products</h4>
-                        <h1><?php echo $total_products; ?></h1>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="counter bg-white rounded p-5">
+                            <i class="fa fa-users text-secondary"></i>
+                            <h4>Available Products</h4>
+                            <h1 class="count" data-target="<?php echo $total_products; ?>">0</h1>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Fact End -->
+    <!-- Fact End -->
 
 
 
@@ -937,6 +967,92 @@ $total_products = $product_row['total_products'];
         });
     </script>
 
+    <script>
+        const counters = document.querySelectorAll('.count');
+        const speed = 100; // Adjust the speed (lower is faster)
+
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+
+                const increment = Math.ceil(target / speed);
+
+                if (count < target) {
+                    counter.innerText = count + increment;
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+
+            updateCount();
+        });
+    </script>
+
+    <script>
+        const searchToggle = document.getElementById('searchToggle');
+        const searchWrapper = document.getElementById('searchWrapper');
+        const searchBox = document.getElementById('searchBox');
+        const clearSearch = document.getElementById('clearSearch');
+
+        searchToggle.addEventListener('click', () => {
+            searchWrapper.classList.toggle('d-none');
+            if (!searchWrapper.classList.contains('d-none')) {
+                searchBox.focus();
+            } else {
+                searchBox.value = '';
+                filterProducts('');
+            }
+        });
+
+        searchBox.addEventListener('input', () => {
+            filterProducts(searchBox.value.trim().toLowerCase());
+        });
+
+        clearSearch.addEventListener('click', () => {
+            searchBox.value = '';
+            searchBox.focus();
+            filterProducts('');
+        });
+
+        function filterProducts(query) {
+            const productCards = document.querySelectorAll('.product-card');
+
+            const priceRangeMatch = query.match(/^(\d+)\s*-\s*(\d+)$/);
+            let minPrice = null, maxPrice = null;
+
+            productCards.forEach(card => {
+                const id = card.dataset.id.toLowerCase();
+                const name = card.dataset.name.toLowerCase();
+                const price = parseFloat(card.dataset.price);
+                const description = card.dataset.description.toLowerCase();
+                const category = card.dataset.category.toLowerCase();
+
+                let matches = false;
+
+                if (priceRangeMatch) {
+                    minPrice = parseFloat(priceRangeMatch[1]);
+                    maxPrice = parseFloat(priceRangeMatch[2]);
+                    if (price >= minPrice && price <= maxPrice) {
+                        matches = true;
+                    }
+                } else {
+                    if (
+                        id.includes(query) ||
+                        name.includes(query) ||
+                        price.toString().includes(query) ||
+                        description.includes(query) ||
+                        category.includes(query)
+                    ) {
+                        matches = true;
+                    }
+                }
+
+                card.style.display = matches ? '' : 'none';
+            });
+        }
+    </script>
 
     <!-- Template Javascript -->
     <script src="design-assets/js/main.js"></script>

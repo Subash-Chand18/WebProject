@@ -2,13 +2,13 @@
 session_start();
 
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
 $user_id = $_SESSION['user_id'];
-$query = "SELECT name, email FROM user WHERE id = $user_id";
+$query = "SELECT name, email FROM users WHERE id = $user_id";
 $result = mysqli_query($con, $query);
 
 if ($result && mysqli_num_rows($result) > 0) {

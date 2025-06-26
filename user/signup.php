@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
@@ -16,7 +16,7 @@ if (isset($_POST['signup'])) {
     $confirm_password_raw = trim($_POST['confirm_password']);
 
     $upload_dir = "../assets/images/";
-    $image = "default-profile.png"; // Default image if none uploaded
+    $image = "avatar.jpg";
 
     if (!empty($_FILES['userfile']['name'])) {
         $image = basename($_FILES['userfile']['name']);
@@ -29,24 +29,26 @@ if (isset($_POST['signup'])) {
         }
     }
 
+    // Server-side validation
     if (empty($name) || empty($email) || empty($password_raw) || empty($confirm_password_raw)) {
         $error = "All fields except profile image are required!";
     } elseif ($password_raw !== $confirm_password_raw) {
         $error = "Passwords do not match!";
+    } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/", $password_raw)) {
+        $error = "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one special character.";
     } else {
-        $password = md5($password_raw);
+        $password = md5($password_raw); // For real apps, use password_hash()
 
-        $checkQuery = "SELECT id FROM user WHERE email = '$email' AND deleted_at IS NULL";
+        $checkQuery = "SELECT id FROM users WHERE email = '$email' AND deleted_at IS NULL";
         $checkResult = mysqli_query($con, $checkQuery);
 
         if ($checkResult && mysqli_num_rows($checkResult) > 0) {
             $error = "Email is already registered!";
         } else {
-            $insertQuery = "INSERT INTO user (name, email, password, image) VALUES (?, ?, ?, ?)";
+            $insertQuery = "INSERT INTO users (name, email, password, image) VALUES (?, ?, ?, ?)";
             $stmt = mysqli_prepare($con, $insertQuery);
             mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $password, $image);
             if (mysqli_stmt_execute($stmt)) {
-                // Show success message with clickable login link including email param
                 $success = "Registration successful! You can now <a href='Userlogin.php?email=" . urlencode($email) . "'>login</a>.";
                 unset($_POST['name'], $_POST['email'], $_POST['password'], $_POST['confirm_password']);
             } else {
@@ -57,6 +59,7 @@ if (isset($_POST['signup'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -105,7 +108,7 @@ if (isset($_POST['signup'])) {
         </div>
 
         <div class="form-group">
-            <label for="userfile">Profile Image (Optional)</label>
+            <label for="userfile"></label>
             <input type="file" name="userfile" id="userfile" accept="image/*" />
         </div>
 
@@ -153,6 +156,26 @@ if (isset($_POST['signup'])) {
         }
         window.location.href = loginUrl;
     });
+
+function validateSignupForm() {
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm_password").value;
+
+    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+
+    if (password !== confirm) {
+        alert("Passwords do not match!");
+        return false;
+    }
+
+    if (!pattern.test(password)) {
+        alert("Password must be at least 8 characters, include one uppercase, one lowercase, and one special character.");
+        return false;
+    }
+
+    return true;
+}
+
     </script>
 </body>
 

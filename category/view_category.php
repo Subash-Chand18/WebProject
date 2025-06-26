@@ -8,7 +8,7 @@ $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <link rel="stylesheet" href="../assets/css/view_category.css">
 
-<section class="view-category-container">
+<div class="dashboard-content">
     <header class="page-header center-content text-center">
         <h1><i class="fas fa-list"></i> Categories</h1>
     </header>
@@ -86,17 +86,20 @@ $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
         </div>
     </div>
 </div>
-
+</div>
 <?php include '../includes/footer.php'; ?>
 
 <script>
-// Search functionality
-const searchInput = document.getElementById('searchInput');
-const categoryTable = document.getElementById('categoryTable');
-const tbodyRows = categoryTable.tBodies[0].rows;
 
-searchInput.addEventListener('input', () => {
-    filterTable(searchInput.value);
+// Search functionality
+document.getElementById('searchInput').addEventListener('keyup', function () {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#categoryTable tbody tr');
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
 });
 
 

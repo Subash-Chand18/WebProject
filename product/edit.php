@@ -1,7 +1,7 @@
 <?php
 include '../includes/header.php';
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }

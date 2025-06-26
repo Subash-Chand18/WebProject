@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     } else {
         $sql = "INSERT INTO category (name, description) VALUES ('$name', '$desc')";
         if (mysqli_query($con, $sql)) {
-            echo "<script>alert('Category added successfully.'); window.location.href='view_category.php';</script>";
+            echo "<script> window.location.href='view_category.php';</script>";
             exit;
         } else {
             echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";

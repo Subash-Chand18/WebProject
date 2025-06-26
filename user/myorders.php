@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
@@ -21,8 +21,7 @@ $orderResult = mysqli_query($con, $orderQuery);
 
 <?php include("includes/header.php"); ?>
 
-<br><br><br><br><br><br>
-
+<br><br><br><br><br><br><br><br>
 <!-- order start -->
         <div class="container">
                 <h1>My Orders</h1>
@@ -115,7 +114,7 @@ $orderResult = mysqli_query($con, $orderQuery);
                     <?php endwhile; ?>
                 <?php else: ?>
                     <!-- No Orders Message Start -->
-                    <div class="success-container-wrapper" style="text-align:center; margin-top: 50px;">
+                    <div class="success-container-wrapper" style="text-align:center; margin-top: 0px;">
                         <div class="success-container">
                             <i class="fas fa-shopping-cart mb-3 animate__animated animate__bounceIn" style="font-size: 60px; color: #777;"></i>
                             <h1 class="animate__animated animate__fadeInDown">No Orders Yet 😞</h1>

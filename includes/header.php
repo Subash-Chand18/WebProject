@@ -5,7 +5,7 @@ if (!isset($_SESSION['admin_email']) || $_SESSION['admin_type'] !== 'admin') {
     header("Location: ../admin/Adminlogin.php");
     exit();
 }
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
@@ -72,6 +72,7 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
             <li><a href="../admin/customers.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
             <li><a href="../admin/Adminorders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
             <li><a href="../admin/orderdetails.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
+             <li><a href="../admin/product_rating_review.php" class="sidebar-link"><i class="fas fa-comment-dots"></i> Review</a></li>
             <li><a href="#" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
             <li><a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
             

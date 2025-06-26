@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
     exit;

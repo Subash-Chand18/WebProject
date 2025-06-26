@@ -1,7 +1,7 @@
 <?php
 include '../includes/header.php';
 
-$con = mysqli_connect("localhost", "root", "", "EClothingStore");
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
                 VALUES ('$name', '$desc', $price, '$sku', $qty, $c_id, '$image')";
 
         if (mysqli_query($con, $sql)) {
-            echo "<script>alert('Product added successfully.');</script>";
+            echo "<script>window.location.href='view.php';</script>";
         } else {
             echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
         }
