@@ -3,18 +3,17 @@ session_start();
 
 $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 
-
 $con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 
-// Fetch top 10 bestselling products (by order quantity)
-
+// Fetch top 10 bestselling products (by order quantity) with deleted_at condition
 $bestsql = "SELECT p.*, SUM(od.quantity) as total_sold
         FROM product p
         JOIN orderdetail od ON p.id = od.product_id
+        WHERE p.deleted_at IS NULL
         GROUP BY p.id
         ORDER BY total_sold DESC
         LIMIT 10";
@@ -25,26 +24,27 @@ while ($row = mysqli_fetch_assoc($result)) {
     $bestsellers[] = $row;
 }
 
-//$sql = "select * from product";
+// Fetch all products with category where deleted_at is null
 $sql = "SELECT p.*, c.name AS category_name 
         FROM product p
         LEFT JOIN category c ON p.category_id = c.id
+        WHERE p.deleted_at IS NULL
         ORDER BY p.id ASC";
+
 $res = mysqli_query($con, $sql);
 
-// for new added 10 product
-
+// Fetch newly added 10 products where deleted_at is null
 $sqlNew = "SELECT p.*, c.name AS category_name 
             FROM product p
             LEFT JOIN category c ON p.category_id = c.id
-            -- WHERE p.created_at >= NOW() - INTERVAL 2 DAY
-            ORDER BY p.created_at DESC LIMIT 10";
+            WHERE p.deleted_at IS NULL
+            ORDER BY p.created_at DESC 
+            LIMIT 10";
 
 $resNew = mysqli_query($con, $sqlNew);
 
 // Store New Products
 $newProducts = [];
-
 while ($rowNew = mysqli_fetch_assoc($resNew)) {
     $newProducts[] = $rowNew;
 }
@@ -58,16 +58,15 @@ while ($row = mysqli_fetch_assoc($res)) {
     $categories[$row['category_name']][] = $row;
 }
 
-// Count total Users
-$user_result = mysqli_query($con, "SELECT COUNT(*) AS total_users FROM users where deleted_at is null");
+// Count total Users where deleted_at is null
+$user_result = mysqli_query($con, "SELECT COUNT(*) AS total_users FROM users WHERE deleted_at IS NULL");
 $user_row = mysqli_fetch_assoc($user_result);
 $total_users = $user_row['total_users'];
 
-// Count total products
-$product_result = mysqli_query($con, "SELECT COUNT(*) AS total_products FROM product where deleted_at is null");
+// Count total products where deleted_at is null
+$product_result = mysqli_query($con, "SELECT COUNT(*) AS total_products FROM product WHERE deleted_at IS NULL");
 $product_row = mysqli_fetch_assoc($product_result);
 $total_products = $product_row['total_products'];
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -247,6 +246,21 @@ $total_products = $product_row['total_products'];
 
 
     <!-- Hero Start -->
+     <style>
+        /* Zoom In/Out Hover Effect on Hero Carousel Images */
+        .hero-header .carousel-item {
+            overflow: hidden;
+        }
+
+        .hero-header .carousel-item img {
+            transition: transform 0.5s ease;
+        }
+
+        .hero-header .carousel-item:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+
     <div class="container-fluid py-5 mb-5 hero-header">
         <div class="container py-5">
             <div class="row g-5 align-items-center">
@@ -298,6 +312,29 @@ $total_products = $product_row['total_products'];
     <!-- Hero End -->
 
     <!-- Clothes Section Start -->
+     <style>
+        /* Features Hover Effects */
+        .featurs-item {
+            transition: transform 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+            border: 2px solid transparent;
+        }
+
+        .featurs-item:hover {
+            transform: scale(1.05);
+            border-color: #28a745; /* green border */
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.5); /* green glow */
+        }
+
+        .featurs-icon {
+            transition: background-color 0.4s ease, transform 0.4s ease;
+        }
+
+        .featurs-item:hover .featurs-icon {
+            background-color: #28a745 !important; /* green icon bg */
+            transform: rotate(10deg);
+        }
+
+     </style>
     <div class="container-fluid featurs py-5">
         <div class="container py-5">
             <div class="row g-4">
@@ -308,7 +345,7 @@ $total_products = $product_row['total_products'];
                         </div>
                         <div class="featurs-content text-center">
                             <h5>Free Shipping</h5>
-                            <p class="mb-0">Free on order over $300</p>
+                            <p class="mb-0">Free Shipping On Order Over Rs 30000</p>
                         </div>
                     </div>
                 </div>
@@ -330,7 +367,7 @@ $total_products = $product_row['total_products'];
                         </div>
                         <div class="featurs-content text-center">
                             <h5>30 Day Return</h5>
-                            <p class="mb-0">30 day money guarantee</p>
+                            <p class="mb-0">30 Day Money Guarantee</p>
                         </div>
                     </div>
                 </div>
@@ -341,7 +378,7 @@ $total_products = $product_row['total_products'];
                         </div>
                         <div class="featurs-content text-center">
                             <h5>24/7 Support</h5>
-                            <p class="mb-0">Support every time fast</p>
+                            <p class="mb-0">Support Every Time Fast</p>
                         </div>
                     </div>
                 </div>
@@ -493,16 +530,35 @@ $total_products = $product_row['total_products'];
 
 
     <!-- schems Start -->
+     <style>
+        .service-item {
+            transition: transform 0.4s ease;
+            overflow: hidden;
+        }
+
+        .service-item:hover {
+            transform: scale(1.05);
+        }
+
+        .service-item img {
+            transition: transform 0.4s ease;
+        }
+
+        .service-item:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+
     <div class="container-fluid service py-5">
         <div class="container py-5">
             <div class="row g-4 justify-content-center">
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-secondary rounded border border-secondary">
-                            <img src="design-assets/img/blazerformen.jpeg" class="img-fluid rounded-top w-100" alt="">
+                            <img src="assets/images/florencia-simonini-yhk8ZidU-K4-unsplash.jpg" class="img-fluid rounded-top w-100" alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-primary text-center p-4 rounded">
-                                    <h5 class="text-white">Blazer</h5>
+                                    <h5 class="text-white">Sunglasses</h5>
                                     <h3 class="mb-0">20% OFF</h3>
                                 </div>
                             </div>
@@ -512,10 +568,10 @@ $total_products = $product_row['total_products'];
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-dark rounded border border-dark">
-                            <img src="design-assets/img/blackcoat.jpg" class="img-fluid rounded-top w-100" alt="">
+                            <img src="assets/images/classic black tshirt.jpg" class="img-fluid rounded-top w-100" alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-light text-center p-4 rounded">
-                                    <h5 class="text-primary">Brand clothes</h5>
+                                    <h5 class="text-primary">Classic Black T-Shirt</h5>
                                     <h3 class="mb-0">Free delivery</h3>
                                 </div>
                             </div>
@@ -525,11 +581,11 @@ $total_products = $product_row['total_products'];
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-primary rounded border border-primary">
-                            <img src="design-assets/img/blackgaun.webp" class="img-fluid rounded-top w-100" alt="">
+                            <img src="assets/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg" class="img-fluid rounded-top w-100" alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-secondary text-center p-4 rounded">
-                                    <h5 class="text-white">Gown</h5>
-                                    <h3 class="mb-0">Discount 30$</h3>
+                                    <h5 class="text-white">Nike Air Force</h5>
+                                    <h3 class="mb-0">Discount 10%</h3>
                                 </div>
                             </div>
                         </div>
@@ -615,6 +671,38 @@ $total_products = $product_row['total_products'];
 
 
     <!-- Banner Section Start-->
+     <style>
+        /* Banner Hover Effects */
+        .banner .position-relative img,
+        .banner h1,
+        .banner p,
+        .banner-btn,
+        .banner .position-relative .rounded-circle {
+            transition: all 0.4s ease;
+        }
+
+        .banner .position-relative:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner .position-relative:hover .rounded-circle {
+            background-color: #f8f9fa;
+            transform: scale(1.1);
+        }
+
+        .banner:hover h1,
+        .banner:hover p {
+            transform: translateY(-5px);
+        }
+
+        .banner-btn:hover {
+            background-color: #000;
+            color: #fff !important;
+            border-color: #000;
+        }
+
+     </style>
     <div class="container-fluid banner bg-secondary my-5">
         <div class="container py-5">
             <div class="row g-4 align-items-center">
@@ -693,6 +781,35 @@ $total_products = $product_row['total_products'];
     <!-- Bestsaler Product End -->
 
     <!-- Fact Start -->
+     <style>
+        /* Fact Section Hover Effects */
+        .counter {
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        /* Hover zoom and green border + glow */
+        .counter:hover {
+            transform: scale(1.05);
+            border-color: #28a745; /* Green border */
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.4); /* Green glow */
+        }
+
+        /* Icon transition on hover */
+        .counter i {
+            font-size: 3rem;
+            transition: color 0.3s ease;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* Icon turns green on hover */
+        .counter:hover i {
+            color: #28a745;
+        }
+    </style>
+
     <div class="container-fluid py-5">
         <div class="container">
             <div class="bg-light p-5 rounded">
