@@ -26,12 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['o
 
 $sql = "
     SELECT 
-        o.id AS order_id, o.name AS order_name, o.order_status, o.payment_method, o.created_at,
+        o.id AS order_id, o.name AS order_name, o.order_status, o.payment_method, o.created_at,o.shipping_charge,
         u.name AS user_name, u.email AS user_email,
         GROUP_CONCAT(p.name SEPARATOR ', ') AS product_names,
         GROUP_CONCAT(DISTINCT p.image SEPARATOR ', ') AS product_images,
         SUM(od.quantity) AS total_quantity,
-        SUM(od.unit_price * od.quantity) AS total_price
+        SUM(od.unit_price * od.quantity)+o.shipping_charge AS total_price
     FROM orders o
     LEFT JOIN users u ON o.user_id = u.id
     LEFT JOIN orderdetail od ON od.order_id = o.id
@@ -118,6 +118,7 @@ $res = mysqli_query($con, $sql);
                     <th>Order Date</th>
                     <th>Payment Method</th>
                     <th>Product Names</th>
+                    <th>Shipping Charge</th>
                     <th>Total Qty</th>
                     <th>Total Price (Rs)</th>
                     <th>Status</th>
@@ -134,6 +135,7 @@ $res = mysqli_query($con, $sql);
                             <td><?= date('Y-m-d h:i A', strtotime($order['created_at'])) ?></td>
                             <td><?= htmlspecialchars($order['payment_method']) ?></td>
                             <td><?= htmlspecialchars($order['product_names']) ?></td>
+                            <td><?= number_format($order['shipping_charge'], 2) ?></td>
                             <td><?= (int) $order['total_quantity'] ?></td>
                             <td><?= number_format($order['total_price'], 2) ?></td>
                             <td>
