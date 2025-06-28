@@ -32,12 +32,14 @@ if (isset($_POST['signup'])) {
     // Server-side validation
     if (empty($name) || empty($email) || empty($password_raw) || empty($confirm_password_raw)) {
         $error = "All fields except profile image are required!";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format!";
     } elseif ($password_raw !== $confirm_password_raw) {
         $error = "Passwords do not match!";
     } elseif (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/", $password_raw)) {
-        $error = "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one special character.";
+        $error = "Password must be at least 8 characters, include uppercase, lowercase, and a special character.";
     } else {
-        $password = md5($password_raw); // For real apps, use password_hash()
+        $password = md5($password_raw); // For production, use password_hash()
 
         $checkQuery = "SELECT id FROM users WHERE email = '$email' AND deleted_at IS NULL";
         $checkResult = mysqli_query($con, $checkQuery);
@@ -50,7 +52,7 @@ if (isset($_POST['signup'])) {
             mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $password, $image);
             if (mysqli_stmt_execute($stmt)) {
                 $success = "Registration successful! You can now <a href='Userlogin.php?email=" . urlencode($email) . "'>login</a>.";
-                unset($_POST['name'], $_POST['email'], $_POST['password'], $_POST['confirm_password']);
+                unset($_POST);
             } else {
                 $error = "Registration failed: " . mysqli_error($con);
             }
@@ -59,7 +61,6 @@ if (isset($_POST['signup'])) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -72,13 +73,13 @@ if (isset($_POST['signup'])) {
 </head>
 
 <body>
-    <form class="authForm" action="" method="post" enctype="multipart/form-data" novalidate>
+    <form class="authForm" action="" method="post" enctype="multipart/form-data" onsubmit="return validateSignupForm()" novalidate>
         <h2>User Signup</h2>
 
         <?php if ($error): ?>
-        <p style="color: red; text-align: center; font-weight: 600;"><?php echo htmlspecialchars($error); ?></p>
+            <p class="form-message" style="color: red;"><?php echo htmlspecialchars($error); ?></p>
         <?php elseif ($success): ?>
-        <p style="color: green; text-align: center; font-weight: 600;"><?php echo $success; ?></p>
+            <p class="form-message" style="color: green;"><?php echo $success; ?></p>
         <?php endif; ?>
 
         <div class="form-group">
@@ -96,15 +97,13 @@ if (isset($_POST['signup'])) {
         <div class="form-group" style="position: relative;">
             <input type="password" name="password" id="password" placeholder=" " required />
             <label for="password">Password</label>
-            <i class="bx bx-show toggle-icon" id="togglePassword" aria-label="Toggle password visibility" role="button"
-                tabindex="0"></i>
+            <i class="bx bx-show toggle-icon" id="togglePassword" role="button" tabindex="0"></i>
         </div>
 
         <div class="form-group" style="position: relative;">
             <input type="password" name="confirm_password" id="confirm_password" placeholder=" " required />
             <label for="confirm_password">Confirm Password</label>
-            <i class="bx bx-show toggle-icon" id="toggleConfirmPassword" aria-label="Toggle password visibility"
-                role="button" tabindex="0"></i>
+            <i class="bx bx-show toggle-icon" id="toggleConfirmPassword" role="button" tabindex="0"></i>
         </div>
 
         <div class="form-group">
@@ -114,8 +113,6 @@ if (isset($_POST['signup'])) {
 
         <div class="button-group">
             <button type="submit" name="signup">Sign Up</button>
-
-            <!-- Back to Login with JS passing email -->
             <a href="Userlogin.php" id="backToLogin" class="cancel-btn"
                 style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; margin-top: 10px;">Back
                 to Login</a>
@@ -123,59 +120,77 @@ if (isset($_POST['signup'])) {
     </form>
 
     <script>
-    // Password visibility toggle (same as before)
-    function toggleVisibility(toggleId, inputId) {
-        const toggleIcon = document.getElementById(toggleId);
-        const inputField = document.getElementById(inputId);
+        function toggleVisibility(toggleId, inputId) {
+            const toggleIcon = document.getElementById(toggleId);
+            const inputField = document.getElementById(inputId);
 
-        toggleIcon.addEventListener("click", () => {
-            const type = inputField.type === "password" ? "text" : "password";
-            inputField.type = type;
-            toggleIcon.classList.toggle("bx-show");
-            toggleIcon.classList.toggle("bx-hide");
-        });
+            toggleIcon.addEventListener("click", () => {
+                const type = inputField.type === "password" ? "text" : "password";
+                inputField.type = type;
+                toggleIcon.classList.toggle("bx-show");
+                toggleIcon.classList.toggle("bx-hide");
+            });
 
-        toggleIcon.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleIcon.click();
-            }
-        });
-    }
-
-    toggleVisibility("togglePassword", "password");
-    toggleVisibility("toggleConfirmPassword", "confirm_password");
-
-    // Pass current email to login when clicking "Back to Login"
-    document.getElementById("backToLogin").addEventListener("click", function (e) {
-        e.preventDefault();
-        const emailValue = document.getElementById("email").value.trim();
-        let loginUrl = "Userlogin.php";
-        if (emailValue) {
-            loginUrl += "?email=" + encodeURIComponent(emailValue);
+            toggleIcon.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleIcon.click();
+                }
+            });
         }
-        window.location.href = loginUrl;
-    });
 
-function validateSignupForm() {
-    const password = document.getElementById("password").value;
-    const confirm = document.getElementById("confirm_password").value;
+        toggleVisibility("togglePassword", "password");
+        toggleVisibility("toggleConfirmPassword", "confirm_password");
 
-    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+        document.getElementById("backToLogin").addEventListener("click", function (e) {
+            e.preventDefault();
+            const emailValue = document.getElementById("email").value.trim();
+            let loginUrl = "Userlogin.php";
+            if (emailValue) {
+                loginUrl += "?email=" + encodeURIComponent(emailValue);
+            }
+            window.location.href = loginUrl;
+        });
 
-    if (password !== confirm) {
-        alert("Passwords do not match!");
-        return false;
-    }
+        function validateSignupForm() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const confirm = document.getElementById("confirm_password").value;
 
-    if (!pattern.test(password)) {
-        alert("Password must be at least 8 characters, include one uppercase, one lowercase, and one special character.");
-        return false;
-    }
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
 
-    return true;
-}
+            const messageElement = document.querySelector(".form-message");
+            if (messageElement) messageElement.textContent = "";
 
+            if (!emailPattern.test(email)) {
+                displayMessage("Please enter a valid email address.", "red");
+                return false;
+            }
+
+            if (password !== confirm) {
+                displayMessage("Passwords do not match!", "red");
+                return false;
+            }
+
+            if (!passwordPattern.test(password)) {
+                displayMessage("Password must be at least 8 characters, include one uppercase, one lowercase, and one special character.", "red");
+                return false;
+            }
+
+            return true;
+        }
+
+        function displayMessage(message, color) {
+            let msgElem = document.querySelector(".form-message");
+            if (!msgElem) {
+                msgElem = document.createElement("p");
+                msgElem.className = "form-message";
+                document.querySelector(".authForm").insertBefore(msgElem, document.querySelector(".authForm .form-group"));
+            }
+            msgElem.style.color = color;
+            msgElem.textContent = message;
+        }
     </script>
 </body>
 

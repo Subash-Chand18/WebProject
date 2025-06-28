@@ -137,7 +137,7 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
 
     // Counter animation
     const counters = document.querySelectorAll('.count');
-    const speed = 100;
+    const speed = 50;
     counters.forEach(counter => {
         const target = +counter.getAttribute('data-target');
         let count = 0;
