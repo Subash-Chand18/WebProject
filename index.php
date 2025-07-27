@@ -29,7 +29,7 @@ $sql = "SELECT p.*, c.name AS category_name
         FROM product p
         LEFT JOIN category c ON p.category_id = c.id
         WHERE p.deleted_at IS NULL
-        ORDER BY p.id ASC";
+        ORDER BY p.id DESC";
 
 $res = mysqli_query($con, $sql);
 
@@ -67,13 +67,30 @@ $total_users = $user_row['total_users'];
 $product_result = mysqli_query($con, "SELECT COUNT(*) AS total_products FROM product WHERE deleted_at IS NULL");
 $product_row = mysqli_fetch_assoc($product_result);
 $total_products = $product_row['total_products'];
+
+// Fetch store details
+$storeName = "E-Clothing Store";
+$storeAddress = "Dhangadhi,Kailali Nepal";
+$storeEmail = "eclothingstore@dlms.dev.np";
+$storeContact="+9779806478012";
+$storeLogo = ""; 
+
+$sql = "SELECT * FROM store_settings LIMIT 1";
+$res = mysqli_query($con, $sql);
+if ($row = mysqli_fetch_assoc($res)) {
+    $storeName = $row['store_name'];
+    $storeAddress = $row['store_address'];
+    $storeEmail = $row['store_email'];
+    $storeContact=$row['contact_number'];
+    $storeLogo = $row['store_logo'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>E-Clothing Store</title>
+    <title><?php echo htmlspecialchars($storeName); ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <!-- Google Web Fonts -->
@@ -97,8 +114,6 @@ $total_products = $product_row['total_products'];
 
     <!-- Template Stylesheet -->
     <link href="design-assets/css/style.css" rel="stylesheet">
-     <link href="assets/css/view_product.css" rel="stylesheet">
-
     <style>
         /* Smooth transition for the entire card */
         .clothing-item {
@@ -140,9 +155,9 @@ $total_products = $product_row['total_products'];
             <div class="d-flex justify-content-between">
                 <div class="top-info ps-2">
                     <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#"
-                            class="text-white">Dhangadhi ,Kailali</a></small>
+                            class="text-white"><?php echo htmlspecialchars($storeAddress); ?></a></small>
                     <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#"
-                            class="text-white">user@gmail.com</a></small>
+                            class="text-white"><?php echo htmlspecialchars($storeEmail); ?></a></small>
                 </div>
                 <div class="top-link pe-2">
                     <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
@@ -152,9 +167,15 @@ $total_products = $product_row['total_products'];
         </div><br>
         <div class="container px-0">
             <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                <a href="index.php" class="navbar-brand">
-                    <h2 class="text-primary display-6">E-Clothing Store</h2>
-                    <!-- <h3 class="mb-3 text-secondary">Buy now pay Latter</h2> -->
+                <a href="index.php" class="navbar-brand d-flex align-items-center">
+                    <?php if (!empty($storeLogo)): ?>
+                        <img src="assets/images/<?php echo htmlspecialchars($storeLogo); ?>" alt="Logo"
+                            style="height: 100px; margin-right: 10px; border-radius: 50%;">
+                    <?php endif; ?>
+                    <div>
+                        <h2 class="text-primary display-6"><?php echo htmlspecialchars($storeName); ?></h2>
+                        <h3 class="mb-3 text-secondary">Buy now pay Latter</h3>
+                    </div>
                 </a>
                 <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarCollapse">
@@ -162,26 +183,13 @@ $total_products = $product_row['total_products'];
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="index.php"
-                            class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'index.php')
-                                echo 'active'; ?>">Home</a>
+                        <a href="index.php" class="nav-item nav-link active">Home</a>
+                        <a href="user/our_shop.php" class="nav-item nav-link">Shop</a>
+                        <a href="user/contact.php" class="nav-item nav-link">Contact</a>
+                        <?php if (isset($_SESSION['user_id'])): ?><a href="user/myorders.php"
+                                class="nav-item nav-link">My Orders</a><?php endif; ?>
 
-                        <a href="user/our_shop.php"
-                            class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'our_shop.php')
-                                echo 'active'; ?>">Shop</a>
-
-                        <a href="user/contact.php"
-                            class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'contact.php')
-                                echo 'active'; ?>">Contact</a>
-
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <a href="user/myorders.php"
-                                class="nav-item nav-link <?php if (basename($_SERVER['PHP_SELF']) == 'myorders.php')
-                                    echo 'active'; ?>">My
-                                Orders</a>
-                        <?php endif; ?>
                     </div>
-
                     <div class="d-flex align-items-center gap-3">
 
                         <div class="d-flex align-items-center gap-3">
@@ -194,30 +202,21 @@ $total_products = $product_row['total_products'];
                             <?php endif; ?>
                         </div>
                         <div class="d-flex m-3 me-0">
-                            <button id="searchToggle"
-                                class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4">
-                                <i class="fas fa-search text-primary"></i>
-                            </button>
-
-                            <!-- Search Input with Clear Button -->
-                            <div id="searchWrapper" class="d-none position-relative">
-                                <input type="text" id="searchBox" class="form-control ps-2 pe-5" style="width: 280px;">
-
-                                <!-- Clear Button inside input -->
-                                <button id="clearSearch" class="btn btn-sm btn-light border position-absolute"
-                                    style="right: 5px; top: 50%; transform: translateY(-50%);">
-                                    ✖
-                                </button>
-                            </div>
+                            <button
+                                class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
+                                data-bs-toggle="modal" data-bs-target="#searchModal"><i
+                                    class="fas fa-search text-primary"></i></button>
                             <a href="user/cart.php" class="position-relative me-4 my-auto">
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span
                                     class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
                                     style="top: -5px; left: 15px; height: 20px; min-width: 20px;"><?php echo $cartCount; ?></span>
                             </a>
-                            <a href="#" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
-                            </a>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <a href="user/myaccount.php" class="my-auto">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
             </nav>
@@ -246,7 +245,7 @@ $total_products = $product_row['total_products'];
 
 
     <!-- Hero Start -->
-     <style>
+    <style>
         /* Zoom In/Out Hover Effect on Hero Carousel Images */
         .hero-header .carousel-item {
             overflow: hidden;
@@ -279,17 +278,17 @@ $total_products = $product_row['total_products'];
                     <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
                         <div class="carousel-inner" role="listbox">
                             <div class="carousel-item active rounded">
-                                <img src="design-assets/img/blackcoat.jpg"
+                                <img src="assets/images/blackcoat.webp"
                                     class="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide">
                                 <a href="#" class="btn px-4 py-2 text-white rounded">Men</a>
                             </div>
                             <div class="carousel-item rounded">
-                                <img src="design-assets/img/Red-WeddingBridalGown.jpg"
+                                <img src="assets/images/Red-WeddingBridalGown.avif"
                                     class="img-fluid w-100 h-100 rounded" alt="Second slide">
                                 <a href="#" class="btn px-4 py-2 text-white rounded">Women</a>
                             </div>
                             <div class="carousel-item rounded">
-                                <img src="design-assets/img/boykidsdress.jpg" class="img-fluid w-100 h-100 rounded"
+                                <img src="assets/images/boykidsdress.jpg" class="img-fluid w-100 h-100 rounded"
                                     alt="Second slide">
                                 <a href="#" class="btn px-4 py-2 text-white rounded">Babies</a>
                             </div>
@@ -312,7 +311,7 @@ $total_products = $product_row['total_products'];
     <!-- Hero End -->
 
     <!-- Clothes Section Start -->
-     <style>
+    <style>
         /* Features Hover Effects */
         .featurs-item {
             transition: transform 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
@@ -321,8 +320,10 @@ $total_products = $product_row['total_products'];
 
         .featurs-item:hover {
             transform: scale(1.05);
-            border-color: #28a745; /* green border */
-            box-shadow: 0 0 20px rgba(40, 167, 69, 0.5); /* green glow */
+            border-color: #28a745;
+            /* green border */
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+            /* green glow */
         }
 
         .featurs-icon {
@@ -330,11 +331,11 @@ $total_products = $product_row['total_products'];
         }
 
         .featurs-item:hover .featurs-icon {
-            background-color: #28a745 !important; /* green icon bg */
+            background-color: #28a745 !important;
+            /* green icon bg */
             transform: rotate(10deg);
         }
-
-     </style>
+    </style>
     <div class="container-fluid featurs py-5">
         <div class="container py-5">
             <div class="row g-4">
@@ -528,9 +529,8 @@ $total_products = $product_row['total_products'];
     </div>
     <!-- Clothes Shop End-->
 
-
     <!-- schems Start -->
-     <style>
+    <style>
         .service-item {
             transition: transform 0.4s ease;
             overflow: hidden;
@@ -555,7 +555,8 @@ $total_products = $product_row['total_products'];
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-secondary rounded border border-secondary">
-                            <img src="assets/images/florencia-simonini-yhk8ZidU-K4-unsplash.jpg" class="img-fluid rounded-top w-100" alt="">
+                            <img src="assets/images/florencia-simonini-yhk8ZidU-K4-unsplash.jpg"
+                                class="img-fluid rounded-top w-100" alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-primary text-center p-4 rounded">
                                     <h5 class="text-white">Sunglasses</h5>
@@ -568,7 +569,8 @@ $total_products = $product_row['total_products'];
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-dark rounded border border-dark">
-                            <img src="assets/images/classic black tshirt.jpg" class="img-fluid rounded-top w-100" alt="">
+                            <img src="assets/images/classic black tshirt.jpg" class="img-fluid rounded-top w-100"
+                                alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-light text-center p-4 rounded">
                                     <h5 class="text-primary">Classic Black T-Shirt</h5>
@@ -581,7 +583,8 @@ $total_products = $product_row['total_products'];
                 <div class="col-md-6 col-lg-4">
                     <a href="#">
                         <div class="service-item bg-primary rounded border border-primary">
-                            <img src="assets/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg" class="img-fluid rounded-top w-100" alt="">
+                            <img src="assets/images/ryan-plomp-jvoZ-Aux9aw-unsplash.jpg"
+                                class="img-fluid rounded-top w-100" alt="">
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-secondary text-center p-4 rounded">
                                     <h5 class="text-white">Nike Air Force</h5>
@@ -668,10 +671,8 @@ $total_products = $product_row['total_products'];
     </div>
     <!-- New Products Section End -->
 
-
-
     <!-- Banner Section Start-->
-     <style>
+    <style>
         /* Banner Hover Effects */
         .banner .position-relative img,
         .banner h1,
@@ -701,8 +702,7 @@ $total_products = $product_row['total_products'];
             color: #fff !important;
             border-color: #000;
         }
-
-     </style>
+    </style>
     <div class="container-fluid banner bg-secondary my-5">
         <div class="container py-5">
             <div class="row g-4 align-items-center">
@@ -718,7 +718,7 @@ $total_products = $product_row['total_products'];
                 </div>
                 <div class="col-lg-6">
                     <div class="position-relative">
-                        <img src="design-assets/img/banner-1.png" class="img-fluid w-100 rounded" alt="" width="10">
+                        <img src="assets/images/Nepalisarii.png" class="img-fluid w-100 rounded" alt="" width="10">
                         <div class="d-flex align-items-center justify-content-center bg-white rounded-circle position-absolute"
                             style="width: 140px; height: 140px; top: 0; left: 0;">
                             <h1 style="font-size: 100px;">1</h1>
@@ -765,7 +765,7 @@ $total_products = $product_row['total_products'];
                                         <i class="fas fa-star text-primary"></i>
                                         <i class="fas fa-star"></i>
                                     </div>
-                                    <h4 class="mb-3">$<?php echo htmlspecialchars($product['price']); ?></h4>
+                                    <h4 class="mb-3">RS <?php echo htmlspecialchars($product['price']); ?></h4>
                                     <a href="user/add_to_cart.php?id=<?php echo $product['id']; ?>"
                                         class="btn border border-secondary rounded-pill px-3 text-primary">
                                         <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
@@ -781,7 +781,7 @@ $total_products = $product_row['total_products'];
     <!-- Bestsaler Product End -->
 
     <!-- Fact Start -->
-     <style>
+    <style>
         /* Fact Section Hover Effects */
         .counter {
             transition: all 0.4s ease;
@@ -792,8 +792,10 @@ $total_products = $product_row['total_products'];
         /* Hover zoom and green border + glow */
         .counter:hover {
             transform: scale(1.05);
-            border-color: #28a745; /* Green border */
-            box-shadow: 0 0 15px rgba(40, 167, 69, 0.4); /* Green glow */
+            border-color: #28a745;
+            /* Green border */
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+            /* Green glow */
         }
 
         /* Icon transition on hover */
@@ -869,7 +871,7 @@ $total_products = $product_row['total_products'];
                         </div>
                         <div class="d-flex align-items-center flex-nowrap">
                             <div class="bg-secondary rounded">
-                                <img src="design-assets/img/customerboy.jpg" class="img-fluid rounded"
+                                <img src="assets/images/customerboy.jpg" class="img-fluid rounded"
                                     style="width: 100px; height: 100px;" alt="">
                             </div>
                             <div class="ms-4 d-block">
@@ -897,7 +899,7 @@ $total_products = $product_row['total_products'];
                         </div>
                         <div class="d-flex align-items-center flex-nowrap">
                             <div class="bg-secondary rounded">
-                                <img src="design-assets/img/bts.webp" class="img-fluid rounded"
+                                <img src="assets/images/bts.webp" class="img-fluid rounded"
                                     style="width: 100px; height: 100px;" alt="">
                             </div>
                             <div class="ms-4 d-block">
@@ -925,7 +927,7 @@ $total_products = $product_row['total_products'];
                         </div>
                         <div class="d-flex align-items-center flex-nowrap">
                             <div class="bg-secondary rounded">
-                                <img src="design-assets/img/customerboy2.jpg" class="img-fluid rounded"
+                                <img src="assets/images/customerboy2.jpg" class="img-fluid rounded"
                                     style="width: 100px; height: 100px;" alt="">
                             </div>
                             <div class="ms-4 d-block">
@@ -994,33 +996,33 @@ $total_products = $product_row['total_products'];
                 <div class="col-lg-3 col-md-6">
                     <div class="d-flex flex-column text-start footer-item">
                         <h4 class="text-light mb-3">Shop Info</h4>
-                        <a class="btn-link" href="">About Us</a>
-                        <a class="btn-link" href="">Contact Us</a>
-                        <a class="btn-link" href="">Privacy Policy</a>
+                        <!-- <a class="btn-link" href="">About Us</a> -->
+                        <a class="btn-link" href="user/contact.php">Contact Us</a>
+                        <!-- <a class="btn-link" href="">Privacy Policy</a>
                         <a class="btn-link" href="">Terms & Condition</a>
                         <a class="btn-link" href="">Return Policy</a>
-                        <a class="btn-link" href="">FAQs & Help</a>
+                        <a class="btn-link" href="">FAQs & Help</a> -->
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="d-flex flex-column text-start footer-item">
                         <h4 class="text-light mb-3">Account</h4>
-                        <a class="btn-link" href="">My Account</a>
-                        <a class="btn-link" href="">Shop details</a>
-                        <a class="btn-link" href="">Shopping Cart</a>
-                        <a class="btn-link" href="">Wishlist</a>
-                        <a class="btn-link" href="">Order History</a>
-                        <a class="btn-link" href="">International Orders</a>
+                        <a class="btn-link" href="user/myaccount.php">My Account</a>
+                        <!-- <a class="btn-link" href="">Shop details</a> -->
+                        <a class="btn-link" href="user/cart.php">Shopping Cart</a>
+                        <!-- <a class="btn-link" href="">Wishlist</a> -->
+                        <a class="btn-link" href="user/myorders.php">Order History</a>
+                        <!-- <a class="btn-link" href="">International Orders</a> -->
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="footer-item">
                         <h4 class="text-light mb-3">Contact</h4>
-                        <p>Address: Dhangadhi</p>
-                        <p>Email: webdeveloper@gmail.com</p>
-                        <p>Phone: +9779865321457</p>
+                        <p>Address:<?php echo htmlspecialchars($storeAddress); ?></p>
+                        <p>Email: <?php echo htmlspecialchars($storeEmail); ?></p>
+                        <p>Phone: <?php echo htmlspecialchars($storeContact); ?></p>
                         <p>Payment Accepted</p>
-                        <img src="design-assets/img/payment.png" class="img-fluid" alt="">
+                        <img src="assets/images/payment.png" class="img-fluid" alt="">
                     </div>
                 </div>
             </div>
@@ -1033,8 +1035,8 @@ $total_products = $product_row['total_products'];
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>E-CLothing
-                            Store</a>, All right reserved.</span>
+                    <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i><?php echo htmlspecialchars($storeName); ?>
+                            </a>, All right reserved.</span>
                 </div>
                 <div class="col-md-6 my-auto text-center text-md-end text-white">
 
@@ -1044,8 +1046,6 @@ $total_products = $product_row['total_products'];
         </div>
     </div>
     <!-- Copyright End -->
-
-
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i
@@ -1106,70 +1106,59 @@ $total_products = $product_row['total_products'];
             updateCount();
         });
     </script>
-
     <script>
-        const searchToggle = document.getElementById('searchToggle');
-        const searchWrapper = document.getElementById('searchWrapper');
-        const searchBox = document.getElementById('searchBox');
-        const clearSearch = document.getElementById('clearSearch');
+    document.getElementById('exampleModalLabel').addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        const productCards = document.querySelectorAll('.product-card');
 
-        searchToggle.addEventListener('click', () => {
-            searchWrapper.classList.toggle('d-none');
-            if (!searchWrapper.classList.contains('d-none')) {
-                searchBox.focus();
-            } else {
-                searchBox.value = '';
-                filterProducts('');
-            }
-        });
+        let minPrice = null, maxPrice = null;
+        const priceRangeMatch = query.match(/^(\d+)\s*-\s*(\d+)$/);
 
-        searchBox.addEventListener('input', () => {
-            filterProducts(searchBox.value.trim().toLowerCase());
-        });
-
-        clearSearch.addEventListener('click', () => {
-            searchBox.value = '';
-            searchBox.focus();
-            filterProducts('');
-        });
-
-        function filterProducts(query) {
-            const productCards = document.querySelectorAll('.product-card');
-
-            const priceRangeMatch = query.match(/^(\d+)\s*-\s*(\d+)$/);
-            let minPrice = null, maxPrice = null;
-
-            productCards.forEach(card => {
-                const id = card.dataset.id.toLowerCase();
-                const name = card.dataset.name.toLowerCase();
-                const price = parseFloat(card.dataset.price);
-                const description = card.dataset.description.toLowerCase();
-                const category = card.dataset.category.toLowerCase();
-
-                let matches = false;
-
-                if (priceRangeMatch) {
-                    minPrice = parseFloat(priceRangeMatch[1]);
-                    maxPrice = parseFloat(priceRangeMatch[2]);
-                    if (price >= minPrice && price <= maxPrice) {
-                        matches = true;
-                    }
-                } else {
-                    if (
-                        id.includes(query) ||
-                        name.includes(query) ||
-                        price.toString().includes(query) ||
-                        description.includes(query) ||
-                        category.includes(query)
-                    ) {
-                        matches = true;
-                    }
-                }
-
-                card.style.display = matches ? '' : 'none';
-            });
+        if (priceRangeMatch) {
+            minPrice = parseFloat(priceRangeMatch[1]);
+            maxPrice = parseFloat(priceRangeMatch[2]);
         }
-    </script>
+
+        productCards.forEach(card => {
+            const id = card.dataset.id;
+            const name = card.dataset.name;
+            const sku = card.dataset.sku;
+            const description = card.dataset.description;
+            const price = parseFloat(card.dataset.price);
+            const category = card.dataset.category;
+
+            let matches = false;
+
+            if (priceRangeMatch) {
+                if (price >= minPrice && price <= maxPrice) {
+                    matches = true;
+                }
+            } else {
+                if (
+                    id.includes(query) ||
+                    name.includes(query) ||
+                    sku.includes(query) ||
+                    description.includes(query) ||
+                    category.includes(query) ||
+                    price.toString().includes(query)
+                ) {
+                    matches = true;
+                }
+            }
+
+            card.style.display = matches ? '' : 'none';
+        });
+    });
+    // Clear Button functionality
+    document.getElementById('clearBtn').addEventListener('click', function () {
+        document.getElementById('exampleModalLabel').value = '';
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.style.display = '';
+        });
+    });
+
+</script>
 
     <!-- Template Javascript -->
     <script src="design-assets/js/main.js"></script>

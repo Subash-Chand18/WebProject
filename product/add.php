@@ -23,35 +23,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
         $image = basename($_FILES['userfile']['name']);
         $upload_file = $upload_dir . $image;
 
-        // Validate image upload
-        if ($_FILES['userfile']['error'] !== UPLOAD_ERR_OK) {
+        $file_ext = strtolower(pathinfo($upload_file, PATHINFO_EXTENSION));
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif','avif','webp'];
+        $file_size = $_FILES['userfile']['size'];
+
+        // Validate image file
+        if (!in_array($file_ext, $allowed_ext)) {
+            echo "<script>alert('Invalid file type! Only JPG, JPEG, PNG, GIF, AVIF, WEBP files are allowed.');</script>";
+             $image = "";
+        } elseif ($file_size > 2 * 1024 * 1024) {
+            echo "<script>alert('File size exceeds 2MB limit.');</script>";
+             $image = "";
+        } elseif ($_FILES['userfile']['error'] !== UPLOAD_ERR_OK) {
             echo "<script>alert('File upload error: " . $_FILES['userfile']['error'] . "');</script>";
+             $image = "";
         } else {
             move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_file);
+
+            // Escape input data to prevent SQL injection
+            $name = mysqli_real_escape_string($con, $_POST["name"]);
+            $desc = mysqli_real_escape_string($con, $_POST["description"]);
+            $price = floatval($_POST["price"]);
+            $qty = intval($_POST["quantity"]);
+            $sku = mysqli_real_escape_string($con, $_POST["sku"]);
+            $c_id = intval($_POST["category_id"]);
+
+            // Validate inputs
+            if ($price < 0) {
+                echo "<script>alert('Price cannot be negative!');</script>";
+            } else {
+                // Insert product into product table
+                $sql = "INSERT INTO product (name, description, price, sku, quantity, category_id, image)
+                        VALUES ('$name', '$desc', $price, '$sku', $qty, $c_id, '$image')";
+
+                if (mysqli_query($con, $sql)) {
+                    echo "<script>window.location.href='view.php';</script>";
+                } else {
+                    echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
+                }
+            }
         }
-    }
-
-    // Escape input data to prevent SQL injection
-    $name = mysqli_real_escape_string($con, $_POST["name"]);
-    $desc = mysqli_real_escape_string($con, $_POST["description"]);
-    $price = floatval($_POST["price"]);
-    $qty = intval($_POST["quantity"]);
-    $sku = mysqli_real_escape_string($con, $_POST["sku"]);
-    $c_id = intval($_POST["category_id"]);
-
-    // Validate inputs
-    if ($price < 0) {
-        echo "<script>alert('Price cannot be negative!');</script>";
     } else {
-        // Insert product into product table
-        $sql = "INSERT INTO product (name, description, price, sku, quantity, category_id, image)
-                VALUES ('$name', '$desc', $price, '$sku', $qty, $c_id, '$image')";
-
-        if (mysqli_query($con, $sql)) {
-            echo "<script>window.location.href='view.php';</script>";
-        } else {
-            echo "<script>alert('Error: " . mysqli_error($con) . "');</script>";
-        }
+        echo "<script>alert('Please select an image to upload.');</script>";
     }
 }
 ?>

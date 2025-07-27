@@ -88,7 +88,7 @@ mysqli_close($con);
                 <p class="text-muted"><?php echo htmlspecialchars($product['description']); ?></p>
                 <p><strong>SKU:</strong> <?php echo htmlspecialchars($product['sku']); ?></p>
                 <p><strong>Quantity Available:</strong> <?php echo htmlspecialchars($product['quantity']); ?></p>
-                <p class="price-tag">$<?php echo htmlspecialchars($product['price']); ?></p>
+                <p class="price-tag">RS <?php echo htmlspecialchars($product['price']); ?></p>
                 <a href="add_to_cart.php?id=<?php echo $product['id']; ?>" class="btn btn-success btn-style">
                     <i class="fa fa-shopping-cart me-2"></i>Add to Cart
                 </a>

@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_subject = "🧾 Order Placed - Order #$order_id";
         $admin_subject = "📦 New Order Received - Order #$order_id";
 
-        $admin_email = "subashchan31@gmail.com";
+        $admin_email = "deepbist123456@gmail.com";
         $admin_name = "E-Clothing Admin";
 
         //  Send email to user

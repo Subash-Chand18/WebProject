@@ -16,11 +16,12 @@ function mailer($to_email, $to_name, $subject, $message)
         $mail->Host = 'sandbox.smtp.mailtrap.io';
         $mail->SMTPAuth = true;
         $mail->Port = 2525;
-        $mail->Username = '729be990cf3d1c';
-        $mail->Password = '3c154d60053249';        
+        $mail->Username = '16419e58453544';
+        $mail->Password = '37e11ef18c6f9f'; 
 
         //Recipients
-        $mail->setFrom('subashchan31@gnail.com', 'Subash Chand');
+        $mail->setFrom('dipa@gmail.com', 'Dipa Bist');
+        //$mail->addAddress('deepa@gmail.com', 'Deepa Bist');     //Add a recipient
         $mail->addAddress($to_email, $to_name);
         $mail->addReplyTo('no-reply@nast.edu.np', 'Nast college');
 

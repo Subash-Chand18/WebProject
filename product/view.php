@@ -5,11 +5,47 @@ if (!$con) {
 }
 
 $result = mysqli_query($con, "SELECT * FROM product WHERE deleted_at IS NULL ORDER BY created_at DESC");
-
 $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
 <?php include '../includes/header.php'; ?>
+
+<style>
+/* Button Styling */
+.pagination-controls .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-weight: bold;
+}
+
+.pagination-controls .btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.pagination-controls .btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding: 0 2rem;
+}
+</style>
 
 <div class="dashboard-content">
 
@@ -77,6 +113,12 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <?php endif; ?>
             </tbody>
         </table>
+
+        <!-- Stylish Pagination Controls -->
+        <div class="pagination-controls">
+            <button id="prevBtn" class="btn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button id="nextBtn" class="btn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
     </div>
 
     <!-- Product Modal -->
@@ -111,37 +153,15 @@ $products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 <?php include '../includes/footer.php'; ?>
 
 <script>
-
 // Search functionality
 document.getElementById('searchInput').addEventListener('keyup', function () {
     const filter = this.value.toLowerCase();
     const rows = document.querySelectorAll('#productTable tbody tr');
-
     rows.forEach(row => {
         const text = row.innerText.toLowerCase();
         row.style.display = text.includes(filter) ? '' : 'none';
     });
 });
-
-
-function filterTable(query) {
-    const q = query.trim().toLowerCase();
-    for (let row of tbodyRows) {
-        const id = row.getAttribute('data-id');
-        const name = row.getAttribute('data-name');
-        const sku = row.getAttribute('data-sku');
-
-        if (
-            id.includes(q) ||
-            name.includes(q) ||
-            sku.includes(q)
-        ) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    }
-}
 
 // Modal logic
 const productModal = document.getElementById('productModal');
@@ -164,7 +184,6 @@ function openProductModal(product) {
     modalQty.textContent = product.quantity;
     modalSKU.textContent = product.sku;
     productModal.style.display = 'flex';
-    // Focus modal for accessibility
     modalName.focus();
 }
 
@@ -183,4 +202,40 @@ function closeImageView(event) {
         imageViewModal.style.display = 'none';
     }
 }
+
+// Pagination Logic
+const rows = Array.from(document.querySelectorAll('#productTable tbody tr'));
+const rowsPerPage = 10;
+let currentPage = 1;
+const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function displayPage(page) {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    rows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? '' : 'none';
+    });
+    prevBtn.disabled = page === 1;
+    nextBtn.disabled = page === totalPages;
+}
+
+prevBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayPage(currentPage);
+    }
+});
+
+nextBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+        currentPage++;
+        displayPage(currentPage);
+    }
+});
+
+// Initialize first page
+displayPage(currentPage);
 </script>

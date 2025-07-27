@@ -4,14 +4,36 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
     $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 }
+
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
+if (!$con) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
 //include "../../settings.php";
 // echo BASE_URL; exit;
+
+// Fetch store details
+$storeName = "E-Clothing Store";
+$storeAddress = "Dhangadhi,Kailali Nepal";
+$storeEmail = "eclothingstore@dlms.dev.np";
+$storeContact="+9779806478012";
+$storeLogo = "";  
+
+$sql = "SELECT * FROM store_settings LIMIT 1";
+$res = mysqli_query($con, $sql);
+if ($row = mysqli_fetch_assoc($res)) {
+    $storeName = $row['store_name'];
+    $storeAddress = $row['store_address'];
+    $storeEmail = $row['store_email'];
+    $storeContact = $row['contact_number'];
+    $storeLogo = $row['store_logo'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>E-Clothing Store</title>
+    <title><?php echo htmlspecialchars($storeName); ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <!-- Google Web Fonts -->
@@ -48,8 +70,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <div class="container topbar bg-primary d-none d-lg-block">
         <div class="d-flex justify-content-between">
             <div class="top-info ps-2">
-                <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">Dhangadhi ,Kailali</a></small>
-                <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">user@gmail.com</a></small>
+                <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white"><?php echo htmlspecialchars($storeAddress); ?></a></small>
+                <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white"><?php echo htmlspecialchars($storeEmail); ?></a></small>
             </div>
             <div class="top-link pe-2">
                 <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
@@ -59,9 +81,14 @@ if (session_status() === PHP_SESSION_NONE) {
     </div><br>
     <div class="container px-0">
         <nav class="navbar navbar-light bg-white navbar-expand-xl">
-            <a href="./../index.php" class="navbar-brand">
-                <h2 class="text-primary display-6">Clothes</h2>
-                <h3 class="mb-3 text-secondary">Buy now pay Latter</h3>
+            <a href="./../index.php" class="navbar-brand d-flex align-items-center">
+                <?php if (!empty($storeLogo)): ?>
+                    <img src="./../assets/images/<?php echo htmlspecialchars($storeLogo); ?>" alt="Logo" style="height: 100px; margin-right: 10px; border-radius: 50%;">
+                <?php endif; ?>
+                <div>
+                    <h2 class="text-primary display-6"><?php echo htmlspecialchars($storeName); ?></h2>
+                    <h3 class="mb-3 text-secondary">Buy now pay Latter</h3>
+                </div>
             </a>
             <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fa fa-bars text-primary"></span>
@@ -88,9 +115,11 @@ if (session_status() === PHP_SESSION_NONE) {
                         <i class="fa fa-shopping-bag fa-2x"></i>
                         <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;"> <?php echo isset($cartCount) ? $cartCount : 0; ?></span>
                     </a>
-                    <a href="#" class="my-auto">
-                        <i class="fas fa-user fa-2x"></i>
-                    </a>
+                   <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="./myaccount.php" class="my-auto">
+                            <i class="fas fa-user fa-2x"></i>
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>

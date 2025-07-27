@@ -1,5 +1,7 @@
 <?php
-include '../includes/dbcon.php';  // Adjust path if needed
+session_start();
+$con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
+if (!$con) die("Connection failed: " . mysqli_connect_error());
 
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);

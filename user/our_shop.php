@@ -17,7 +17,7 @@ $result = mysqli_query($con, $sql);
             <h1 class="mb-4">All Products</h1>
             <div class="input-group mb-3 w-50 mx-auto">
                 <input type="text" id="searchBox"
-                    placeholder="Search by name, ID, price, SKU, category, or price range like 100-500"
+                    placeholder="Search by name, ID, price, category, or price range like 100-500,.."
                     class="form-control">
                 <button class="btn btn-outline-secondary" type="button" id="clearBtn">X</button>
             </div>

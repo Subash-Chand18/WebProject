@@ -9,12 +9,18 @@ $con = mysqli_connect("localhost", "root", "", "E_Clothing_Store");
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
+$adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
 
-$adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
+$storeSettingsQuery = mysqli_query($con, "SELECT store_name, store_logo FROM store_settings ORDER BY id DESC LIMIT 1");
+$storeSettings = mysqli_fetch_assoc($storeSettingsQuery);
+
+$storeName = $storeSettings['store_name'] ?? "E-Clothing Store";
+$storeLogo = $storeSettings['store_logo'] ?? null;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,15 +29,23 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
     <link rel="stylesheet" href="../assets/css/add_product.css" />
     <link rel="stylesheet" href="../assets/css/view_product.css" />
     <link rel="stylesheet" href="../assets/css/edit_product.css" />
-     <link rel="stylesheet" href="../assets/css/customers.css" />
+    <link rel="stylesheet" href="../assets/css/customers.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
+
 </head>
+
 <body>
     <!-- Top Navigation -->
     <header class="topnav">
         <div class="logo">
-            <i class="fas fa-tshirt"></i> E-Clothing Store
+            <?php if ($storeLogo): ?>
+                <img src="../assets/images/<?= htmlspecialchars($storeLogo) ?>"
+                    alt="<?= htmlspecialchars($storeName) ?> Logo"
+                    style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 8px;">
+            <?php else: ?>
+                <i class="fas fa-tshirt"></i>
+            <?php endif; ?>
+            <?= htmlspecialchars($storeName) ?>
         </div>
         <nav class="topnav-menu">
             <a href="#" class="nav-link active">Home</a>
@@ -45,7 +59,8 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
     <!-- Sidebar -->
     <aside class="sidebar">
         <ul class="sidebar-menu">
-            <li><a href="../admin/Admindashboard.php" class="sidebar-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="../admin/Admindashboard.php" class="sidebar-link active"><i class="fas fa-chart-line"></i>
+                    Dashboard</a></li>
 
             <!-- Products with dropdown -->
             <li class="dropdown">
@@ -70,15 +85,17 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['email'];
             </li>
 
             <li><a href="../admin/customers.php" class="sidebar-link"><i class="fas fa-users"></i> Customers</a></li>
-            <li><a href="../admin/Adminorders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-            <li><a href="../admin/orderdetails.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order Details</a></li>
-             <li><a href="../admin/product_rating_review.php" class="sidebar-link"><i class="fas fa-comment-dots"></i> Review</a></li>
-            <li><a href="#" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
-            <li><a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
-            
+            <li><a href="../admin/Adminorders.php" class="sidebar-link"><i class="fas fa-shopping-cart"></i> Orders</a>
+            </li>
+            <li><a href="../admin/orderdetails.php" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Order
+                    Details</a></li>
+            <li><a href="../admin/product_rating_review.php" class="sidebar-link"><i class="fas fa-comment-dots"></i>
+                    Review</a></li>
+            <li><a href="../admin/report.php" class="sidebar-link"><i class="fas fa-file-alt"></i> Reports</a></li>
+            <li><a href="../admin/setting.php" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a></li>
+
         </ul>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
-       

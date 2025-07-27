@@ -69,8 +69,8 @@ if (isset($_POST['adminlogin'])) {
             <label>
                 <input type="checkbox" name="remember" <?php if (isset($_COOKIE['admin_email'])) echo 'checked'; ?> />
                 Remember me
-            <!-- </label>
-            <a href="forgotpassword.php">Forgot Password?</a> -->
+            </label>
+            <!-- <a href="forgotpassword.php">Forgot Password?</a> -->
         </div>
 
         <div class="button-group">

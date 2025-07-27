@@ -17,12 +17,12 @@ function mailer($message)
         $mail->Host = 'sandbox.smtp.mailtrap.io';
         $mail->SMTPAuth = true;
         $mail->Port = 2525;
-        $mail->Username = '729be990cf3d1c';
-        $mail->Password = '3c154d60053249';                              //SMTP password
+        $mail->Username = '16419e58453544';
+        $mail->Password = '37e11ef18c6f9f';                               //SMTP password
         //$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
 
         //Recipients
-        $mail->setFrom('subashchan31@gmail.com', 'Dipa Bist');
+        $mail->setFrom('dipa@gmail.com', 'Dipa Bist');
         $mail->addAddress('deepa@gmail.com', 'Deepa Bist');     //Add a recipient
         $mail->addReplyTo('no-reply@nast.edu.np', 'Nast college');
 

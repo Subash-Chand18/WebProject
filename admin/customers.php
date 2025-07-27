@@ -97,7 +97,7 @@ $res = mysqli_query($con, $sql);
                         <td><?= htmlspecialchars($user['id']) ?></td>
                         <td>
                             <?php
-                            $imagePath = '../design-assets/img/' . $user['image'];
+                            $imagePath = '../assets/images/' . $user['image'];
                             $imgSrc = (!empty($user['image']) && file_exists($imagePath)) ? $imagePath : '../assets/images/avatar.jpg';
                             ?>
                             <img src="<?= $imgSrc ?>" class="profile-img" alt="Profile">
