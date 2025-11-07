@@ -23,15 +23,15 @@ if (isset($_POST['signup'])) {
         $image = basename($_FILES['userfile']['name']);
         $upload_file = $upload_dir . $image;
 
-        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg', 'image/avif'];
-        $max_size = 2 * 1024 * 1024; // 2MB
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg', 'image/avif','image/heic','image/heif'];
+        $max_size = 3 * 1024 * 1024; // 3MB
 
         if ($_FILES['userfile']['error'] !== UPLOAD_ERR_OK) {
             $errors['image'] = "File upload error: " . $_FILES['userfile']['error'];
         } elseif (!in_array($_FILES['userfile']['type'], $allowed_types)) {
-            $errors['image'] = "Only image files (JPG, JPEG, PNG, GIF, WEBP, AVIF) are allowed.";
+            $errors['image'] = "Only image files (JPG, JPEG, PNG, GIF, WEBP, AVIF, HEIF, HEIC) are allowed.";
         } elseif ($_FILES['userfile']['size'] > $max_size) {
-            $errors['image'] = "Image size should not exceed 2MB.";
+            $errors['image'] = "Image size should not exceed 3MB.";
         } else {
             move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_file);
         }

@@ -1,7 +1,8 @@
 <?php
 include '../includes/header.php';
 
-$sql = "SELECT id, name, email, image, created_at FROM users WHERE user_type != 'admin' AND deleted_at IS NULL ORDER BY created_at ASC";
+$sql = "SELECT id, name, email, image, created_at FROM users WHERE deleted_at IS NULL ORDER BY created_at DESC";
+// $sql = "SELECT id, name, email, image, created_at FROM users WHERE user_type != 'admin' AND deleted_at IS NULL ORDER BY created_at ASC";
 $res = mysqli_query($con, $sql);
 ?>
 
@@ -149,7 +150,7 @@ function viewUserDetails(button) {
     imageContainer.innerHTML = '';
 
     if (user.image) {
-        const imagePath = `../design-assets/img/${user.image}`;
+        const imagePath = `../assets/images/${user.image}`;
         imageContainer.innerHTML = `<img src="${imagePath}" alt="User Image">`;
     } else {
         imageContainer.innerHTML = `<img src="../assets/images/avatar.jpg" alt="Default Image">`;

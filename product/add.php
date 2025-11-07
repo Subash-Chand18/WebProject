@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["submit"])) {
         $upload_file = $upload_dir . $image;
 
         $file_ext = strtolower(pathinfo($upload_file, PATHINFO_EXTENSION));
-        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif','avif','webp'];
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif','avif','webp','heic','heif'];
         $file_size = $_FILES['userfile']['size'];
 
         // Validate image file

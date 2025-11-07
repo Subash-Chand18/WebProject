@@ -10,6 +10,11 @@ if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
 $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
+// Fetch admin profile image
+$adminEmail = $_SESSION['admin_email'];
+$res = mysqli_query($con, "SELECT image FROM users WHERE email = '$adminEmail' AND deleted_at IS NULL LIMIT 1");
+$adminRow = mysqli_fetch_assoc($res);
+$adminProfileImage = $adminRow['image'] ?? null;
 
 $storeSettingsQuery = mysqli_query($con, "SELECT store_name, store_logo FROM store_settings ORDER BY id DESC LIMIT 1");
 $storeSettings = mysqli_fetch_assoc($storeSettingsQuery);
@@ -51,9 +56,18 @@ $storeLogo = $storeSettings['store_logo'] ?? null;
             <a href="#" class="nav-link active">Home</a>
             <a href="../admin/logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
-        <div class="welcome-msg">
-            <i class="fas fa-user-circle"></i> Welcome, <strong><?php echo htmlspecialchars($adminName); ?></strong>
-        </div>
+           <div class="welcome-msg">
+    <?php if (!empty($adminProfileImage)) : ?>
+       <img src="../assets/images/<?= htmlspecialchars($adminProfileImage) ?>" 
+             alt="Admin Profile" 
+             style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 8px;">
+    <?php else: ?>
+        <i class="fas fa-user-circle" 
+           style="font-size: 40px; color: #555; margin-right: 8px;"></i>
+    <?php endif; ?>
+    Welcome, <strong><?= htmlspecialchars($adminName) ?></strong>
+</div>
+
     </header>
 
     <!-- Sidebar -->

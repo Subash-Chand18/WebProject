@@ -1,0 +1,117 @@
+-- Create the database
+CREATE DATABASE E_Clothing_Store;
+USE E_Clothing_Store;
+
+-- Create User Table
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(200) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    image VARCHAR(255),                           -- User profile image
+    user_type VARCHAR(50) DEFAULT 'user',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL
+);
+
+-- Create Category Table
+CREATE TABLE category (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL
+);
+
+-- Create Product Table
+CREATE TABLE product (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    description TEXT,
+    price DECIMAL(10, 2),
+    quantity INT,
+    sku VARCHAR(100),
+    category_id INT,
+    image VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
+    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+);
+
+-- Create Product Detail Table
+CREATE TABLE productdetail (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT,
+    variation_key VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
+
+-- Create Orders Table
+CREATE TABLE orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,                          -- FK to user
+    name VARCHAR(200) NOT NULL,            -- Name of the person placing the order
+    order_status VARCHAR(50) DEFAULT 'Pending',
+    payment_method VARCHAR(50) DEFAULT 'Cash on Delivery',  -- Default payment method
+    shipping_charge DECIMAL(10,2) NOT NULL DEFAULT 0.00;
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Create Order Detail Table with created_at and deleted_at
+CREATE TABLE orderdetail (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    product_id INT,
+    quantity INT,
+    unit_price DECIMAL(10, 2),
+    total DECIMAL(10, 2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
+
+-- Create Shipping Table with created_at and deleted_at
+CREATE TABLE shipping (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    billing_address VARCHAR(255) NOT NULL,    -- User's own address
+    shipping_address VARCHAR(255) NOT NULL,    -- Actual delivery address (can be same or different)
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+CREATE TABLE product_ratings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    review TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE store_settings (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  store_name VARCHAR(255) NOT NULL,
+  store_logo VARCHAR(255),
+  contact_number VARCHAR(50),
+  store_email VARCHAR(255),
+  store_address VARCHAR(255),
+  store_information TEXT,
+  established_date VARCHAR(50)
+);
+ALTER TABLE store_settings AUTO_INCREMENT = 1;
+
+CREATE TABLE user_contact (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    message TEXT NOT NULL,
+    messaged_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

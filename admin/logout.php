@@ -5,7 +5,7 @@ $_SESSION = [];
 
 session_destroy();
 
-// Delete the 'email' cookie used for Remember Me (adjust path if needed)
+// Delete the 'email' cookie used for Remember Me
 if (isset($_COOKIE['email'])) {
 
     setcookie("email", "", time() - 3600, "/");
@@ -13,4 +13,3 @@ if (isset($_COOKIE['email'])) {
 
 header("Location: Adminlogin.php");
 exit();
-?>

@@ -38,7 +38,7 @@ $sql = "
     LEFT JOIN product p ON od.product_id = p.id
     WHERE o.deleted_at IS NULL
     GROUP BY o.id
-    ORDER BY o.created_at ASC
+    ORDER BY o.created_at DESC
 ";
 
 $res = mysqli_query($con, $sql);

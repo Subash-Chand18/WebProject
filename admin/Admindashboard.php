@@ -30,6 +30,12 @@ $res = mysqli_query($con, "SELECT SUM(od.quantity * od.unit_price) + SUM(o.shipp
 $totalRevenue = mysqli_fetch_assoc($res)['total'] ?? 0;
 
 $adminName = $_SESSION['admin_name'] ?? $_SESSION['admin_email'];
+// Fetch admin profile image
+$adminEmail = $_SESSION['admin_email'];
+$res = mysqli_query($con, "SELECT image FROM users WHERE email = '$adminEmail' AND deleted_at IS NULL LIMIT 1");
+$adminRow = mysqli_fetch_assoc($res);
+$adminProfileImage = $adminRow['image'] ?? null;
+
 
 $storeSettingsQuery = mysqli_query($con, "SELECT store_name, store_logo FROM store_settings ORDER BY id DESC LIMIT 1");
 $storeSettings = mysqli_fetch_assoc($storeSettingsQuery);
@@ -64,9 +70,19 @@ $storeLogo = $storeSettings['store_logo'] ?? null;
         <a href="Admindashboard.php" class="nav-link active">Home</a>
         <a href="logout.php" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>
-    <div class="welcome-msg">
-        <i class="fas fa-user-circle"></i> Welcome, <strong><?= htmlspecialchars($adminName) ?></strong>
-    </div>
+   <div class="welcome-msg">
+    <?php if (!empty($adminProfileImage)) : ?>
+       <img src="../assets/images/<?= htmlspecialchars($adminProfileImage) ?>" 
+             alt="Admin Profile" 
+             style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 8px;">
+    <?php else: ?>
+        <i class="fas fa-user-circle" 
+           style="font-size: 40px; color: #555; margin-right: 8px;"></i>
+    <?php endif; ?>
+    Welcome, <strong><?= htmlspecialchars($adminName) ?></strong>
+</div>
+
+
 </header>
 
 <aside class="sidebar">

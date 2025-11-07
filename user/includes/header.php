@@ -73,10 +73,10 @@ if ($row = mysqli_fetch_assoc($res)) {
                 <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white"><?php echo htmlspecialchars($storeAddress); ?></a></small>
                 <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white"><?php echo htmlspecialchars($storeEmail); ?></a></small>
             </div>
-            <div class="top-link pe-2">
+            <!-- <div class="top-link pe-2">
                 <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
                 <a href="#" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
-            </div>
+            </div> -->
         </div>
     </div><br>
     <div class="container px-0">
@@ -87,7 +87,7 @@ if ($row = mysqli_fetch_assoc($res)) {
                 <?php endif; ?>
                 <div>
                     <h2 class="text-primary display-6"><?php echo htmlspecialchars($storeName); ?></h2>
-                    <h3 class="mb-3 text-secondary">Buy now pay Latter</h3>
+                    <!-- <h3 class="mb-3 text-secondary">Buy now pay Latter</h3> -->
                 </div>
             </a>
             <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -127,20 +127,49 @@ if ($row = mysqli_fetch_assoc($res)) {
 </div>
 <!-- Navbar End -->
 
-<!-- Modal Search Start -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <!-- Modal Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content rounded-0">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Search for products</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex align-items-center">
-                <div class="input-group w-75 mx-auto d-flex">
-                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                </div>
+                <form action="our_shop.php" method="GET" class="input-group w-75 mx-auto d-flex">
+                    <input type="search" name="search_query" class="form-control p-3" placeholder="Search by product name..." aria-describedby="search-icon-1">
+                    <button type="submit" id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<!-- Modal Search End -->
+
+
+ <!-- Search js -->
+   <script>
+$(document).ready(function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search_query');
+
+    if (searchQuery) {
+        $('#searchModal').modal('hide');
+        const allProductsSection = document.getElementById('tab-all');
+        if (allProductsSection) {
+            $('html, body').animate({
+                scrollTop: $(allProductsSection).offset().top - 100
+            }, 800);
+        }
+        $(allProductsSection).css({
+            'background-color': 'rgba(255, 255, 0, 0.1)',
+            'transition': 'background-color 1s ease'
+        });
+        setTimeout(function () {
+            $(allProductsSection).css('background-color', '');
+        }, 2000);
+    }
+});
+</script>
+

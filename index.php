@@ -72,8 +72,8 @@ $total_products = $product_row['total_products'];
 $storeName = "E-Clothing Store";
 $storeAddress = "Dhangadhi,Kailali Nepal";
 $storeEmail = "eclothingstore@dlms.dev.np";
-$storeContact="+9779806478012";
-$storeLogo = ""; 
+$storeContact = "+9779806478012";
+$storeLogo = "";
 
 $sql = "SELECT * FROM store_settings LIMIT 1";
 $res = mysqli_query($con, $sql);
@@ -81,7 +81,7 @@ if ($row = mysqli_fetch_assoc($res)) {
     $storeName = $row['store_name'];
     $storeAddress = $row['store_address'];
     $storeEmail = $row['store_email'];
-    $storeContact=$row['contact_number'];
+    $storeContact = $row['contact_number'];
     $storeLogo = $row['store_logo'];
 }
 ?>
@@ -159,10 +159,10 @@ if ($row = mysqli_fetch_assoc($res)) {
                     <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#"
                             class="text-white"><?php echo htmlspecialchars($storeEmail); ?></a></small>
                 </div>
-                <div class="top-link pe-2">
+                <!-- <div class="top-link pe-2">
                     <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
                     <a href="#" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
-                </div>
+                </div> -->
             </div>
         </div><br>
         <div class="container px-0">
@@ -174,7 +174,7 @@ if ($row = mysqli_fetch_assoc($res)) {
                     <?php endif; ?>
                     <div>
                         <h2 class="text-primary display-6"><?php echo htmlspecialchars($storeName); ?></h2>
-                        <h3 class="mb-3 text-secondary">Buy now pay Latter</h3>
+
                     </div>
                 </a>
                 <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
@@ -229,20 +229,21 @@ if ($row = mysqli_fetch_assoc($res)) {
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Search for products</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">
-                    <div class="input-group w-75 mx-auto d-flex">
-                        <input type="search" class="form-control p-3" placeholder="keywords"
-                            aria-describedby="search-icon-1">
-                        <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                    </div>
+                    <form action="index.php" method="GET" class="input-group w-75 mx-auto d-flex">
+                        <input type="search" name="search_query" class="form-control p-3"
+                            placeholder="Search by product name..." aria-describedby="search-icon-1">
+                        <button type="submit" id="search-icon-1" class="input-group-text p-3"><i
+                                class="fa fa-search"></i></button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- Modal Search End -->
 
     <!-- Hero Start -->
     <style>
@@ -266,13 +267,7 @@ if ($row = mysqli_fetch_assoc($res)) {
                 <div class="col-md-12 col-lg-7">
                     <h4 class="mb-3 text-secondary">100% Best Suitable Clothes</h4>
                     <h1 class="mb-5 display-3 text-primary">Brand new CLothes</h1>
-                    <div class="position-relative mx-auto">
-                        <input class="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill" type="number"
-                            placeholder="Search">
-                        <button type="submit"
-                            class="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"
-                            style="top: 0; right: 25%;">Submit Now</button>
-                    </div>
+
                 </div>
                 <div class="col-md-12 col-lg-5">
                     <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
@@ -356,8 +351,8 @@ if ($row = mysqli_fetch_assoc($res)) {
                             <i class="fas fa-user-shield fa-3x text-white"></i>
                         </div>
                         <div class="featurs-content text-center">
-                            <h5>Security Payment</h5>
-                            <p class="mb-0">100% security payment</p>
+                            <h5>Best Produts</h5>
+                            <p class="mb-0">100% Best Suitable Products Available</p>
                         </div>
                     </div>
                 </div>
@@ -388,6 +383,100 @@ if ($row = mysqli_fetch_assoc($res)) {
     </div>
     <!-- Featurs Section End -->
 
+    <?php
+    // Get search query if any
+    $searchQuery = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
+
+    // Base SQL for fetching products
+    $sql = "SELECT p.*, c.name AS category_name 
+        FROM product p
+        LEFT JOIN category c ON p.category_id = c.id
+        WHERE p.deleted_at IS NULL";
+
+    // If user searched for something
+    if ($searchQuery !== '') {
+        $sql .= " AND (
+                p.name LIKE ? 
+                OR p.description LIKE ? 
+                OR p.sku LIKE ? 
+                OR p.price LIKE ? 
+                OR c.name LIKE ?
+              )
+              ORDER BY p.id DESC";
+
+        $stmt = mysqli_prepare($con, $sql);
+        $param = "%$searchQuery%";
+        mysqli_stmt_bind_param($stmt, "sssss", $param, $param, $param, $param, $param);
+    } else {
+        // Default order for all products (no search)
+        $sql .= " ORDER BY p.id DESC";
+        $stmt = mysqli_prepare($con, $sql);
+    }
+
+    // Execute query
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    // Organize data
+    $allProducts = [];
+    $categories = [];
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $allProducts[] = $row;
+        $categories[$row['category_name']][] = $row;
+    }
+
+    // Display a small heading if search is active
+    if ($searchQuery !== '') {
+        echo '<div class="text-center my-4">
+            <h3>Search Results for "<span class="text-primary">' . htmlspecialchars($searchQuery) . '</span>"</h3>
+          </div>';
+    }
+
+    // Check if products found
+    if ($searchQuery !== '' && count($allProducts) === 0) {
+        echo '<div id="noResult" class="text-center my-5">
+            <h4 class="text-danger">No products found!</h4>
+            <p>Showing all products in 5 seconds...</p>
+          </div>';
+
+        echo '<script>
+            setTimeout(() => {
+                window.location.href = window.location.pathname; // Reload same page without search
+            }, 5000);
+          </script>';
+    }
+
+    ?>
+    <style>
+        /* Equal image height */
+        .clothing-item img {
+            height: 280px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        /* Fix card layout */
+        .clothing-item {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Limit description text */
+        .clothing-item p {
+            height: 60px;
+            /* fixed space for 2–3 lines */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            /* show only 3 lines */
+            -webkit-box-orient: vertical;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
     <!-- Clothes Shop Start-->
     <div class="container-fluid clothing py-5">
         <div class="container py-5">
@@ -415,6 +504,7 @@ if ($row = mysqli_fetch_assoc($res)) {
                         </ul>
                     </div>
                 </div>
+
 
                 <!-- Tab Content Start -->
                 <div class="tab-content">
@@ -723,7 +813,7 @@ if ($row = mysqli_fetch_assoc($res)) {
                             style="width: 140px; height: 140px; top: 0; left: 0;">
                             <h1 style="font-size: 100px;">1</h1>
                             <div class="d-flex flex-column">
-                                <span class="h2 mb-0">50$</span>
+                                <span class="h2 mb-0"></span>
                                 <span class="h4 text-muted mb-0">piece</span>
                             </div>
                         </div>
@@ -833,8 +923,8 @@ if ($row = mysqli_fetch_assoc($res)) {
                     <div class="col-md-6 col-lg-6 col-xl-3">
                         <div class="counter bg-white rounded p-5">
                             <i class="fa fa-users text-secondary"></i>
-                            <h4>Quality Certificates</h4>
-                            <h1>33</h1>
+                            <h4>Quality of Products</h4>
+                            <h1>100%</h1>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-6 col-xl-3">
@@ -903,8 +993,8 @@ if ($row = mysqli_fetch_assoc($res)) {
                                     style="width: 100px; height: 100px;" alt="">
                             </div>
                             <div class="ms-4 d-block">
-                                <h4 class="text-dark"></h4>
-                                <p class="m-0 pb-3">BTS</p>
+                                <h4 class="text-dark">BTS</h4>
+                                <p class="m-0 pb-3">K-Pop idols</p>
                                 <div class="d-flex pe-5">
                                     <i class="fas fa-star text-primary"></i>
                                     <i class="fas fa-star text-primary"></i>
@@ -931,7 +1021,7 @@ if ($row = mysqli_fetch_assoc($res)) {
                                     style="width: 100px; height: 100px;" alt="">
                             </div>
                             <div class="ms-4 d-block">
-                                <h4 class="text-dark">Aman Gupta</h4>
+                                <h4 class="text-dark">James Dong</h4>
                                 <p class="m-0 pb-3">CEO of Daraz</p>
                                 <div class="d-flex pe-5">
                                     <i class="fas fa-star text-primary"></i>
@@ -963,13 +1053,13 @@ if ($row = mysqli_fetch_assoc($res)) {
                     </div>
                     <div class="col-lg-6">
                         <div class="position-relative mx-auto">
-                            <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number"
-                                placeholder="Your Email">
-                            <button type="submit"
-                                class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white"
-                                style="top: 0; right: 0;">Subscribe Now</button>
+                            <input class="form-control border-0 w-100 py-3 px-4 rounded-pill text-center fw-semibold"
+                                type="text" value="Customer are the GOD for Us ! Thank you for your Love and Support !!"
+                                readonly style="background-color: white; cursor: default;">
                         </div>
                     </div>
+
+
                     <div class="col-lg-3">
                         <div class="d-flex justify-content-end pt-3">
                             <a class="btn  btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i
@@ -1035,8 +1125,9 @@ if ($row = mysqli_fetch_assoc($res)) {
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i><?php echo htmlspecialchars($storeName); ?>
-                            </a>, All right reserved.</span>
+                    <span class="text-light"><a href="#"><i
+                                class="fas fa-copyright text-light me-2"></i><?php echo htmlspecialchars($storeName); ?>
+                        </a>, All right reserved.</span>
                 </div>
                 <div class="col-md-6 my-auto text-center text-md-end text-white">
 
@@ -1106,59 +1197,40 @@ if ($row = mysqli_fetch_assoc($res)) {
             updateCount();
         });
     </script>
+
+    <!-- Search js -->
+
     <script>
-    document.getElementById('exampleModalLabel').addEventListener('input', function () {
-        const query = this.value.trim().toLowerCase();
-        const productCards = document.querySelectorAll('.product-card');
+        $(document).ready(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search_query');
 
-        let minPrice = null, maxPrice = null;
-        const priceRangeMatch = query.match(/^(\d+)\s*-\s*(\d+)$/);
+            // If there is a search query, scroll to the product section
+            if (searchQuery) {
+                // Hide the modal if still open
+                $('#searchModal').modal('hide');
 
-        if (priceRangeMatch) {
-            minPrice = parseFloat(priceRangeMatch[1]);
-            maxPrice = parseFloat(priceRangeMatch[2]);
-        }
-
-        productCards.forEach(card => {
-            const id = card.dataset.id;
-            const name = card.dataset.name;
-            const sku = card.dataset.sku;
-            const description = card.dataset.description;
-            const price = parseFloat(card.dataset.price);
-            const category = card.dataset.category;
-
-            let matches = false;
-
-            if (priceRangeMatch) {
-                if (price >= minPrice && price <= maxPrice) {
-                    matches = true;
+                // Scroll smoothly to the "All Products" section
+                const allProductsSection = document.getElementById('tab-all');
+                if (allProductsSection) {
+                    $('html, body').animate({
+                        scrollTop: $(allProductsSection).offset().top - 100 // Adjust -100 if needed
+                    }, 800);
                 }
-            } else {
-                if (
-                    id.includes(query) ||
-                    name.includes(query) ||
-                    sku.includes(query) ||
-                    description.includes(query) ||
-                    category.includes(query) ||
-                    price.toString().includes(query)
-                ) {
-                    matches = true;
-                }
+
+                // Optional: add a temporary highlight to grab attention
+                $(allProductsSection).css({
+                    'background-color': 'rgba(255, 255, 0, 0.1)',
+                    'transition': 'background-color 1s ease'
+                });
+
+                // Remove highlight after 2 seconds
+                setTimeout(function () {
+                    $(allProductsSection).css('background-color', '');
+                }, 2000);
             }
-
-            card.style.display = matches ? '' : 'none';
         });
-    });
-    // Clear Button functionality
-    document.getElementById('clearBtn').addEventListener('click', function () {
-        document.getElementById('exampleModalLabel').value = '';
-        const productCards = document.querySelectorAll('.product-card');
-        productCards.forEach(card => {
-            card.style.display = '';
-        });
-    });
-
-</script>
+    </script>
 
     <!-- Template Javascript -->
     <script src="design-assets/js/main.js"></script>

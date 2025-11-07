@@ -17,7 +17,7 @@ $store = mysqli_fetch_assoc($storeQuery);
 
 $address = $store['store_address'] ?? 'Dhangadhi, Kailali Nepal';
 $email = $store['store_email'] ?? 'eclothingstore@dlms.dev.np';
-$phone = $store['contact_number'] ?? '974212321445';
+$phone = $store['contact_number'] ?? '9844351869';
 
 // Check User Login
 $isLoggedIn = isset($_SESSION['user_id']);
@@ -50,8 +50,8 @@ if (isset($_POST['submit'])) {
                 $mail->isSMTP();
                 $mail->Host = 'smtp.mailtrap.io';
                 $mail->SMTPAuth = true;
-                $mail->Username = '16419e58453544';
-                $mail->Password = '37e11ef18c6f9f'; 
+                $mail->Username = '729be990cf3d1c';
+                $mail->Password = '3c154d60053249'; 
                 $mail->SMTPSecure = 'tls';
                 $mail->Port = 587;
 
