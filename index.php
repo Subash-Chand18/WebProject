@@ -72,7 +72,7 @@ $total_products = $product_row['total_products'];
 $storeName = "E-Clothing Store";
 $storeAddress = "Dhangadhi,Kailali Nepal";
 $storeEmail = "eclothingstore@dlms.dev.np";
-$storeContact = "+9779806478012";
+$storeContact = "+9779844351869";
 $storeLogo = "";
 
 $sql = "SELECT * FROM store_settings LIMIT 1";
